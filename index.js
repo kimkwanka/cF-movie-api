@@ -56,24 +56,28 @@ const errorHandlerMiddleware = (err, req, res, _) => {
   res.status(500).send('Something broke!');
 };
 
-// Enable Logger
-app.use(morgan('common'));
+const initMiddlewareAndRoutes = (expressApp) => {
+  // Enable Logger
+  expressApp.use(morgan('common'));
 
-// Send text response on '/'
-app.get('/', (req, res) => {
-  res.send('ROUTE: /');
-});
+  // Send text response on '/'
+  expressApp.get('/', (req, res) => {
+    res.send('ROUTE: /');
+  });
 
-// Send json response on '/movies'
-app.get('/movies', (req, res) => {
-  res.send(top10Movies);
-});
+  // Send json response on '/movies'
+  expressApp.get('/movies', (req, res) => {
+    res.send(top10Movies);
+  });
 
-// Serve static files
-app.use(express.static('public'));
+  // Serve static files
+  expressApp.use(express.static('public'));
 
-// Handle errors
-app.use(errorHandlerMiddleware);
+  // Handle errors
+  expressApp.use(errorHandlerMiddleware);
+};
+
+initMiddlewareAndRoutes(app);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
