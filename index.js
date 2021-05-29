@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+// Sample API data
 const top10Movies = [
   {
     title: 'Joker',
@@ -49,22 +50,29 @@ const top10Movies = [
   },
 ];
 
+// Custom error handler middleware
 const errorHandlerMiddleware = (err, req, res, _) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 };
 
+// Enable Logger
 app.use(morgan('common'));
 
+// Send text response on '/'
 app.get('/', (req, res) => {
   res.send('ROUTE: /');
 });
 
+// Send json response on '/movies'
 app.get('/movies', (req, res) => {
   res.send(top10Movies);
 });
 
+// Serve static files
 app.use(express.static('public'));
+
+// Handle errors
 app.use(errorHandlerMiddleware);
 
 app.listen(PORT, () => {
