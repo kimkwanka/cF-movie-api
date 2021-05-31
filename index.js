@@ -2,6 +2,7 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 const express = require('express');
 const morgan = require('morgan');
+const uuid = require('uuid');
 
 const PORT = process.env.PORT || 8080;
 
