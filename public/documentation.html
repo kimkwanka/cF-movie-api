@@ -16,6 +16,7 @@
       <tr>
         <th>Business Logic</th>
         <th>URL</th>
+        <th>Query parameters</th>
         <th>HTTP Method</th>
         <th>Request body format</th>
         <th>Response body format</th>
@@ -23,6 +24,7 @@
       <tr>
         <th>Returns a list of all movies</th>
         <th>/movies</th>
+        <th>None</th>
         <th>GET</th>
         <th>None</th>
         <th>JSON object holding data about all movies</th>
@@ -30,6 +32,7 @@
       <tr>
         <th>Returns data about a single movie by title</th>
         <th>/movies/:title</th>
+        <th>title</th>
         <th>GET</th>
         <th>None</th>
         <th>
@@ -42,6 +45,7 @@
       <tr>
         <th>Returns data about a genre by name</th>
         <th>/genres/:name</th>
+        <th>name</th>
         <th>GET</th>
         <th>None</th>
         <th>
@@ -56,6 +60,7 @@
       <tr>
         <th>Returns data about a director by name</th>
         <th>/directors/:name</th>
+        <th>name</th>
         <th>GET</th>
         <th>None</th>
         <th>
@@ -68,6 +73,7 @@
       <tr>
         <th>Register a new user</th>
         <th>/users</th>
+        <th>None</th>
         <th>POST</th>
         <th>{
           "username": "MangoChicken22",
@@ -89,6 +95,7 @@
       <tr>
         <th>Update a user's username</th>
         <th>/users/:user_id</th>
+        <th>user_id</th>
         <th>PATCH</th>
         <th>{"username": "MarshmallowKnight87"}</th>
         <th>
@@ -99,6 +106,7 @@
       <tr>
         <th>Add a movie to a user's list of favorites</th>
         <th>/users/:user_id/movies/:movie_id</th>
+        <th>movie_id</th>
         <th>POST</th>
         <th>None</th>
         <th>
@@ -109,6 +117,7 @@
       <tr>
         <th>Remove a movie from a user's list of favorites</th>
         <th>/users/:user_id/movies/:movie_id</th>
+        <th>user_id, movie_id</th>
         <th>DELETE</th>
         <th>None</th>
         <th>
@@ -119,6 +128,7 @@
       <tr>
         <th>Remove a user from the list of users</th>
         <th>/users/:user_id</th>
+        <th>user_id</th>
         <th>DELETE</th>
         <th>None</th>
         <th>
