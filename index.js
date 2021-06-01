@@ -224,8 +224,9 @@ const initMiddlewareAndRoutes = (expressApp) => {
   expressApp.delete('/users/:user_id', (req, res) => {
     const userIDToFind = req.params.user_id;
     const indexOfUserToDelete = users.findIndex((user) => (user.id === userIDToFind));
+    const userWithIDExists = indexOfUserToDelete !== -1;
 
-    if (indexOfUserToDelete) {
+    if (userWithIDExists) {
       const emailOfUserToDelete = users[indexOfUserToDelete].email;
 
       users.splice(indexOfUserToDelete, 1);
