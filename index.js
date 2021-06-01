@@ -121,7 +121,16 @@ const directors = [
   },
 ];
 
-const users = [];
+const users = [
+  {
+    id: '194aa46a-7c4a-4124-8cb7-48259b2cceec',
+    username: 'Nianmo',
+    password: 'pwd123',
+    email: 'nianmo@outlook.com',
+    birthday: '04/01/1996',
+    favoriteMovies: [],
+  },
+];
 
 // Custom error handler middleware
 const errorHandlerMiddleware = (err, req, res, _) => {
