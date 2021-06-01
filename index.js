@@ -28,44 +28,84 @@ const genres = [
 
 const movies = [
   {
+    id: '0',
     title: 'Joker',
     director: 'Todd Phillips',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '1',
     title: 'Once Upon a Time... in Hollywood',
     director: 'Quentin Tarantino',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '2',
     title: 'Avengers: Endgame',
     director: 'Anthony Russo',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '3',
     title: 'Captain Marvel',
     director: 'Anna Boden',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '4',
     title: 'It Chapter Two',
     director: 'Andy Muschietti',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '5',
     title: 'The Lion King',
     director: 'Jon Favreau',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '6',
     title: 'Spider-Man: Far from Home',
     director: 'Jon Watts',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '7',
     title: 'Alita: Battle Angel',
     director: 'Robert Rodriguez',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '8',
     title: 'Aladdin',
     director: 'Guy Ritchie',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
   {
+    id: '9',
     title: 'Us',
     director: 'Jordan Peele',
+    description: 'Sample Description',
+    genre: 'drama',
+    imgUrl: 'http://samplewebsite.com/movie.jpg',
   },
 ];
 
@@ -135,18 +175,97 @@ const initMiddlewareAndRoutes = (expressApp) => {
   });
 
   expressApp.post('/users', (req, res) => {
+    const {
+      username, password, email, birthday,
+    } = req.body;
+
+    if (!username || !password || !email || !birthday) {
+      res.status(400).send('Missing user property in request body, please consult the documentation.');
+    } else {
+      const id = uuid.v4();
+      const favoriteMovies = [];
+
+      const newUser = {
+        id, username, password, email, birthday, favoriteMovies,
+      };
+
+      users.push(newUser);
+      res.status(201).send(newUser);
+    }
   });
 
   expressApp.patch('/users/:user_id', (req, res) => {
+    const { username } = req.body;
+
+    if (!username) {
+      res.status(400).send('Missing user property in request body, please consult the documentation.');
+    } else {
+      const userIDToFind = req.params.user_id;
+      const userToUpdate = users.find((user) => (user.id === userIDToFind));
+
+      if (userToUpdate) {
+        userToUpdate.username = username;
+        res.status(200).send(userToUpdate);
+      } else {
+        res.status(404).send(`Couldn't find a user with id: "${userIDToFind}"`);
+      }
+    }
   });
 
   expressApp.delete('/users/:user_id', (req, res) => {
+    const userIDToFind = req.params.user_id;
+    const indexOfUserToDelete = users.findIndex((user) => (user.id === userIDToFind));
+
+    if (indexOfUserToDelete) {
+      const emailOfUserToDelete = users[indexOfUserToDelete].email;
+
+      users.splice(indexOfUserToDelete, 1);
+      res.status(200).send(`Successfully deleted user with email: ${emailOfUserToDelete}`);
+    } else {
+      res.status(404).send(`Couldn't find a user with id: "${userIDToFind}"`);
+    }
   });
 
   expressApp.post('/users/:user_id/movies/:movie_id', (req, res) => {
+    const userIDToFind = req.params.user_id;
+    const userToUpdate = users.find((user) => (user.id === userIDToFind));
+
+    if (userToUpdate) {
+      const movieIDToFind = req.params.movie_id;
+      const movieIDAlreadyInFavorites = userToUpdate.favoriteMovies.includes(movieIDToFind);
+      const movieWithIDExists = movies.findIndex((movie) => (movie.id === movieIDToFind)) !== -1;
+
+      if (!movieIDAlreadyInFavorites && movieWithIDExists) {
+        userToUpdate.favoriteMovies.push(movieIDToFind);
+        res.status(200).send(`Successfully added movie with id: ${movieIDToFind} to favorites`);
+      } else if (movieIDAlreadyInFavorites) {
+        res.status(400).send(`Movie with id: ${movieIDToFind} is already a favorite.`);
+      } else {
+        res.status(400).send(`Movie with id: ${movieIDToFind} doesn't exist.`);
+      }
+    } else {
+      res.status(404).send(`Couldn't find a user with id: "${userIDToFind}"`);
+    }
   });
 
   expressApp.delete('/users/:user_id/movies/:movie_id', (req, res) => {
+    const userIDToFind = req.params.user_id;
+    const userToUpdate = users.find((user) => (user.id === userIDToFind));
+
+    if (userToUpdate) {
+      const movieIDToFind = req.params.movie_id;
+      const indexOfMovieToDelete = userToUpdate.favoriteMovies.indexOf(movieIDToFind);
+      const movieIDExistsInFavorites = indexOfMovieToDelete !== -1;
+
+      if (movieIDExistsInFavorites) {
+        userToUpdate.favoriteMovies.splice(indexOfMovieToDelete, 1);
+        res.status(200).send(`Successfully removed movie with id: ${movieIDToFind} from favorites`);
+      } else {
+        res.status(400).send(`Movie with id: ${movieIDToFind} wasn't a favorite to begin with.`);
+      }
+    } else {
+      res.status(404).send(`Couldn't find a user with id: "${userIDToFind}"`);
+    }
   });
 
   // Serve static files
