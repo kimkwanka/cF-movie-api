@@ -2,8 +2,6 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 const express = require('express');
 const morgan = require('morgan');
-const uuid = require('uuid');
-
 const mongoose = require('mongoose');
 const Models = require('./models');
 
