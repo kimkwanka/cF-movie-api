@@ -11,7 +11,6 @@ const movieSchema = mongoose.Schema({
     Name: String,
     Bio: String,
   },
-  Actors: [String],
   ImagePath: String,
   Featured: Boolean,
 });
@@ -24,8 +23,10 @@ const userSchema = mongoose.Schema({
   FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
 });
 
-const Movie = mongoose.model('Movie', movieSchema);
-const User = mongoose.model('User', userSchema);
+const Movies = mongoose.model('Movie', movieSchema);
+const Users = mongoose.model('User', userSchema);
 
-module.exports.Movie = Movie;
-module.exports.User = User;
+module.exports = {
+  Movies,
+  Users,
+};
