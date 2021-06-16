@@ -93,11 +93,16 @@
         </th>
       </tr>
       <tr>
-        <th>Update a user's username</th>
+        <th>Update a user's data</th>
         <th>/users/:user_id</th>
         <th>user_id</th>
-        <th>PATCH</th>
-        <th>{"username": "MarshmallowKnight87"}</th>
+        <th>PUT</th>
+        <th>{
+          "username": "MangoChicken22",
+          "password": "test123",
+          "email":"mangochicken22@gmail.com",
+          "birthday": "06/11/1973"
+        }</th>
         <th>
           Text message indicating whether the username was successfully updated
           or not
