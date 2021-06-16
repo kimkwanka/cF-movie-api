@@ -4,6 +4,14 @@ const express = require('express');
 const morgan = require('morgan');
 const uuid = require('uuid');
 
+const mongoose = require('mongoose');
+const Models = require('./models');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -183,56 +191,62 @@ const initMiddlewareAndRoutes = (expressApp) => {
     }
   });
 
-  expressApp.post('/users', (req, res) => {
+  expressApp.post('/users', async (req, res) => {
     const {
-      username, password, email, birthday,
+      Username, Password, Email, Birthday,
     } = req.body;
 
-    if (!username || !password || !email || !birthday) {
-      res.status(400).send('Missing user property in request body, please consult the documentation.');
-    } else {
-      const id = uuid.v4();
-      const favoriteMovies = [];
-
-      const newUser = {
-        id, username, password, email, birthday, favoriteMovies,
-      };
-
-      users.push(newUser);
-      res.status(201).send(newUser);
-    }
-  });
-
-  expressApp.patch('/users/:user_id', (req, res) => {
-    const { username } = req.body;
-
-    if (!username) {
-      res.status(400).send('Missing user property in request body, please consult the documentation.');
-    } else {
-      const userIDToFind = req.params.user_id;
-      const userToUpdate = users.find((user) => (user.id === userIDToFind));
-
-      if (userToUpdate) {
-        userToUpdate.username = username;
-        res.status(200).send(userToUpdate);
-      } else {
-        res.status(404).send(`Couldn't find a user with id: "${userIDToFind}"`);
+    try {
+      const alreadyExistingUser = await Users.findOne({ Username });
+      if (alreadyExistingUser) {
+        return res.status(400).send(`${Username} already exists.`);
       }
+
+      const newUser = await Users.create({
+        Username, Password, Email, Birthday,
+      });
+
+      return res.status(201).json(newUser);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send(`Error: ${error}`);
     }
   });
 
-  expressApp.delete('/users/:user_id', (req, res) => {
-    const userIDToFind = req.params.user_id;
-    const indexOfUserToDelete = users.findIndex((user) => (user.id === userIDToFind));
-    const userWithIDExists = indexOfUserToDelete !== -1;
+  expressApp.put('/users/:_id', async (req, res) => {
+    const {
+      Username, Password, Email, Birthday,
+    } = req.body;
 
-    if (userWithIDExists) {
-      const emailOfUserToDelete = users[indexOfUserToDelete].email;
+    const { _id } = req.params;
 
-      users.splice(indexOfUserToDelete, 1);
-      res.status(200).send(`Successfully deleted user with email: ${emailOfUserToDelete}`);
-    } else {
-      res.status(404).send(`Couldn't find a user with id: "${userIDToFind}"`);
+    try {
+      const updatedUser = await Users.findOneAndUpdate({ _id }, {
+        $set: {
+          Username, Password, Email, Birthday,
+        },
+      }, {
+        new: true,
+      });
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send(`Error: ${error}`);
+    }
+  });
+
+  expressApp.delete('/users/:_id', async (req, res) => {
+    const { _id } = req.params;
+
+    try {
+      const userToDelete = await Users.findOneAndRemove({ _id });
+      if (!userToDelete) {
+        return res.status(400).send(`User with ID ${_id} couldn't be found.`);
+      }
+      return res.status(200).send(`User with ID ${_id} was successfully removed.`);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send(`Error: ${error}`);
     }
   });
 
