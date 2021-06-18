@@ -48,7 +48,7 @@ const deleteUser = async (user_id) => {
   try {
     const userToDelete = await Users.findOneAndRemove({ _id: user_id });
     if (!userToDelete) {
-      return { statusCode: 400, body: `User with id: ${user_id} doesn't exist.` };
+      return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
     }
     return { statusCode: 200, body: `User with ID ${user_id} was successfully removed.` };
   } catch (e) {
@@ -71,14 +71,14 @@ const addFavoriteMovieToUser = async (user_id, movie_id) => {
       }
 
       if (!movieWithIDExists) {
-        return { statusCode: 400, body: `Movie with id: ${movie_id} doesn't exist.` };
+        return { statusCode: 404, body: `Movie with id: ${movie_id} doesn't exist.` };
       }
 
       userToUpdate.FavoriteMovies.push(movie_id);
       await userToUpdate.save();
       return { statusCode: 200, body: `Successfully added movie with id: ${movie_id} to favorites` };
     }
-    return { statusCode: 400, body: `User with id: ${user_id} doesn't exist.` };
+    return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
@@ -100,7 +100,7 @@ const removeFavoriteMovieFromUser = async (user_id, movie_id) => {
       }
       return { statusCode: 400, body: `Movie with id: ${movie_id} wasn't a favorite to begin with.` };
     }
-    return { statusCode: 400, body: `User with id: ${user_id} doesn't exist.` };
+    return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
