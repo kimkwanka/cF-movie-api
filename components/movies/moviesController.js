@@ -6,32 +6,23 @@ const getAllMovies = async (req, res) => res.send(await moviesService.findAllMov
 
 const getMovieByTitle = async (req, res) => {
   const movieTitleToFind = req.params.title;
-  const movieToFindByTitle = await moviesService.findMovieByTitle(movieTitleToFind);
+  const findMovieByTitleResponse = await moviesService.findMovieByTitle(movieTitleToFind);
 
-  if (movieToFindByTitle) {
-    return res.send(movieToFindByTitle);
-  }
-  return res.status(404).send(`Couldn't find a movie with title: "${movieTitleToFind}"`);
+  return res.status(findMovieByTitleResponse.statusCode).send(findMovieByTitleResponse.body);
 };
 
 const getGenreByName = async (req, res) => {
   const genreNameToFind = req.params.name;
-  const movieWithGenre = await moviesService.findMovieWithGenre(genreNameToFind);
+  const findGenreByNameResponse = await moviesService.findGenreByName(genreNameToFind);
 
-  if (movieWithGenre) {
-    return res.send(movieWithGenre.Genre);
-  }
-  return res.status(404).send(`Couldn't find a genre with name: "${genreNameToFind}"`);
+  return res.status(findGenreByNameResponse.statusCode).send(findGenreByNameResponse.body);
 };
 
 const getDirectorByName = async (req, res) => {
   const directorNameToFind = req.params.name;
-  const movieWithDirector = await moviesService.findMovieWithDirector(directorNameToFind);
+  const findDirectorByNameResponse = await moviesService.findDirectorByName(directorNameToFind);
 
-  if (movieWithDirector) {
-    return res.send(movieWithDirector.Director);
-  }
-  return res.status(404).send(`Couldn't find a director with name: "${directorNameToFind}"`);
+  return res.status(findDirectorByNameResponse.statusCode).send(findDirectorByNameResponse.body);
 };
 
 module.exports = {
