@@ -1,15 +1,12 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 /* eslint camelcase: ["error", { allow: ["user_id", "movie_id"]}] */
-const mongoose = require('mongoose');
-const { Movies } = require('../../models');
+const moviesService = require('./moviesService');
 
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
-
-const getAllMovies = async (req, res) => res.send(await Movies.find({}));
+const getAllMovies = async (req, res) => res.send(await moviesService.findAllMovies());
 
 const getMovieByTitle = async (req, res) => {
   const movieTitleToFind = req.params.title;
-  const movieToFindByTitle = await Movies.findOne({ Title: movieTitleToFind });
+  const movieToFindByTitle = await moviesService.findMovieByTitle(movieTitleToFind);
 
   if (movieToFindByTitle) {
     return res.send(movieToFindByTitle);
@@ -19,7 +16,7 @@ const getMovieByTitle = async (req, res) => {
 
 const getGenreByName = async (req, res) => {
   const genreNameToFind = req.params.name;
-  const movieWithGenre = await Movies.findOne({ 'Genre.Name': genreNameToFind });
+  const movieWithGenre = await moviesService.findMovieWithGenre(genreNameToFind);
 
   if (movieWithGenre) {
     return res.send(movieWithGenre.Genre);
@@ -29,7 +26,7 @@ const getGenreByName = async (req, res) => {
 
 const getDirectorByName = async (req, res) => {
   const directorNameToFind = req.params.name;
-  const movieWithDirector = await Movies.findOne({ 'Director.Name': directorNameToFind });
+  const movieWithDirector = await moviesService.findMovieWithDirector(directorNameToFind);
 
   if (movieWithDirector) {
     return res.send(movieWithDirector.Director);
