@@ -5,6 +5,8 @@
 const express = require('express');
 const morgan = require('morgan');
 
+const auth = require('./components/auth/auth');
+
 const moviesRouter = require('./components/movies/moviesRouter');
 const usersRouter = require('./components/users/usersRouter');
 
@@ -22,9 +24,13 @@ const initMiddlewareAndRoutes = (expressApp) => {
   // Enable body-parser
   expressApp.use(express.json());
 
+  // Enable Authentication
+  expressApp.use(auth);
+
   // Enable Logger
   expressApp.use(morgan('common'));
 
+  // Show documentation on root
   expressApp.get('/', (req, res) => {
     res.redirect('/documentation.html');
   });
