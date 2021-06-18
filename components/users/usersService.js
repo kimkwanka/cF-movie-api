@@ -1,10 +1,7 @@
 /* eslint-disable max-len */
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 /* eslint camelcase: ["error", { allow: ["user_id", "movie_id"]}] */
-const mongoose = require('mongoose');
 const { Movies, Users } = require('../../models');
-
-mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const addUser = async ({
   Username, Password, Email, Birthday,

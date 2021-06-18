@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
 const movieSchema = mongoose.Schema({
   Title: { type: String, required: true },
   Description: { type: String, required: true },
