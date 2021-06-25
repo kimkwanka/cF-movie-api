@@ -4,6 +4,7 @@
 
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 
 const auth = require('./components/auth/auth');
 
@@ -21,6 +22,9 @@ const errorHandlerMiddleware = (err, req, res, _) => {
 };
 
 const initMiddlewareAndRoutes = (expressApp) => {
+  // Enable CORS for all domains
+  expressApp.use(cors());
+
   // Remove the X-Powered-By headers
   expressApp.disable('x-powered-by');
 
