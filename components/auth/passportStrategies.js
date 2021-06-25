@@ -1,4 +1,5 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+/* eslint no-underscore-dangle: ["error", { "allow": ["_id",] }] */
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const { Strategy: JWTStrategy, ExtractJwt: ExtractJWT } = require('passport-jwt');
