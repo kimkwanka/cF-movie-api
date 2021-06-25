@@ -7,7 +7,9 @@ const passport = require('passport');
 
 const authRouter = express.Router();
 
-require('./passport'); // Your local passport file
+const passportStrategies = require('./passportStrategies'); // Your local passport file
+
+passportStrategies.initStrategies();
 
 const generateJWTToken = (user) => jwt.sign(user, jwtSecret, {
   subject: user.Username, // This is the username you’re encoding in the JWT
