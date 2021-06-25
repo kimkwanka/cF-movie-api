@@ -21,6 +21,9 @@ const errorHandlerMiddleware = (err, req, res, _) => {
 };
 
 const initMiddlewareAndRoutes = (expressApp) => {
+  // Remove the X-Powered-By headers
+  expressApp.disable('x-powered-by');
+
   // Enable body-parser
   expressApp.use(express.json());
 
