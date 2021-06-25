@@ -1,7 +1,8 @@
 /* eslint-disable max-len */
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 /* eslint camelcase: ["error", { allow: ["user_id", "movie_id"]}] */
-const { Movies, Users } = require('../../models');
+const Users = require('./usersModel');
+const Movies = require('../movies/moviesModel');
 
 const addUser = async ({
   Username, Password, Email, Birthday,

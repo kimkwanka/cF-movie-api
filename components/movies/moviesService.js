@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 /* eslint camelcase: ["error", { allow: ["user_id", "movie_id"]}] */
-const { Movies } = require('../../models');
+const Movies = require('./moviesModel');
 
 const findAllMovies = async () => Movies.find({});
 
