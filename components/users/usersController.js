@@ -4,11 +4,11 @@
 const usersService = require('./usersService');
 
 const addUser = async (req, res) => {
-  const {
-    Username, Password, Email, Birthday,
-  } = req.body;
-
   try {
+    const {
+      Username, Password, Email, Birthday,
+    } = req.body;
+
     const requestBodyValidationErrors = await usersService.validateRequestBody(req);
 
     if (!requestBodyValidationErrors.isEmpty()) {
@@ -27,13 +27,13 @@ const addUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const {
-    Username, Password, Email, Birthday,
-  } = req.body;
-
-  const { user_id } = req.params;
-
   try {
+    const {
+      Username, Password, Email, Birthday,
+    } = req.body;
+
+    const { user_id } = req.params;
+
     const updateUserResponse = await usersService.updateUser(user_id, {
       Username, Password, Email, Birthday,
     });
@@ -46,9 +46,9 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-  const { user_id } = req.params;
-
   try {
+    const { user_id } = req.params;
+
     const deleteUserResponse = await usersService.deleteUser(user_id);
 
     return res.status(deleteUserResponse.statusCode).send(deleteUserResponse.body);
@@ -59,11 +59,11 @@ const deleteUser = async (req, res) => {
 };
 
 const addFavoriteMovieToUser = async (req, res) => {
-  const {
-    user_id, movie_id,
-  } = req.params;
-
   try {
+    const {
+      user_id, movie_id,
+    } = req.params;
+
     const addFavoriteMovieToUserResponse = await usersService.addFavoriteMovieToUser(user_id, movie_id);
 
     return res.status(addFavoriteMovieToUserResponse.statusCode).send(addFavoriteMovieToUserResponse.body);
@@ -74,11 +74,11 @@ const addFavoriteMovieToUser = async (req, res) => {
 };
 
 const removeFavoriteMovieFromUser = async (req, res) => {
-  const {
-    user_id, movie_id,
-  } = req.params;
-
   try {
+    const {
+      user_id, movie_id,
+    } = req.params;
+
     const removeFavoriteMovieFromUserResponse = await usersService.removeFavoriteMovieFromUser(user_id, movie_id);
 
     return res.status(removeFavoriteMovieFromUserResponse.statusCode).send(removeFavoriteMovieFromUserResponse.body);
