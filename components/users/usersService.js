@@ -13,8 +13,10 @@ const addUser = async ({
       return { statusCode: 400, body: `${Username} already exists.` };
     }
 
+    const hashedPassword = Users.hashPassword(Password);
+
     const newUser = await Users.create({
-      Username, Password, Email, Birthday,
+      Username, Password: hashedPassword, Email, Birthday,
     });
 
     return { statusCode: 201, body: newUser };

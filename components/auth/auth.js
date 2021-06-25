@@ -1,38 +1,48 @@
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 const express = require('express');
-
-const jwtSecret = process.env.JWT_SECRET;
-
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
 const authRouter = express.Router();
 
-const passportStrategies = require('./passportStrategies'); // Your local passport file
+const passportStrategies = require('./passportStrategies');
 
 passportStrategies.initStrategies();
 
-const generateJWTToken = (user) => jwt.sign(user, jwtSecret, {
-  subject: user.Username, // This is the username you’re encoding in the JWT
-  expiresIn: '7d', // This specifies that the token will expire in 7 days
-  algorithm: 'HS256', // This is the algorithm used to “sign” or encode the values of the JWT
+const generateJWTToken = (user) => jwt.sign(user, process.env.JWT_SECRET, {
+  subject: user.Username,
+  expiresIn: '7d',
+  algorithm: 'HS256',
 });
 
-authRouter.post('/login', (req, res) => {
-  passport.authenticate('local', { session: false }, (authError, user, _) => {
-    if (authError || !user) {
-      return res.status(400).json({
-        message: 'Something is not right',
-        user,
-      });
+const promisifiedAuthenticate = (req, res) => new Promise((resolve, reject) => {
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    if (err) {
+      reject(err);
     }
-    req.login(user, { session: false }, (loginError) => {
+    resolve({ user, info });
+  })(req, res);
+});
+
+authRouter.post('/login', async (req, res) => {
+  try {
+    const { user, info } = await promisifiedAuthenticate(req, res);
+
+    if (!user) {
+      return res.status(400).send(info.message);
+    }
+
+    return req.login(user, { session: false }, (loginError) => {
       if (loginError) {
-        res.send(loginError);
+        return res.status(500).send(loginError);
       }
       const token = generateJWTToken(user.toJSON());
       return res.json({ user, token });
     });
-  })(req, res);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send(err.message);
+  }
 });
 
 module.exports = authRouter;
