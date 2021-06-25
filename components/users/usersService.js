@@ -1,8 +1,19 @@
 /* eslint-disable max-len */
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 /* eslint camelcase: ["error", { allow: ["user_id", "movie_id"]}] */
+const { body, validationResult } = require('express-validator');
+
 const Users = require('./usersModel');
 const Movies = require('../movies/moviesModel');
+
+const validateRequestBody = async (req) => {
+  await body('Username', 'Username needs to be at least 5 characters').isLength({ min: 5 }).run(req);
+  await body('Username', 'Username must not contain alphanumeric characters').isAlphanumeric().run(req);
+  await body('Password', 'Password is required').not().isEmpty().run(req);
+  await body('Email', 'Email does not appear to be valid').isEmail().run(req);
+
+  return validationResult(req);
+};
 
 const addUser = async ({
   Username, Password, Email, Birthday,
@@ -108,6 +119,7 @@ const removeFavoriteMovieFromUser = async (user_id, movie_id) => {
 };
 
 module.exports = {
+  validateRequestBody,
   addUser,
   updateUser,
   deleteUser,

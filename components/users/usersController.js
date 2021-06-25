@@ -9,6 +9,12 @@ const addUser = async (req, res) => {
   } = req.body;
 
   try {
+    const requestBodyValidationErrors = await usersService.validateRequestBody(req);
+
+    if (!requestBodyValidationErrors.isEmpty()) {
+      return res.status(422).json({ errors: requestBodyValidationErrors.array() });
+    }
+
     const addUserResponse = await usersService.addUser({
       Username, Password, Email, Birthday,
     });
