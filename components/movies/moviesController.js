@@ -1,5 +1,3 @@
-/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-/* eslint camelcase: ["error", { allow: ["user_id", "movie_id"]}] */
 const moviesService = require('./moviesService');
 
 const getAllMovies = async (req, res) => res.send(await moviesService.findAllMovies());

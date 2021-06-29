@@ -1,4 +1,3 @@
-/* eslint no-underscore-dangle: ["error", { "allow": ["_id",] }] */
 const express = require('express');
 const passport = require('passport');
 const usersController = require('./usersController');

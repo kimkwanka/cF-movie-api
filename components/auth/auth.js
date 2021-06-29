@@ -1,4 +1,3 @@
-/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');

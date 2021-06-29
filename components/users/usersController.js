@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-/* eslint camelcase: ["error", { allow: ["user_id", "movie_id"]}] */
 const usersService = require('./usersService');
 
 const addUser = async (req, res) => {
