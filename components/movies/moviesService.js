@@ -8,28 +8,28 @@ const findAllMovies = async () => Movies.find({});
 const findMovieByTitle = async (movieTitleToFind) => {
   const movieToFindByTitle = await Movies.findOne({ Title: movieTitleToFind });
 
-  if (movieToFindByTitle) {
-    return { statusCode: 200, body: movieToFindByTitle };
+  if (!movieToFindByTitle) {
+    return { statusCode: 404, body: `Couldn't find a movie with title: "${movieTitleToFind}"` };
   }
-  return { statusCode: 404, body: `Couldn't find a movie with title: "${movieTitleToFind}"` };
+  return { statusCode: 200, body: movieToFindByTitle };
 };
 
 const findGenreByName = async (genreNameToFind) => {
   const movieWithGenre = await Movies.findOne({ 'Genre.Name': genreNameToFind });
 
-  if (movieWithGenre) {
-    return { statusCode: 200, body: movieWithGenre.Genre };
+  if (!movieWithGenre) {
+    return { statusCode: 404, body: `Couldn't find a genre with name: "${genreNameToFind}"` };
   }
-  return { statusCode: 404, body: `Couldn't find a genre with name: "${genreNameToFind}"` };
+  return { statusCode: 200, body: movieWithGenre.Genre };
 };
 
 const findDirectorByName = async (directorNameToFind) => {
   const movieWithDirector = await Movies.findOne({ 'Director.Name': directorNameToFind });
 
-  if (movieWithDirector) {
-    return { statusCode: 200, body: movieWithDirector.Director };
+  if (!movieWithDirector) {
+    return { statusCode: 404, body: `Couldn't find a director with name: "${directorNameToFind}"` };
   }
-  return { statusCode: 404, body: `Couldn't find a director with name: "${directorNameToFind}"` };
+  return { statusCode: 200, body: movieWithDirector.Director };
 };
 
 module.exports = {

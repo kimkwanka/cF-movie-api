@@ -48,6 +48,7 @@ const updateUser = async (user_id, {
     }, {
       new: true,
     });
+
     return { statusCode: 200, body: updatedUser };
   } catch (e) {
     console.error(e);
@@ -58,9 +59,11 @@ const updateUser = async (user_id, {
 const deleteUser = async (user_id) => {
   try {
     const userToDelete = await Users.findOneAndRemove({ _id: user_id });
+
     if (!userToDelete) {
       return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
     }
+
     return { statusCode: 200, body: `User with ID ${user_id} was successfully removed.` };
   } catch (e) {
     console.error(e);
@@ -72,24 +75,26 @@ const addFavoriteMovieToUser = async (user_id, movie_id) => {
   try {
     const userToUpdate = await Users.findOne({ _id: user_id });
 
-    if (userToUpdate) {
-      const movieIDAlreadyInFavorites = userToUpdate.FavoriteMovies.includes(movie_id);
-      const movieFoundByID = await Movies.findOne({ _id: movie_id });
-      const movieWithIDExists = movieFoundByID !== null;
-
-      if (movieIDAlreadyInFavorites) {
-        return { statusCode: 400, body: `Movie with id: ${movie_id} is already a favorite.` };
-      }
-
-      if (!movieWithIDExists) {
-        return { statusCode: 404, body: `Movie with id: ${movie_id} doesn't exist.` };
-      }
-
-      userToUpdate.FavoriteMovies.push(movie_id);
-      await userToUpdate.save();
-      return { statusCode: 200, body: `Successfully added movie with id: ${movie_id} to favorites` };
+    if (!userToUpdate) {
+      return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
     }
-    return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
+
+    const movieIDAlreadyInFavorites = userToUpdate.FavoriteMovies.includes(movie_id);
+    const movieFoundByID = await Movies.findOne({ _id: movie_id });
+    const movieWithIDExists = movieFoundByID !== null;
+
+    if (movieIDAlreadyInFavorites) {
+      return { statusCode: 400, body: `Movie with id: ${movie_id} is already a favorite.` };
+    }
+
+    if (!movieWithIDExists) {
+      return { statusCode: 404, body: `Movie with id: ${movie_id} doesn't exist.` };
+    }
+
+    userToUpdate.FavoriteMovies.push(movie_id);
+    await userToUpdate.save();
+
+    return { statusCode: 200, body: `Successfully added movie with id: ${movie_id} to favorites` };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
@@ -100,18 +105,21 @@ const removeFavoriteMovieFromUser = async (user_id, movie_id) => {
   try {
     const userToUpdate = await Users.findOne({ _id: user_id });
 
-    if (userToUpdate) {
-      const indexOfMovieIDToDelete = userToUpdate.FavoriteMovies.indexOf(movie_id);
-      const movieIDExistsInFavorites = indexOfMovieIDToDelete !== -1;
+    if (!userToUpdate) {
+      return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
+    }
 
-      if (movieIDExistsInFavorites) {
-        userToUpdate.FavoriteMovies.splice(indexOfMovieIDToDelete, 1);
-        await userToUpdate.save();
-        return { statusCode: 200, body: `Successfully removed movie with id: ${movie_id} from favorites.` };
-      }
+    const indexOfMovieIDToDelete = userToUpdate.FavoriteMovies.indexOf(movie_id);
+    const movieIDExistsInFavorites = indexOfMovieIDToDelete !== -1;
+
+    if (!movieIDExistsInFavorites) {
       return { statusCode: 400, body: `Movie with id: ${movie_id} wasn't a favorite to begin with.` };
     }
-    return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
+
+    userToUpdate.FavoriteMovies.splice(indexOfMovieIDToDelete, 1);
+    await userToUpdate.save();
+
+    return { statusCode: 200, body: `Successfully removed movie with id: ${movie_id} from favorites.` };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
