@@ -12,7 +12,7 @@ A simple RESTful movie API that will serve as the backend of a future React app.
 ## Unique Features
 This REST API is structured by components following the [Node.js Best Practices Project](https://github.com/goldbergyoni/nodebestpractices) and tries to separate the concerns of the different logic layers as much as possible as outlined in [this article](https://www.coreycleary.me/project-structure-for-an-express-rest-api-when-there-is-no-standard-way)  by Corey Cleary.
 
-Furthermore ``async / await`` is instead of regular callbacks wherever possible to provide a cleaner and more readable code base.
+Furthermore ``async / await`` is used instead of regular callbacks wherever possible to provide a cleaner and more readable code base.
 
 ## Getting started
 
