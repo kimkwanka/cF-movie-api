@@ -38,6 +38,18 @@ const updateUser = async (user_id, {
   Username, Password, Email, Birthday,
 }) => {
   try {
+    const existingUserWithUsername = await Users.findOne({ Username });
+
+    if (existingUserWithUsername) {
+      const userID = existingUserWithUsername._id.toString();
+      // We need to cast to string or else equality check will never be true
+      // (_id is an object for some reason, whereas user_id is a regular string)
+
+      if (userID !== user_id) {
+        return { statusCode: 400, body: `${Username} already exists.` };
+      }
+    }
+
     const hashedPassword = Users.hashPassword(Password);
 
     const updatedUser = await Users.findOneAndUpdate({ _id: user_id }, {
