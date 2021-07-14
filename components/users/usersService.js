@@ -38,9 +38,11 @@ const updateUser = async (user_id, {
   Username, Password, Email, Birthday,
 }) => {
   try {
+    const hashedPassword = Users.hashPassword(Password);
+
     const updatedUser = await Users.findOneAndUpdate({ _id: user_id }, {
       $set: {
-        Username, Password, Email, Birthday,
+        Username, Password: hashedPassword, Email, Birthday,
       },
     }, {
       new: true,
