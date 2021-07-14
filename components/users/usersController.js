@@ -29,6 +29,12 @@ const updateUser = async (req, res) => {
       Username, Password, Email, Birthday,
     } = req.body;
 
+    const requestBodyValidationErrors = await usersService.validateRequestBody(req);
+
+    if (!requestBodyValidationErrors.isEmpty()) {
+      return res.status(422).json({ errors: requestBodyValidationErrors.array() });
+    }
+
     const { user_id } = req.params;
 
     const updateUserResponse = await usersService.updateUser(user_id, {
