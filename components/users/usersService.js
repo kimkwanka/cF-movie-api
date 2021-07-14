@@ -3,10 +3,18 @@ const { body, validationResult } = require('express-validator');
 const Users = require('./usersModel');
 const Movies = require('../movies/moviesModel');
 
-const validateRequestBody = async (req) => {
+const validateAddUserRequestBody = async (req) => {
   await body('Username', 'Username needs to be at least 5 characters').isLength({ min: 5 }).run(req);
   await body('Username', 'Username must not contain alphanumeric characters').isAlphanumeric().run(req);
   await body('Password', 'Password is required').not().isEmpty().run(req);
+  await body('Email', 'Email does not appear to be valid').isEmail().run(req);
+
+  return validationResult(req);
+};
+
+const validateUpdateUserRequestBody = async (req) => {
+  await body('Username', 'Username needs to be at least 5 characters').isLength({ min: 5 }).run(req);
+  await body('Username', 'Username must not contain alphanumeric characters').isAlphanumeric().run(req);
   await body('Email', 'Email does not appear to be valid').isEmail().run(req);
 
   return validationResult(req);
@@ -16,9 +24,14 @@ const addUser = async ({
   Username, Password, Email, Birthday,
 }) => {
   try {
-    const alreadyExistingUser = await Users.findOne({ Username });
-    if (alreadyExistingUser) {
+    const userWithUsername = await Users.findOne({ Username });
+    if (userWithUsername) {
       return { statusCode: 400, body: `${Username} already exists.` };
+    }
+
+    const userWithEmail = await Users.findOne({ Email });
+    if (userWithEmail) {
+      return { statusCode: 400, body: `${Email} already exists.` };
     }
 
     const hashedPassword = Users.hashPassword(Password);
@@ -38,29 +51,42 @@ const updateUser = async (user_id, {
   Username, Password, Email, Birthday,
 }) => {
   try {
-    const existingUserWithUsername = await Users.findOne({ Username });
+    const userToUpdate = await Users.findOne({ _id: user_id });
 
-    if (existingUserWithUsername) {
-      const userID = existingUserWithUsername._id.toString();
+    if (!userToUpdate) {
+      return { statusCode: 404, body: `User with id: ${user_id} doesn't exist.` };
+    }
+
+    const userWithUsername = await Users.findOne({ Username });
+    if (userWithUsername) {
+      const IDOfUserWithUsername = userWithUsername._id.toString();
       // We need to cast to string or else equality check will never be true
       // (_id is an object for some reason, whereas user_id is a regular string)
-
-      if (userID !== user_id) {
+      if (IDOfUserWithUsername !== user_id) {
         return { statusCode: 400, body: `${Username} already exists.` };
       }
     }
 
-    const hashedPassword = Users.hashPassword(Password);
+    const userWithEmail = await Users.findOne({ Email });
+    if (userWithEmail) {
+      const IDOfUserWithEmail = userWithEmail._id.toString();
 
-    const updatedUser = await Users.findOneAndUpdate({ _id: user_id }, {
-      $set: {
-        Username, Password: hashedPassword, Email, Birthday,
-      },
-    }, {
-      new: true,
-    });
+      if (IDOfUserWithEmail !== user_id) {
+        return { statusCode: 400, body: `${Email} already exists.` };
+      }
+    }
 
-    return { statusCode: 200, body: updatedUser };
+    userToUpdate.Username = Username;
+    userToUpdate.Email = Email;
+    userToUpdate.Birthday = Birthday;
+
+    if (Password !== userToUpdate.Password) {
+      userToUpdate.Password = Users.hashPassword(Password);
+    }
+
+    await userToUpdate.save();
+
+    return { statusCode: 200, body: userToUpdate };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
@@ -138,7 +164,8 @@ const removeFavoriteMovieFromUser = async (user_id, movie_id) => {
 };
 
 module.exports = {
-  validateRequestBody,
+  validateAddUserRequestBody,
+  validateUpdateUserRequestBody,
   addUser,
   updateUser,
   deleteUser,

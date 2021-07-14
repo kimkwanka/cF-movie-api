@@ -6,7 +6,7 @@ const addUser = async (req, res) => {
       Username, Password, Email, Birthday,
     } = req.body;
 
-    const requestBodyValidationErrors = await usersService.validateRequestBody(req);
+    const requestBodyValidationErrors = await usersService.validateAddUserRequestBody(req);
 
     if (!requestBodyValidationErrors.isEmpty()) {
       return res.status(422).json({ errors: requestBodyValidationErrors.array() });
@@ -26,10 +26,16 @@ const addUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const {
-      Username, Password, Email, Birthday,
+      Username, Email, Birthday,
     } = req.body;
 
-    const requestBodyValidationErrors = await usersService.validateRequestBody(req);
+    let { Password } = req.body;
+
+    if (!Password) {
+      Password = req.user.Password;
+    }
+
+    const requestBodyValidationErrors = await usersService.validateUpdateUserRequestBody(req);
 
     if (!requestBodyValidationErrors.isEmpty()) {
       return res.status(422).json({ errors: requestBodyValidationErrors.array() });
