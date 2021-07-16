@@ -5,7 +5,7 @@ const Movies = require('../movies/moviesModel');
 
 const validateAddUserRequestBody = async (req) => {
   await body('Username', 'Username needs to be at least 5 characters').isLength({ min: 5 }).run(req);
-  await body('Username', 'Username must not contain alphanumeric characters').isAlphanumeric().run(req);
+  await body('Username', 'Username must not contain non-alphanumeric characters').isAlphanumeric().run(req);
   await body('Password', 'Password is required').not().isEmpty().run(req);
   await body('Email', 'Email does not appear to be valid').isEmail().run(req);
 
@@ -14,7 +14,7 @@ const validateAddUserRequestBody = async (req) => {
 
 const validateUpdateUserRequestBody = async (req) => {
   await body('Username', 'Username needs to be at least 5 characters').isLength({ min: 5 }).run(req);
-  await body('Username', 'Username must not contain alphanumeric characters').isAlphanumeric().run(req);
+  await body('Username', 'Username must not contain non-alphanumeric characters').isAlphanumeric().run(req);
   await body('Email', 'Email does not appear to be valid').isEmail().run(req);
 
   return validationResult(req);
