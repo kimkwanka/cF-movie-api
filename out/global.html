@@ -98,6 +98,338 @@
 
         
             
+<h4 class="name" id="{DELETE} /users/:user_id"><span class="type-signature">(route) </span>{DELETE} /users/:user_id<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <h5>Route:</h5>
+                            <table class="params">
+                            <thead><tr><th>Method</th><th class="last">Path</th></tr></thead>
+                            <tr>
+                            <td class="type">DELETE</td>
+                            <td class="name last">/users/:user_id</td>
+                            </tr>
+                            </table>
+                            Delete a user account
+                          <h5>Authentication</h5>
+                          <p>This route requires JWT Authentication</p>
+                            <h5>Header Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">Authorization:</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Bearer [token]</td>
+          </tr>
+          </table>
+                            <h5>Route Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">user_id</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">User ID</td>
+          </tr>
+          </table>
+                            <h5>Response:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">undefined</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Text message indicating whether the user was successfully removed or not</td>
+          </tr>
+          </table>
+                            <h5>Response Code:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            
+            <td class="type">200</td>
+            
+            
+            <td class="description last">OK</td>
+          </tr><tr>
+            
+            <td class="type">401</td>
+            
+            
+            <td class="description last">Unauthorized</td>
+          </tr><tr>
+            
+            <td class="type">404</td>
+            
+            
+            <td class="description last">Not found</td>
+          </tr>
+          </table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="users_usersRouter.js.html">users/usersRouter.js</a>, <a href="users_usersRouter.js.html#line53">line 53</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="{DELETE} /users/:user_id/movies/:movie_id"><span class="type-signature">(route) </span>{DELETE} /users/:user_id/movies/:movie_id<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <h5>Route:</h5>
+                            <table class="params">
+                            <thead><tr><th>Method</th><th class="last">Path</th></tr></thead>
+                            <tr>
+                            <td class="type">DELETE</td>
+                            <td class="name last">/users/:user_id/movies/:movie_id</td>
+                            </tr>
+                            </table>
+                            Remove a movie from a user's list of favorites
+                          <h5>Authentication</h5>
+                          <p>This route requires JWT Authentication</p>
+                            <h5>Header Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">Authorization:</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Bearer [token]</td>
+          </tr>
+          </table>
+                            <h5>Route Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">user_id</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">User ID</td>
+          </tr><tr>
+            <td class="name">movie_id</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Movie ID</td>
+          </tr>
+          </table>
+                            <h5>Response:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">undefined</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Text message indicating whether the movie was successfully removed or not</td>
+          </tr>
+          </table>
+                            <h5>Response Code:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            
+            <td class="type">200</td>
+            
+            
+            <td class="description last">OK</td>
+          </tr><tr>
+            
+            <td class="type">400</td>
+            
+            
+            <td class="description last">Bad request (movie is not a favorite)</td>
+          </tr><tr>
+            
+            <td class="type">401</td>
+            
+            
+            <td class="description last">Unauthorized</td>
+          </tr><tr>
+            
+            <td class="type">404</td>
+            
+            
+            <td class="description last">Not found</td>
+          </tr>
+          </table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="users_usersRouter.js.html">users/usersRouter.js</a>, <a href="users_usersRouter.js.html#line85">line 85</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
 <h4 class="name" id="{GET} /directors/:name"><span class="type-signature">(route) </span>{GET} /directors/:name<span class="type-signature"></span></h4>
 
 
@@ -131,7 +463,7 @@
             <td class="type"></td>
             
             
-            <td class="description last">'Bearer <token>'</td>
+            <td class="description last">Bearer [token]</td>
           </tr>
           </table>
                             <h5>Route Parameters:</h5>
@@ -147,7 +479,7 @@
             </thead>
             <tr>
             <td class="name">name</td>
-            <td class="type">string</td>
+            <td class="type">String</td>
             
             
             <td class="description last">Name of the director</td>
@@ -240,7 +572,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="moviesRouter.js.html">moviesRouter.js</a>, <a href="moviesRouter.js.html#line50">line 50</a>
+        <a href="movies_moviesRouter.js.html">movies/moviesRouter.js</a>, <a href="movies_moviesRouter.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -291,7 +623,7 @@
             <td class="type"></td>
             
             
-            <td class="description last">'Bearer <token>'</td>
+            <td class="description last">Bearer [token]</td>
           </tr>
           </table>
                             <h5>Route Parameters:</h5>
@@ -307,7 +639,7 @@
             </thead>
             <tr>
             <td class="name">name</td>
-            <td class="type">string</td>
+            <td class="type">String</td>
             
             
             <td class="description last">Genre name</td>
@@ -400,7 +732,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="moviesRouter.js.html">moviesRouter.js</a>, <a href="moviesRouter.js.html#line35">line 35</a>
+        <a href="movies_moviesRouter.js.html">movies/moviesRouter.js</a>, <a href="movies_moviesRouter.js.html#line35">line 35</a>
     </li></ul></dd>
     
 
@@ -451,7 +783,7 @@
             <td class="type"></td>
             
             
-            <td class="description last">'Bearer <token>'</td>
+            <td class="description last">Bearer [token]</td>
           </tr>
           </table>
                             <h5>Route Parameters:</h5>
@@ -467,7 +799,7 @@
             </thead>
             <tr>
             <td class="name">title</td>
-            <td class="type">string</td>
+            <td class="type">String</td>
             
             
             <td class="description last">The title of the movie</td>
@@ -560,7 +892,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="moviesRouter.js.html">moviesRouter.js</a>, <a href="moviesRouter.js.html#line20">line 20</a>
+        <a href="movies_moviesRouter.js.html">movies/moviesRouter.js</a>, <a href="movies_moviesRouter.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -611,7 +943,7 @@
             <td class="type"></td>
             
             
-            <td class="description last">'Bearer <token>'</td>
+            <td class="description last">Bearer [token]</td>
           </tr>
           </table>
                             <h5>Response:</h5>
@@ -695,7 +1027,521 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="moviesRouter.js.html">moviesRouter.js</a>, <a href="moviesRouter.js.html#line7">line 7</a>
+        <a href="movies_moviesRouter.js.html">movies/moviesRouter.js</a>, <a href="movies_moviesRouter.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="{POST} /users"><span class="type-signature">(route) </span>{POST} /users<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <h5>Route:</h5>
+                            <table class="params">
+                            <thead><tr><th>Method</th><th class="last">Path</th></tr></thead>
+                            <tr>
+                            <td class="type">POST</td>
+                            <td class="name last">/users</td>
+                            </tr>
+                            </table>
+                            Register a new user
+                            <h5>Body Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">undefined</td>
+            <td class="type">object</td>
+            
+            
+            <td class="description last">{ "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }</td>
+          </tr>
+          </table>
+                            <h5>Response:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">undefined</td>
+            <td class="type">Object</td>
+            
+            
+            <td class="description last">{ "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }</td>
+          </tr>
+          </table>
+                            <h5>Response Code:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            
+            <td class="type">201</td>
+            
+            
+            <td class="description last">Created</td>
+          </tr><tr>
+            
+            <td class="type">400</td>
+            
+            
+            <td class="description last">Bad request (username or email already exist)</td>
+          </tr><tr>
+            
+            <td class="type">401</td>
+            
+            
+            <td class="description last">Unauthorized</td>
+          </tr><tr>
+            
+            <td class="type">422</td>
+            
+            
+            <td class="description last">Unprocessable Entity (validation errors)</td>
+          </tr><tr>
+            
+            <td class="type">500</td>
+            
+            
+            <td class="description last">Internal Server Error</td>
+          </tr>
+          </table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="users_usersRouter.js.html">users/usersRouter.js</a>, <a href="users_usersRouter.js.html#line20">line 20</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="{POST} /users/:user_id/movies/:movie_id"><span class="type-signature">(route) </span>{POST} /users/:user_id/movies/:movie_id<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <h5>Route:</h5>
+                            <table class="params">
+                            <thead><tr><th>Method</th><th class="last">Path</th></tr></thead>
+                            <tr>
+                            <td class="type">POST</td>
+                            <td class="name last">/users/:user_id/movies/:movie_id</td>
+                            </tr>
+                            </table>
+                            Add a movie to a user's list of favorites
+                          <h5>Authentication</h5>
+                          <p>This route requires JWT Authentication</p>
+                            <h5>Header Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">Authorization:</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Bearer [token]</td>
+          </tr>
+          </table>
+                            <h5>Route Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">user_id</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">User ID</td>
+          </tr><tr>
+            <td class="name">movie_id</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Movie ID</td>
+          </tr>
+          </table>
+                            <h5>Response:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">undefined</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Text message indicating whether the movie was successfully added or not</td>
+          </tr>
+          </table>
+                            <h5>Response Code:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            
+            <td class="type">200</td>
+            
+            
+            <td class="description last">OK</td>
+          </tr><tr>
+            
+            <td class="type">400</td>
+            
+            
+            <td class="description last">Bad request (movie is already a favorite)</td>
+          </tr><tr>
+            
+            <td class="type">401</td>
+            
+            
+            <td class="description last">Unauthorized</td>
+          </tr><tr>
+            
+            <td class="type">404</td>
+            
+            
+            <td class="description last">Not found</td>
+          </tr>
+          </table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="users_usersRouter.js.html">users/usersRouter.js</a>, <a href="users_usersRouter.js.html#line68">line 68</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="{PUT} /users/:user_id"><span class="type-signature">(route) </span>{PUT} /users/:user_id<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <h5>Route:</h5>
+                            <table class="params">
+                            <thead><tr><th>Method</th><th class="last">Path</th></tr></thead>
+                            <tr>
+                            <td class="type">PUT</td>
+                            <td class="name last">/users/:user_id</td>
+                            </tr>
+                            </table>
+                            Update a user's data
+                          <h5>Authentication</h5>
+                          <p>This route requires JWT Authentication</p>
+                            <h5>Body Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">undefined</td>
+            <td class="type">object</td>
+            
+            
+            <td class="description last">{ "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }</td>
+          </tr>
+          </table>
+                            <h5>Header Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">Authorization:</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">Bearer [token]</td>
+          </tr>
+          </table>
+                            <h5>Route Parameters:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">user_id</td>
+            <td class="type">String</td>
+            
+            
+            <td class="description last">User ID</td>
+          </tr>
+          </table>
+                            <h5>Response:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            <td class="name">undefined</td>
+            <td class="type">Object</td>
+            
+            
+            <td class="description last">{ "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }</td>
+          </tr>
+          </table>
+                            <h5>Response Code:</h5>
+          <table class="params">
+            <thead>
+              <tr>
+                
+                <th>Type</th>
+                
+                
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+            <tr>
+            
+            <td class="type">200</td>
+            
+            
+            <td class="description last">OK</td>
+          </tr><tr>
+            
+            <td class="type">400</td>
+            
+            
+            <td class="description last">Bad request (username or email already exist)</td>
+          </tr><tr>
+            
+            <td class="type">401</td>
+            
+            
+            <td class="description last">Unauthorized</td>
+          </tr><tr>
+            
+            <td class="type">404</td>
+            
+            
+            <td class="description last">Not found</td>
+          </tr><tr>
+            
+            <td class="type">422</td>
+            
+            
+            <td class="description last">Unprocessable Entity (validation errors)</td>
+          </tr>
+          </table>
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="users_usersRouter.js.html">users/usersRouter.js</a>, <a href="users_usersRouter.js.html#line35">line 35</a>
     </li></ul></dd>
     
 
@@ -729,13 +1575,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html">{GET} /directors/:name</a></li><li><a href="global.html">{GET} /genres/:name</a></li><li><a href="global.html">{GET} /movie/:title</a></li><li><a href="global.html">{GET} /movies</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html">{DELETE} /users/:user_id</a></li><li><a href="global.html">{DELETE} /users/:user_id/movies/:movie_id</a></li><li><a href="global.html">{GET} /directors/:name</a></li><li><a href="global.html">{GET} /genres/:name</a></li><li><a href="global.html">{GET} /movie/:title</a></li><li><a href="global.html">{GET} /movies</a></li><li><a href="global.html">{POST} /users</a></li><li><a href="global.html">{POST} /users/:user_id/movies/:movie_id</a></li><li><a href="global.html">{PUT} /users/:user_id</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Sun Sep 19 2021 17:03:13 GMT+0200 (Central European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Sun Sep 19 2021 17:29:11 GMT+0200 (Central European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
