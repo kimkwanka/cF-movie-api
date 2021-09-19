@@ -45,6 +45,9 @@ const initMiddlewareAndRoutes = (expressApp) => {
   // Serve static files
   expressApp.use(express.static('public'));
 
+  // Serve static files
+  expressApp.use('/docs', express.static('out'));
+
   // Handle errors
   expressApp.use(errorHandlerMiddleware);
 };
