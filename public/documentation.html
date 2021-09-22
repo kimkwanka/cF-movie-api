@@ -40,7 +40,7 @@
         <th>
           { "_id": "60c26e28a640a21b749adfeb", "title": "Joker", "genre": "Drama" "description": "In Gotham City,
           mentally troubled comedian Arthur Flec ...", "director": "Todd
-          Phillips", "image_url": "http://images.samplewebsite.com/joker.png",
+          Phillips", "imageUrl": "http://images.samplewebsite.com/joker.png",
           "featured": false }
         </th>
       </tr>
@@ -66,7 +66,7 @@
         <th>GET</th>
         <th>None</th>
         <th>
-          { "name": "Todd Phillips", "year_of_birth": 1970, "year_of_death": -1, "bio":
+          { "name": "Todd Phillips", "birth": 1970, "death": "", "bio":
           "Todd Phillips was born on December 20, 1970 in Brooklyn, New York
           City, New York, USA as Todd Bunzl. He is a producer and director,
           known for Joker (2019), Old School (2003) and Due Date (2010)." }
@@ -96,8 +96,8 @@
       </tr>
       <tr>
         <th>Update a user's data</th>
-        <th>/users/:user_id</th>
-        <th>user_id</th>
+        <th>/users/:userId</th>
+        <th>userId</th>
         <th>PUT</th>
         <th>{
           "username": "MangoChicken22",
@@ -118,8 +118,8 @@
       </tr>
       <tr>
         <th>Add a movie to a user's list of favorites</th>
-        <th>/users/:user_id/movies/:movie_id</th>
-        <th>movie_id</th>
+        <th>/users/:userId/movies/:movieId</th>
+        <th>movieId</th>
         <th>POST</th>
         <th>None</th>
         <th>
@@ -129,8 +129,8 @@
       </tr>
       <tr>
         <th>Remove a movie from a user's list of favorites</th>
-        <th>/users/:user_id/movies/:movie_id</th>
-        <th>user_id, movie_id</th>
+        <th>/users/:userId/movies/:movieId</th>
+        <th>userId, movieId</th>
         <th>DELETE</th>
         <th>None</th>
         <th>
@@ -140,8 +140,8 @@
       </tr>
       <tr>
         <th>Remove a user from the list of users</th>
-        <th>/users/:user_id</th>
-        <th>user_id</th>
+        <th>/users/:userId</th>
+        <th>userId</th>
         <th>DELETE</th>
         <th>None</th>
         <th>

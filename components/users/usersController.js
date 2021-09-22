@@ -3,7 +3,7 @@ const usersService = require('./usersService');
 const addUser = async (req, res) => {
   try {
     const {
-      Username, Password, Email, Birthday,
+      username, password, email, birthday,
     } = req.body;
 
     const requestBodyValidationErrors = await usersService.validateAddUserRequestBody(req);
@@ -13,7 +13,7 @@ const addUser = async (req, res) => {
     }
 
     const addUserResponse = await usersService.addUser({
-      Username, Password, Email, Birthday,
+      username, password, email, birthday,
     });
 
     return res.status(addUserResponse.statusCode).send(addUserResponse.body);
@@ -26,13 +26,13 @@ const addUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const {
-      Username, Email, Birthday,
+      username, email, birthday,
     } = req.body;
 
-    let { Password } = req.body;
+    let { password } = req.body;
 
-    if (!Password) {
-      Password = req.user.Password;
+    if (!password) {
+      password = req.user.password;
     }
 
     const requestBodyValidationErrors = await usersService.validateUpdateUserRequestBody(req);
@@ -41,10 +41,10 @@ const updateUser = async (req, res) => {
       return res.status(422).json({ errors: requestBodyValidationErrors.array() });
     }
 
-    const { user_id } = req.params;
+    const { userId } = req.params;
 
-    const updateUserResponse = await usersService.updateUser(user_id, {
-      Username, Password, Email, Birthday,
+    const updateUserResponse = await usersService.updateUser(userId, {
+      username, password, email, birthday,
     });
 
     return res.status(updateUserResponse.statusCode).send(updateUserResponse.body);
@@ -56,9 +56,9 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { userId } = req.params;
 
-    const deleteUserResponse = await usersService.deleteUser(user_id);
+    const deleteUserResponse = await usersService.deleteUser(userId);
 
     return res.status(deleteUserResponse.statusCode).send(deleteUserResponse.body);
   } catch (error) {
@@ -70,10 +70,10 @@ const deleteUser = async (req, res) => {
 const addFavoriteMovieToUser = async (req, res) => {
   try {
     const {
-      user_id, movie_id,
+      userId, movieId,
     } = req.params;
 
-    const addFavoriteMovieToUserResponse = await usersService.addFavoriteMovieToUser(user_id, movie_id);
+    const addFavoriteMovieToUserResponse = await usersService.addFavoriteMovieToUser(userId, movieId);
 
     return res.status(addFavoriteMovieToUserResponse.statusCode).send(addFavoriteMovieToUserResponse.body);
   } catch (error) {
@@ -85,10 +85,10 @@ const addFavoriteMovieToUser = async (req, res) => {
 const removeFavoriteMovieFromUser = async (req, res) => {
   try {
     const {
-      user_id, movie_id,
+      userId, movieId,
     } = req.params;
 
-    const removeFavoriteMovieFromUserResponse = await usersService.removeFavoriteMovieFromUser(user_id, movie_id);
+    const removeFavoriteMovieFromUserResponse = await usersService.removeFavoriteMovieFromUser(userId, movieId);
 
     return res.status(removeFavoriteMovieFromUserResponse.statusCode).send(removeFavoriteMovieFromUserResponse.body);
   } catch (error) {

@@ -3,18 +3,20 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const movieSchema = mongoose.Schema({
-  Title: { type: String, required: true },
-  Description: { type: String, required: true },
-  Genre: {
-    Name: String,
-    Description: String,
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  genre: {
+    name: String,
+    description: String,
   },
-  Director: {
-    Name: String,
-    Bio: String,
+  director: {
+    name: String,
+    bio: String,
+    birth: String,
+    death: String,
   },
-  ImagePath: String,
-  Featured: Boolean,
+  imageUrl: String,
+  featured: Boolean,
 });
 
 module.exports = mongoose.model('Movie', movieSchema);

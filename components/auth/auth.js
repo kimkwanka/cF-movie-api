@@ -9,7 +9,7 @@ const passportStrategies = require('./passportStrategies');
 passportStrategies.initStrategies();
 
 const generateJWTToken = (user) => jwt.sign(user, process.env.JWT_SECRET, {
-  subject: user.Username,
+  subject: user.username,
   expiresIn: '7d',
   algorithm: 'HS256',
 });

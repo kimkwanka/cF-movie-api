@@ -5,9 +5,9 @@ const usersController = require('./usersController');
 const usersRouter = express.Router();
 
 const allowRequestOnlyWithSameUserID = (req, res, next) => {
-  const requestUserID = req.params.user_id;
+  const requestUserID = req.params.userId;
   // We need to cast to string or else equality check will never be true
-  // (_id is an object for some reason, whereas user_id is a regular string)
+  // (_id is an object for some reason, whereas userId is a regular string)
   const userID = req.user._id.toString();
 
   if (requestUserID !== userID) {
@@ -35,9 +35,9 @@ usersRouter.post('/users', usersController.addUser);
 /**
  * Update a user's data
  *
- * @name {PUT} /users/:user_id
- * @path {PUT} /users/:user_id
- * @params {String} [user_id] User ID
+ * @name {PUT} /users/:userId
+ * @path {PUT} /users/:userId
+ * @params {String} [userId] User ID
  * @auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
@@ -48,14 +48,14 @@ usersRouter.post('/users', usersController.addUser);
  * @body {object} - { "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }
  * @response {Object} - { "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }
  */
-usersRouter.put('/users/:user_id', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.updateUser);
+usersRouter.put('/users/:userId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.updateUser);
 
 /**
  * Delete a user account
  *
- * @name {DELETE} /users/:user_id
- * @path {DELETE} /users/:user_id
- * @params {String} [user_id] User ID
+ * @name {DELETE} /users/:userId
+ * @path {DELETE} /users/:userId
+ * @params {String} [userId] User ID
  * @auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
@@ -63,15 +63,15 @@ usersRouter.put('/users/:user_id', passport.authenticate('jwt', { session: false
  * @code {404} Not found
  * @response {String} - Text message indicating whether the user was successfully removed or not
  */
-usersRouter.delete('/users/:user_id', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.deleteUser);
+usersRouter.delete('/users/:userId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.deleteUser);
 
 /**
  * Add a movie to a user's list of favorites
  *
- * @name {POST} /users/:user_id/movies/:movie_id
- * @path {POST} /users/:user_id/movies/:movie_id
- * @params {String} [user_id] User ID
- * @params {String} [movie_id] Movie ID
+ * @name {POST} /users/:userId/movies/:movieId
+ * @path {POST} /users/:userId/movies/:movieId
+ * @params {String} [userId] User ID
+ * @params {String} [movieId] Movie ID
  * @auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
@@ -80,15 +80,15 @@ usersRouter.delete('/users/:user_id', passport.authenticate('jwt', { session: fa
  * @code {404} Not found
  * @response {String} - Text message indicating whether the movie was successfully added or not
  */
-usersRouter.post('/users/:user_id/movies/:movie_id', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.addFavoriteMovieToUser);
+usersRouter.post('/users/:userId/movies/:movieId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.addFavoriteMovieToUser);
 
 /**
  * Remove a movie from a user's list of favorites
  *
- * @name {DELETE} /users/:user_id/movies/:movie_id
- * @path {DELETE} /users/:user_id/movies/:movie_id
- * @params {String} [user_id] User ID
- * @params {String} [movie_id] Movie ID
+ * @name {DELETE} /users/:userId/movies/:movieId
+ * @path {DELETE} /users/:userId/movies/:movieId
+ * @params {String} [userId] User ID
+ * @params {String} [movieId] Movie ID
  * @auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
@@ -97,6 +97,6 @@ usersRouter.post('/users/:user_id/movies/:movie_id', passport.authenticate('jwt'
  * @code {404} Not found
  * @response {String} - Text message indicating whether the movie was successfully removed or not
  */
-usersRouter.delete('/users/:user_id/movies/:movie_id', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.removeFavoriteMovieFromUser);
+usersRouter.delete('/users/:userId/movies/:movieId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserID, usersController.removeFavoriteMovieFromUser);
 
 module.exports = usersRouter;

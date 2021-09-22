@@ -6,11 +6,11 @@ const Users = require('../users/usersModel');
 
 const initLocalStrategy = () => {
   const localStrategy = new LocalStrategy({
-    usernameField: 'Username',
-    passwordField: 'Password',
+    usernameField: 'username',
+    passwordField: 'password',
   }, async (username, password, done) => {
     try {
-      const user = await Users.findOne({ Username: username });
+      const user = await Users.findOne({ username });
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
       }
