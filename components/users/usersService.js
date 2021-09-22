@@ -59,19 +59,19 @@ const updateUser = async (userId, {
 
     const userWithUsername = await Users.findOne({ username });
     if (userWithUsername) {
-      const IDOfUserWithUsername = userWithUsername._id.toString();
+      const IdOfUserWithUsername = userWithUsername._id.toString();
       // We need to cast to string or else equality check will never be true
       // (_id is an object for some reason, whereas userId is a regular string)
-      if (IDOfUserWithUsername !== userId) {
+      if (IdOfUserWithUsername !== userId) {
         return { statusCode: 400, body: `${username} already exists.` };
       }
     }
 
     const userWithEmail = await Users.findOne({ email });
     if (userWithEmail) {
-      const IDOfUserWithEmail = userWithEmail._id.toString();
+      const IdOfUserWithEmail = userWithEmail._id.toString();
 
-      if (IDOfUserWithEmail !== userId) {
+      if (IdOfUserWithEmail !== userId) {
         return { statusCode: 400, body: `${email} already exists.` };
       }
     }
@@ -101,7 +101,7 @@ const deleteUser = async (userId) => {
       return { statusCode: 404, body: `User with id: ${userId} doesn't exist.` };
     }
 
-    return { statusCode: 200, body: `User with ID ${userId} was successfully removed.` };
+    return { statusCode: 200, body: `User with Id ${userId} was successfully removed.` };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
@@ -116,15 +116,15 @@ const addFavoriteMovieToUser = async (userId, movieId) => {
       return { statusCode: 404, body: `User with id: ${userId} doesn't exist.` };
     }
 
-    const movieIDAlreadyInFavorites = userToUpdate.favoriteMovies.includes(movieId);
-    const movieFoundByID = await Movies.findOne({ _id: movieId });
-    const movieWithIDExists = movieFoundByID !== null;
+    const movieIdAlreadyInFavorites = userToUpdate.favoriteMovies.includes(movieId);
+    const movieFoundById = await Movies.findOne({ _id: movieId });
+    const movieWithIdExists = movieFoundById !== null;
 
-    if (movieIDAlreadyInFavorites) {
+    if (movieIdAlreadyInFavorites) {
       return { statusCode: 400, body: `Movie with id: ${movieId} is already a favorite.` };
     }
 
-    if (!movieWithIDExists) {
+    if (!movieWithIdExists) {
       return { statusCode: 404, body: `Movie with id: ${movieId} doesn't exist.` };
     }
 
@@ -146,14 +146,14 @@ const removeFavoriteMovieFromUser = async (userId, movieId) => {
       return { statusCode: 404, body: `User with id: ${userId} doesn't exist.` };
     }
 
-    const indexOfMovieIDToDelete = userToUpdate.favoriteMovies.indexOf(movieId);
-    const movieIDExistsInFavorites = indexOfMovieIDToDelete !== -1;
+    const indexOfMovieIdToDelete = userToUpdate.favoriteMovies.indexOf(movieId);
+    const movieIdExistsInFavorites = indexOfMovieIdToDelete !== -1;
 
-    if (!movieIDExistsInFavorites) {
+    if (!movieIdExistsInFavorites) {
       return { statusCode: 400, body: `Movie with id: ${movieId} wasn't a favorite to begin with.` };
     }
 
-    userToUpdate.favoriteMovies.splice(indexOfMovieIDToDelete, 1);
+    userToUpdate.favoriteMovies.splice(indexOfMovieIdToDelete, 1);
     await userToUpdate.save();
 
     return { statusCode: 200, body: `Successfully removed movie with id: ${movieId} from favorites.` };
