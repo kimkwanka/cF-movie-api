@@ -1,6 +1,9 @@
+/* eslint-disable no-console */
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+
+const ip = require('ip');
 
 const auth = require('./components/auth/auth');
 
@@ -55,6 +58,7 @@ const initMiddlewareAndRoutes = (expressApp) => {
 initMiddlewareAndRoutes(app);
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Express server running on port ${PORT}`);
+  console.info(`\nExpress server running in ${process.env.NODE_ENV || 'development'} mode`);
+  console.info(`Local:            http://localhost:${PORT}/`);
+  console.info(`On Your Network:  http://${ip.address()}:${PORT}/\n`);
 });
