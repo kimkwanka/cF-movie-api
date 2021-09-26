@@ -1,5 +1,5 @@
 ## cf-movie-api
-A simple RESTful movie API that will serve as the backend of a future React app.
+A simple RESTful movie API.
 
 ## Built With
 - MongoDB
