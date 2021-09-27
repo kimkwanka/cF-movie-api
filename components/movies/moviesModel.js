@@ -15,8 +15,9 @@ const movieSchema = mongoose.Schema({
     birth: String,
     death: String,
   },
-  imageUrl: String,
+  slug: String,
   featured: Boolean,
+  rating: Number,
 });
 
 module.exports = mongoose.model('Movie', movieSchema);
