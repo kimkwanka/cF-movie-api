@@ -21,7 +21,7 @@ export interface IUserModel extends mongoose.Model<IUserDocument> {
 }
 
 const userSchema = new mongoose.Schema<IUserDocument>({
-  _id: String,
+  _id: { type: mongoose.Schema.Types.ObjectId },
   birthday: Date,
   email: { type: String, required: true },
   favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
