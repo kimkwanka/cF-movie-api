@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
-import express, { Request, Response, Application, NextFunction } from "express";
+import express, { Request, Response, Application, NextFunction } from 'express';
 
-import morgan from "morgan";
-import cors from "cors";
+import morgan from 'morgan';
+import cors from 'cors';
 
-import ip from "ip";
+import ip from 'ip';
 
-import auth from "./components/auth/auth";
+import auth from './components/auth/auth';
 
-import moviesRouter from "./components/movies/moviesRouter";
-import usersRouter from "./components/users/usersRouter";
+import moviesRouter from './components/movies/moviesRouter';
+import usersRouter from './components/users/usersRouter';
 
 const PORT = process.env.PORT || 8080;
 
@@ -24,10 +24,10 @@ const errorHandlerMiddleware = (
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  next: NextFunction,
 ) => {
   console.error(err.stack);
-  res.status(500).send("Something broke!");
+  res.status(500).send('Something broke!');
 };
 
 const initMiddlewareAndRoutes = (expressApp: Application) => {
@@ -35,7 +35,7 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   expressApp.use(cors());
 
   // Remove the X-Powered-By headers
-  expressApp.disable("x-powered-by");
+  expressApp.disable('x-powered-by');
 
   // Enable body-parser
   expressApp.use(express.json());
@@ -44,11 +44,11 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   expressApp.use(auth);
 
   // Enable Logger
-  expressApp.use(morgan("common"));
+  expressApp.use(morgan('common'));
 
   // Show documentation on root
-  expressApp.get("/", (req: Request, res: Response) => {
-    res.redirect("/documentation.html");
+  expressApp.get('/', (req: Request, res: Response) => {
+    res.redirect('/documentation.html');
   });
 
   // API routes
@@ -56,10 +56,10 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   expressApp.use(usersRouter);
 
   // Serve static files
-  expressApp.use(express.static("public"));
+  expressApp.use(express.static('public'));
 
   // Serve static files
-  expressApp.use("/docs", express.static("out"));
+  expressApp.use('/docs', express.static('out'));
 
   // Handle errors
   expressApp.use(errorHandlerMiddleware);
@@ -69,7 +69,7 @@ initMiddlewareAndRoutes(app);
 
 app.listen(PORT, () => {
   console.info(
-    `\nExpress server running in ${process.env.NODE_ENV || "development"} mode`
+    `\nExpress server running in ${process.env.NODE_ENV || 'development'} mode`,
   );
   console.info(`Local:            http://localhost:${PORT}/`);
   console.info(`On Your Network:  http://${ip.address()}:${PORT}/\n`);
