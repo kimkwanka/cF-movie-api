@@ -13,6 +13,11 @@ export interface IUserDocument extends mongoose.Document {
   favoriteMovies: string[];
   password: string;
   username: string;
+  validatePassword(password: string): boolean;
+}
+
+export interface IUserModel extends mongoose.Model<IUserDocument> {
+  hashPassword(password: string): string;
 }
 
 const userSchema = new mongoose.Schema<IUserDocument>({
@@ -33,4 +38,4 @@ userSchema.methods.validatePassword = async function validatePassword(
   return bcrypt.compare(password, this.password);
 };
 
-export default mongoose.model('User', userSchema);
+export default mongoose.model<IUserDocument, IUserModel>('User', userSchema);

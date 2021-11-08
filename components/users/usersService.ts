@@ -1,28 +1,48 @@
-const { body, validationResult } = require('express-validator');
+import { Request } from 'express';
 
-const Users = require('./usersModel');
-const Movies = require('../movies/moviesModel');
+import { body, validationResult } from 'express-validator';
 
-const validateAddUserRequestBody = async (req) => {
-  await body('username', 'username needs to be at least 5 characters').isLength({ min: 5 }).run(req);
-  await body('username', 'username must not contain non-alphanumeric characters').isAlphanumeric().run(req);
+import Users, { IUserDocument } from './usersModel';
+
+import Movies from '../movies/moviesModel';
+
+const validateAddUserRequestBody = async (req: Request) => {
+  await body('username', 'username needs to be at least 5 characters')
+    .isLength({ min: 5 })
+    .run(req);
+  await body(
+    'username',
+    'username must not contain non-alphanumeric characters',
+  )
+    .isAlphanumeric()
+    .run(req);
   await body('password', 'password is required').not().isEmpty().run(req);
   await body('email', 'email does not appear to be valid').isEmail().run(req);
 
   return validationResult(req);
 };
 
-const validateUpdateUserRequestBody = async (req) => {
-  await body('username', 'username needs to be at least 5 characters').isLength({ min: 5 }).run(req);
-  await body('username', 'username must not contain non-alphanumeric characters').isAlphanumeric().run(req);
+const validateUpdateUserRequestBody = async (req: Request) => {
+  await body('username', 'username needs to be at least 5 characters')
+    .isLength({ min: 5 })
+    .run(req);
+  await body(
+    'username',
+    'username must not contain non-alphanumeric characters',
+  )
+    .isAlphanumeric()
+    .run(req);
   await body('email', 'email does not appear to be valid').isEmail().run(req);
 
   return validationResult(req);
 };
 
 const addUser = async ({
-  username, password, email, birthday,
-}) => {
+  username,
+  password,
+  email,
+  birthday,
+}: Partial<IUserDocument>) => {
   try {
     const userWithUsername = await Users.findOne({ username });
     if (userWithUsername) {
@@ -34,10 +54,13 @@ const addUser = async ({
       return { statusCode: 400, body: `${email} already exists.` };
     }
 
-    const hashedPassword = Users.hashPassword(password);
+    const hashedPassword = Users.hashPassword(password || '');
 
     const newUser = await Users.create({
-      username, password: hashedPassword, email, birthday,
+      username,
+      password: hashedPassword,
+      email,
+      birthday,
     });
 
     return { statusCode: 201, body: newUser };
@@ -47,14 +70,18 @@ const addUser = async ({
   }
 };
 
-const updateUser = async (userId, {
-  username, password, email, birthday,
-}) => {
+const updateUser = async (
+  userId: string,
+  { username, password, email, birthday }: Partial<IUserDocument>,
+) => {
   try {
     const userToUpdate = await Users.findOne({ _id: userId });
 
     if (!userToUpdate) {
-      return { statusCode: 404, body: `User with id: ${userId} doesn't exist.` };
+      return {
+        statusCode: 404,
+        body: `User with id: ${userId} doesn't exist.`,
+      };
     }
 
     const userWithUsername = await Users.findOne({ username });
@@ -76,12 +103,12 @@ const updateUser = async (userId, {
       }
     }
 
-    userToUpdate.username = username;
-    userToUpdate.email = email;
-    userToUpdate.birthday = birthday;
+    userToUpdate.username = username || '';
+    userToUpdate.email = email || '';
+    userToUpdate.birthday = birthday || '';
 
     if (password !== userToUpdate.password) {
-      userToUpdate.password = Users.hashPassword(password);
+      userToUpdate.password = Users.hashPassword(password || '');
     }
 
     await userToUpdate.save();
@@ -93,77 +120,105 @@ const updateUser = async (userId, {
   }
 };
 
-const deleteUser = async (userId) => {
+const deleteUser = async (userId: string) => {
   try {
     const userToDelete = await Users.findOneAndRemove({ _id: userId });
 
     if (!userToDelete) {
-      return { statusCode: 404, body: `User with id: ${userId} doesn't exist.` };
+      return {
+        statusCode: 404,
+        body: `User with id: ${userId} doesn't exist.`,
+      };
     }
 
-    return { statusCode: 200, body: `User with Id ${userId} was successfully removed.` };
+    return {
+      statusCode: 200,
+      body: `User with Id ${userId} was successfully removed.`,
+    };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
   }
 };
 
-const addFavoriteMovieToUser = async (userId, movieId) => {
+const addFavoriteMovieToUser = async (userId: string, movieId: string) => {
   try {
     const userToUpdate = await Users.findOne({ _id: userId });
 
     if (!userToUpdate) {
-      return { statusCode: 404, body: `User with id: ${userId} doesn't exist.` };
+      return {
+        statusCode: 404,
+        body: `User with id: ${userId} doesn't exist.`,
+      };
     }
 
-    const movieIdAlreadyInFavorites = userToUpdate.favoriteMovies.includes(movieId);
+    const movieIdAlreadyInFavorites =
+      userToUpdate.favoriteMovies.includes(movieId);
     const movieFoundById = await Movies.findOne({ _id: movieId });
     const movieWithIdExists = movieFoundById !== null;
 
     if (movieIdAlreadyInFavorites) {
-      return { statusCode: 400, body: `Movie with id: ${movieId} is already a favorite.` };
+      return {
+        statusCode: 400,
+        body: `Movie with id: ${movieId} is already a favorite.`,
+      };
     }
 
     if (!movieWithIdExists) {
-      return { statusCode: 404, body: `Movie with id: ${movieId} doesn't exist.` };
+      return {
+        statusCode: 404,
+        body: `Movie with id: ${movieId} doesn't exist.`,
+      };
     }
 
     userToUpdate.favoriteMovies.push(movieId);
     await userToUpdate.save();
 
-    return { statusCode: 200, body: `Successfully added movie with id: ${movieId} to favorites` };
+    return {
+      statusCode: 200,
+      body: `Successfully added movie with id: ${movieId} to favorites`,
+    };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
   }
 };
 
-const removeFavoriteMovieFromUser = async (userId, movieId) => {
+const removeFavoriteMovieFromUser = async (userId: string, movieId: string) => {
   try {
     const userToUpdate = await Users.findOne({ _id: userId });
 
     if (!userToUpdate) {
-      return { statusCode: 404, body: `User with id: ${userId} doesn't exist.` };
+      return {
+        statusCode: 404,
+        body: `User with id: ${userId} doesn't exist.`,
+      };
     }
 
     const indexOfMovieIdToDelete = userToUpdate.favoriteMovies.indexOf(movieId);
     const movieIdExistsInFavorites = indexOfMovieIdToDelete !== -1;
 
     if (!movieIdExistsInFavorites) {
-      return { statusCode: 400, body: `Movie with id: ${movieId} wasn't a favorite to begin with.` };
+      return {
+        statusCode: 400,
+        body: `Movie with id: ${movieId} wasn't a favorite to begin with.`,
+      };
     }
 
     userToUpdate.favoriteMovies.splice(indexOfMovieIdToDelete, 1);
     await userToUpdate.save();
 
-    return { statusCode: 200, body: `Successfully removed movie with id: ${movieId} from favorites.` };
+    return {
+      statusCode: 200,
+      body: `Successfully removed movie with id: ${movieId} from favorites.`,
+    };
   } catch (e) {
     console.error(e);
     return { statusCode: 500, body: `Error: ${e}` };
   }
 };
 
-module.exports = {
+export default {
   validateAddUserRequestBody,
   validateUpdateUserRequestBody,
   addUser,

@@ -1,14 +1,21 @@
-const express = require('express');
-const passport = require('passport');
-const usersController = require('./usersController');
+import express, { Request, Response, NextFunction } from 'express';
+import passport from 'passport';
+
+import { IUserDocument } from './usersModel';
+
+import usersController from './usersController';
 
 const usersRouter = express.Router();
 
-const allowRequestOnlyWithSameUserId = (req, res, next) => {
+const allowRequestOnlyWithSameUserId = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const requestUserId = req.params.userId;
   // We need to cast to string or else equality check will never be true
   // (_id is an object for some reason, whereas userId is a regular string)
-  const userId = req.user._id.toString();
+  const userId = (req.user as Partial<IUserDocument>)._id?.toString();
 
   if (requestUserId !== userId) {
     return res.status(401).send('Unauthorized request');
@@ -48,7 +55,12 @@ usersRouter.post('/users', usersController.addUser);
  * @body {object} - { "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }
  * @response {Object} - { "username": "MangoChicken22", "password": "test123", "email":"mangochicken22@gmail.com", "birthday": "06/11/1973" }
  */
-usersRouter.put('/users/:userId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserId, usersController.updateUser);
+usersRouter.put(
+  '/users/:userId',
+  passport.authenticate('jwt', { session: false }),
+  allowRequestOnlyWithSameUserId,
+  usersController.updateUser,
+);
 
 /**
  * Delete a user account
@@ -63,7 +75,12 @@ usersRouter.put('/users/:userId', passport.authenticate('jwt', { session: false 
  * @code {404} Not found
  * @response {String} - Text message indicating whether the user was successfully removed or not
  */
-usersRouter.delete('/users/:userId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserId, usersController.deleteUser);
+usersRouter.delete(
+  '/users/:userId',
+  passport.authenticate('jwt', { session: false }),
+  allowRequestOnlyWithSameUserId,
+  usersController.deleteUser,
+);
 
 /**
  * Add a movie to a user's list of favorites
@@ -80,7 +97,12 @@ usersRouter.delete('/users/:userId', passport.authenticate('jwt', { session: fal
  * @code {404} Not found
  * @response {String} - Text message indicating whether the movie was successfully added or not
  */
-usersRouter.post('/users/:userId/movies/:movieId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserId, usersController.addFavoriteMovieToUser);
+usersRouter.post(
+  '/users/:userId/movies/:movieId',
+  passport.authenticate('jwt', { session: false }),
+  allowRequestOnlyWithSameUserId,
+  usersController.addFavoriteMovieToUser,
+);
 
 /**
  * Remove a movie from a user's list of favorites
@@ -97,6 +119,11 @@ usersRouter.post('/users/:userId/movies/:movieId', passport.authenticate('jwt', 
  * @code {404} Not found
  * @response {String} - Text message indicating whether the movie was successfully removed or not
  */
-usersRouter.delete('/users/:userId/movies/:movieId', passport.authenticate('jwt', { session: false }), allowRequestOnlyWithSameUserId, usersController.removeFavoriteMovieFromUser);
+usersRouter.delete(
+  '/users/:userId/movies/:movieId',
+  passport.authenticate('jwt', { session: false }),
+  allowRequestOnlyWithSameUserId,
+  usersController.removeFavoriteMovieFromUser,
+);
 
-module.exports = usersRouter;
+export default usersRouter;
