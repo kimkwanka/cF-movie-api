@@ -13,7 +13,7 @@ const moviesRouter = express.Router();
  * @header Authorization: Bearer [token]
  * @code {200} OK
  * @code {401} Unauthorized
- * @response {Array.<Objects>} The list of all movies
+ * @response {Array.<Object>} The list of all movies
  */
 moviesRouter.get(
   '/movies',
