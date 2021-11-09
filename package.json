@@ -47,7 +47,7 @@
     "ts-node": "^10.4.0"
   },
   "scripts": {
-    "start": "nodemon -r dotenv/config --exec 'ts-node' index.ts",
+    "start": "nodemon -r dotenv/config --exec 'ts-node --transpile-only' index.ts",
     "dev": "nodemon -r dotenv/config --watch './**/*.ts' --exec 'ts-node' index.ts",
     "lint": "npx eslint \"**/*.{ts,tsx}\"; npx tsc --noEmit",
     "docs": "jsdoc -c jsdoc.conf"
