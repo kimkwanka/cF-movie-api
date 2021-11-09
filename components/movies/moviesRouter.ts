@@ -1,6 +1,6 @@
-const express = require('express');
-const passport = require('passport');
-const moviesController = require('./moviesController');
+import express from 'express';
+import passport from 'passport';
+import moviesController from './moviesController';
 
 const moviesRouter = express.Router();
 
@@ -15,7 +15,11 @@ const moviesRouter = express.Router();
  * @code {401} Unauthorized
  * @response {Array.<Objects>} The list of all movies
  */
-moviesRouter.get('/movies', passport.authenticate('jwt', { session: false }), moviesController.getAllMovies);
+moviesRouter.get(
+  '/movies',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.getAllMovies,
+);
 
 /**
  * Returns data about a single movie by title
@@ -30,7 +34,11 @@ moviesRouter.get('/movies', passport.authenticate('jwt', { session: false }), mo
  * @code {404} Not found
  * @response {Object} - { "_id": "60c26e28a640a21b749adfeb", "title": "Joker", "genre": "Drama" "description": "In Gotham City, mentally troubled comedian Arthur Flec ...", "director": "Todd Phillips", "image_url": "http://images.samplewebsite.com/joker.png", "featured": false }
  */
-moviesRouter.get('/movies/:title', passport.authenticate('jwt', { session: false }), moviesController.getMovieByTitle);
+moviesRouter.get(
+  '/movies/:title',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.getMovieByTitle,
+);
 
 /**
  * Returns data about a genre by name
@@ -45,7 +53,11 @@ moviesRouter.get('/movies/:title', passport.authenticate('jwt', { session: false
  * @code {404} Not found
  * @response {Object} - { "name": "Thriller", "description": "Thriller is a genre of fiction, having numerous, often overlapping subgenres. Thrillers are characterized and defined by the moods they elicit, giving viewers heightened feelings of suspense, excitement, surprise, anticipation and anxiety. Successful examples of thrillers are the films of Alfred Hitchcock." }
  */
-moviesRouter.get('/genres/:name', passport.authenticate('jwt', { session: false }), moviesController.getGenreByName);
+moviesRouter.get(
+  '/genres/:name',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.getGenreByName,
+);
 
 /**
  * Returns data about a director by name
@@ -60,6 +72,10 @@ moviesRouter.get('/genres/:name', passport.authenticate('jwt', { session: false 
  * @code {404} Not found
  * @response {Object} - { "name": "Todd Phillips", "year_of_birth": 1970, "year_of_death": -1, "bio": "Todd Phillips was born on December 20, 1970 in Brooklyn, New York City, New York, USA as Todd Bunzl. He is a producer and director, known for Joker (2019), Old School (2003) and Due Date (2010)." }
  */
-moviesRouter.get('/directors/:name', passport.authenticate('jwt', { session: false }), moviesController.getDirectorByName);
+moviesRouter.get(
+  '/directors/:name',
+  passport.authenticate('jwt', { session: false }),
+  moviesController.getDirectorByName,
+);
 
-module.exports = moviesRouter;
+export default moviesRouter;
