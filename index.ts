@@ -10,6 +10,7 @@ import auth from './components/auth/auth';
 
 import moviesRouter from './components/movies/moviesRouter';
 import usersRouter from './components/users/usersRouter';
+import graphqlRouter from './components/graphql/graphqlRouter';
 
 const PORT = process.env.PORT || 8080;
 
@@ -54,6 +55,9 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   // API routes
   expressApp.use(moviesRouter);
   expressApp.use(usersRouter);
+
+  // GraphQL route
+  expressApp.use(graphqlRouter);
 
   // Serve static files
   expressApp.use(express.static('public'));
