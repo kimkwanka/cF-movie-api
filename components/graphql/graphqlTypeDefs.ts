@@ -1,6 +1,6 @@
-import { buildSchema } from 'graphql';
+import { gql } from 'apollo-server-express';
 
-const schema = buildSchema(`
+const typeDefs = gql`
   type Genre {
     name: String!
     description: String!
@@ -96,12 +96,10 @@ const schema = buildSchema(`
   }
 
   type Query {
-      movies: [Movie]
-      configuration: TMDB_Configuration
-      discover: [TMDB_Movie_Simple]
-      movie(id: Int!): TMDB_Movie_Detailed
+    movies: [Movie]
+    discover: [TMDB_Movie_Simple]
+    movie(id: Int!): TMDB_Movie_Detailed
   }
-`);
+`;
 
-export { schema };
-export default { schema };
+export default typeDefs;

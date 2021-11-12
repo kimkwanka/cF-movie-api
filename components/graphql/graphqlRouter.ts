@@ -1,19 +1,25 @@
 import express from 'express';
 import passport from 'passport';
-import graphqlController from './graphqlController';
+import { ApolloServer } from 'apollo-server-express';
+
+import typeDefs from './graphqlTypeDefs';
+import resolvers from './graphqlResolvers';
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
 
 const graphqlRouter = express.Router();
 
-graphqlRouter.post(
-  '/graphql',
-  passport.authenticate('jwt', { session: false }),
-  graphqlController,
-);
+const startApolloServer = async () => {
+  await server.start();
+  graphqlRouter.use(
+    // passport.authenticate('jwt', { session: false }),
+    server.getMiddleware({ path: '/graphql' }),
+  );
+};
 
-graphqlRouter.get(
-  '/graphql',
-  passport.authenticate('jwt', { session: false }),
-  graphqlController,
-);
+startApolloServer();
 
 export default graphqlRouter;
