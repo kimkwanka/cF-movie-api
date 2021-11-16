@@ -20,12 +20,7 @@
     user: User
   }
 
-  type OK {
-    message: String!
-    statusCode: String
-  }
-
-  type Error {
+  interface Error {
     message: String!
     statusCode: String
   }
@@ -33,7 +28,6 @@
   union UserOrError = User | Error
 
   union AuthPayloadOrError = AuthPayload | Error
-
 
   type Genre {
     name: String!
