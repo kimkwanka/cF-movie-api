@@ -1,9 +1,15 @@
 import express from 'express';
-import passport from 'passport';
+import fs from 'fs';
+import path from 'path';
+
 import { ApolloServer } from 'apollo-server-express';
 
-import typeDefs from './graphqlTypeDefs';
 import resolvers from './graphqlResolvers';
+
+const typeDefs = fs.readFileSync(
+  path.join(__dirname, 'schema.graphql'),
+  'utf8',
+);
 
 const server = new ApolloServer({
   typeDefs,
@@ -14,10 +20,7 @@ const graphqlRouter = express.Router();
 
 const startApolloServer = async () => {
   await server.start();
-  graphqlRouter.use(
-    // passport.authenticate('jwt', { session: false }),
-    server.getMiddleware({ path: '/graphql' }),
-  );
+  graphqlRouter.use(server.getMiddleware({ path: '/graphql' }));
 };
 
 startApolloServer();

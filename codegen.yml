@@ -1,4 +1,4 @@
-schema: "./domains/graphql/*.ts"
+schema: "./domains/graphql/*.graphql"
 generates:
   ./domains/graphql/types.d.ts:
     plugins:
