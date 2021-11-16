@@ -1,0 +1,7 @@
+schema: http://localhost:8080/graphql
+documents: "./domains/graphql/*.graphql"
+generates:
+  ./domains/graphql/types.d.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
