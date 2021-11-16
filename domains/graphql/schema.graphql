@@ -1,11 +1,39 @@
   type User {
     _id: ID
-    birthday: String!
+    birthday: String
     email: String!
     favoriteMovies: [String]!
     password: String!
     username: String!
   }
+
+  input UserInput {
+    birthday: String
+    email: String!
+    favoriteMovies: [String]!
+    password: String!
+    username: String!
+  }
+
+  type AuthPayload {
+    token: String
+    user: User
+  }
+
+  type OK {
+    message: String!
+    statusCode: String
+  }
+
+  type Error {
+    message: String!
+    statusCode: String
+  }
+
+  union UserOrError = User | Error
+
+  union AuthPayloadOrError = AuthPayload | Error
+
 
   type Genre {
     name: String!
@@ -106,4 +134,13 @@
     discover: [TMDBMovieSimple]
     movie(id: Int!): TMDBMovieDetailed
     users: [User]
+  }
+
+  type Mutation {
+    registerUser(newUserData: UserInput!): UserOrError
+    loginUser(username: String!, password: String!): AuthPayloadOrError
+    updateUser(_id: ID!, newUserData: UserInput!): UserOrError
+    deleteUser(_id: ID!): UserOrError
+    addFavoriteMovieToUser(_id: ID!, movieId: ID!): UserOrError
+    removeFavoriteMovieFromUser(_id: ID!, movieId: ID!): UserOrError
   }

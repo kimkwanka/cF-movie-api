@@ -14,12 +14,26 @@ export type Scalars = {
   Float: number;
 };
 
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  token?: Maybe<Scalars['String']>;
+  user?: Maybe<User>;
+};
+
+export type AuthPayloadOrError = AuthPayload | Error;
+
 export type Director = {
   __typename?: 'Director';
   bio: Scalars['String'];
   birth: Scalars['String'];
   death: Scalars['String'];
   name: Scalars['String'];
+};
+
+export type Error = {
+  __typename?: 'Error';
+  message: Scalars['String'];
+  statusCode?: Maybe<Scalars['String']>;
 };
 
 export type Genre = {
@@ -38,6 +52,56 @@ export type Movie = {
   rating: Scalars['Float'];
   slug: Scalars['String'];
   title: Scalars['String'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  addFavoriteMovieToUser?: Maybe<UserOrError>;
+  deleteUser?: Maybe<UserOrError>;
+  loginUser?: Maybe<AuthPayloadOrError>;
+  registerUser?: Maybe<UserOrError>;
+  removeFavoriteMovieFromUser?: Maybe<UserOrError>;
+  updateUser?: Maybe<UserOrError>;
+};
+
+
+export type MutationAddFavoriteMovieToUserArgs = {
+  _id: Scalars['ID'];
+  movieId: Scalars['ID'];
+};
+
+
+export type MutationDeleteUserArgs = {
+  _id: Scalars['ID'];
+};
+
+
+export type MutationLoginUserArgs = {
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
+
+export type MutationRegisterUserArgs = {
+  newUserData: UserInput;
+};
+
+
+export type MutationRemoveFavoriteMovieFromUserArgs = {
+  _id: Scalars['ID'];
+  movieId: Scalars['ID'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  _id: Scalars['ID'];
+  newUserData: UserInput;
+};
+
+export type Ok = {
+  __typename?: 'OK';
+  message: Scalars['String'];
+  statusCode?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -133,12 +197,22 @@ export type TmdbProductionSpokenLanguaeges = {
 export type User = {
   __typename?: 'User';
   _id?: Maybe<Scalars['ID']>;
-  birthday: Scalars['String'];
+  birthday?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   favoriteMovies: Array<Maybe<Scalars['String']>>;
   password: Scalars['String'];
   username: Scalars['String'];
 };
+
+export type UserInput = {
+  birthday?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  favoriteMovies: Array<InputMaybe<Scalars['String']>>;
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type UserOrError = Error | User;
 
 
 
@@ -209,13 +283,18 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AuthPayload: ResolverTypeWrapper<AuthPayload>;
+  AuthPayloadOrError: ResolversTypes['AuthPayload'] | ResolversTypes['Error'];
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Director: ResolverTypeWrapper<Director>;
+  Error: ResolverTypeWrapper<Error>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Genre: ResolverTypeWrapper<Genre>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Movie: ResolverTypeWrapper<Movie>;
+  Mutation: ResolverTypeWrapper<{}>;
+  OK: ResolverTypeWrapper<Ok>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   TMDBConfiguration: ResolverTypeWrapper<TmdbConfiguration>;
@@ -225,17 +304,24 @@ export type ResolversTypes = {
   TMDBProductionCountry: ResolverTypeWrapper<TmdbProductionCountry>;
   TMDBProductionSpokenLanguaeges: ResolverTypeWrapper<TmdbProductionSpokenLanguaeges>;
   User: ResolverTypeWrapper<User>;
+  UserInput: UserInput;
+  UserOrError: ResolversTypes['Error'] | ResolversTypes['User'];
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AuthPayload: AuthPayload;
+  AuthPayloadOrError: ResolversParentTypes['AuthPayload'] | ResolversParentTypes['Error'];
   Boolean: Scalars['Boolean'];
   Director: Director;
+  Error: Error;
   Float: Scalars['Float'];
   Genre: Genre;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   Movie: Movie;
+  Mutation: {};
+  OK: Ok;
   Query: {};
   String: Scalars['String'];
   TMDBConfiguration: TmdbConfiguration;
@@ -245,6 +331,18 @@ export type ResolversParentTypes = {
   TMDBProductionCountry: TmdbProductionCountry;
   TMDBProductionSpokenLanguaeges: TmdbProductionSpokenLanguaeges;
   User: User;
+  UserInput: UserInput;
+  UserOrError: ResolversParentTypes['Error'] | ResolversParentTypes['User'];
+};
+
+export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AuthPayloadOrErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayloadOrError'] = ResolversParentTypes['AuthPayloadOrError']> = {
+  __resolveType: TypeResolveFn<'AuthPayload' | 'Error', ParentType, ContextType>;
 };
 
 export type DirectorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Director'] = ResolversParentTypes['Director']> = {
@@ -252,6 +350,12 @@ export type DirectorResolvers<ContextType = any, ParentType extends ResolversPar
   birth?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   death?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  statusCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -270,6 +374,21 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
   rating?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addFavoriteMovieToUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationAddFavoriteMovieToUserArgs, '_id' | 'movieId'>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, '_id'>>;
+  loginUser?: Resolver<Maybe<ResolversTypes['AuthPayloadOrError']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'password' | 'username'>>;
+  registerUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'newUserData'>>;
+  removeFavoriteMovieFromUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationRemoveFavoriteMovieFromUserArgs, '_id' | 'movieId'>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, '_id' | 'newUserData'>>;
+};
+
+export type OkResolvers<ContextType = any, ParentType extends ResolversParentTypes['OK'] = ResolversParentTypes['OK']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  statusCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -359,7 +478,7 @@ export type TmdbProductionSpokenLanguaegesResolvers<ContextType = any, ParentTyp
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  birthday?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  birthday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   favoriteMovies?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -367,10 +486,19 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserOrErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserOrError'] = ResolversParentTypes['UserOrError']> = {
+  __resolveType: TypeResolveFn<'Error' | 'User', ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
+  AuthPayload?: AuthPayloadResolvers<ContextType>;
+  AuthPayloadOrError?: AuthPayloadOrErrorResolvers<ContextType>;
   Director?: DirectorResolvers<ContextType>;
+  Error?: ErrorResolvers<ContextType>;
   Genre?: GenreResolvers<ContextType>;
   Movie?: MovieResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  OK?: OkResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   TMDBConfiguration?: TmdbConfigurationResolvers<ContextType>;
   TMDBMovieDetailed?: TmdbMovieDetailedResolvers<ContextType>;
@@ -379,5 +507,6 @@ export type Resolvers<ContextType = any> = {
   TMDBProductionCountry?: TmdbProductionCountryResolvers<ContextType>;
   TMDBProductionSpokenLanguaeges?: TmdbProductionSpokenLanguaegesResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  UserOrError?: UserOrErrorResolvers<ContextType>;
 };
 

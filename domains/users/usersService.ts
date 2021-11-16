@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import mongoose from 'mongoose';
 
 import { body, validationResult } from 'express-validator';
 
@@ -7,6 +8,8 @@ import Users, { TUserDocument } from './usersModel';
 import Movies from '../movies/moviesModel';
 
 const findAllUsers = async () => Users.find({});
+
+const findById = async (id: string) => Users.findById(id);
 
 const validateAddUserRequestBody = async (req: Request) => {
   await body('username', 'username needs to be at least 5 characters')
@@ -39,6 +42,31 @@ const validateUpdateUserRequestBody = async (req: Request) => {
   return validationResult(req);
 };
 
+const loginUser = async ({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}) => {
+  try {
+    const user = await Users.findOne({ username });
+    if (!user) {
+      return { message: 'Incorrect username.' };
+    }
+
+    const passwordMatch = await user.validatePassword(password);
+    if (!passwordMatch) {
+      return { message: 'Incorrect password.' };
+    }
+
+    return user;
+  } catch (err) {
+    console.error(err);
+    return { message: err as string };
+  }
+};
+
 const addUser = async ({
   username,
   password,
@@ -59,6 +87,7 @@ const addUser = async ({
     const hashedPassword = Users.hashPassword(password || '');
 
     const newUser = await Users.create({
+      _id: new mongoose.Types.ObjectId(),
       username,
       password: hashedPassword,
       email,
@@ -135,7 +164,7 @@ const deleteUser = async (userId: string) => {
 
     return {
       statusCode: 200,
-      body: `User with Id ${userId} was successfully removed.`,
+      body: userToDelete,
     };
   } catch (e) {
     console.error(e);
@@ -178,7 +207,7 @@ const addFavoriteMovieToUser = async (userId: string, movieId: string) => {
 
     return {
       statusCode: 200,
-      body: `Successfully added movie with id: ${movieId} to favorites`,
+      body: userToUpdate,
     };
   } catch (e) {
     console.error(e);
@@ -212,7 +241,7 @@ const removeFavoriteMovieFromUser = async (userId: string, movieId: string) => {
 
     return {
       statusCode: 200,
-      body: `Successfully removed movie with id: ${movieId} from favorites.`,
+      body: userToUpdate,
     };
   } catch (e) {
     console.error(e);
@@ -229,4 +258,6 @@ export default {
   addFavoriteMovieToUser,
   removeFavoriteMovieFromUser,
   findAllUsers,
+  loginUser,
+  findById,
 };

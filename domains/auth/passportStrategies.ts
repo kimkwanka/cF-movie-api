@@ -6,7 +6,7 @@ import {
   ExtractJwt as ExtractJWT,
 } from 'passport-jwt';
 
-import Users from '../users/usersModel';
+import usersService from '../users/usersService';
 
 const initLocalStrategy = () => {
   const localStrategy = new LocalStrategy(
@@ -16,20 +16,19 @@ const initLocalStrategy = () => {
     },
     async (username, password, done) => {
       try {
-        const user = await Users.findOne({ username });
-        if (!user) {
-          return done(null, false, { message: 'Incorrect username.' });
+        const userOrErrorMsg = await usersService.loginUser({
+          username,
+          password,
+        });
+
+        if (typeof userOrErrorMsg === 'string') {
+          return done(null, false, { message: userOrErrorMsg });
         }
 
-        const passwordMatch = await user.validatePassword(password);
-        if (!passwordMatch) {
-          return done(null, false, { message: 'Incorrect password.' });
-        }
-
-        return done(null, user);
+        return done(null, userOrErrorMsg);
       } catch (err) {
         console.error(err);
-        return done(err);
+        return { message: err };
       }
     },
   );
@@ -45,7 +44,7 @@ const initJWTStrategy = () => {
     },
     async (jwtPayload, done) => {
       try {
-        const user = await Users.findById(jwtPayload._id);
+        const user = await usersService.findById(jwtPayload._id);
 
         return done(null, user);
       } catch (err) {

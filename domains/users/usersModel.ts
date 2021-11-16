@@ -11,6 +11,7 @@ mongoose.connect(process.env.MONGODB_URI || '', {
 export type TUserDocument = mongoose.Document &
   User & {
     validatePassword(password: string): boolean;
+    toJSON(): object;
   };
 
 export interface IUserModel extends mongoose.Model<TUserDocument> {
