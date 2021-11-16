@@ -6,11 +6,11 @@ import cors from 'cors';
 
 import ip from 'ip';
 
-import auth from './components/auth/auth';
+import auth from './domains/auth/auth';
 
-import moviesRouter from './components/movies/moviesRouter';
-import usersRouter from './components/users/usersRouter';
-import graphqlRouter from './components/graphql/graphqlRouter';
+import moviesRouter from './domains/movies/moviesRouter';
+import usersRouter from './domains/users/usersRouter';
+import graphqlRouter from './domains/graphql/graphqlRouter';
 
 const PORT = process.env.PORT || 8080;
 

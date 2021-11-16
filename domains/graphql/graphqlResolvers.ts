@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 
+import { Resolvers } from './types';
+
 import moviesService from '../movies/moviesService';
 
 const TMDB_BASE_API_URL = 'https://api.themoviedb.org/3';
@@ -18,15 +20,15 @@ const authorizedFetch = async (apiEndpoint: string) => {
   }
 };
 
-const resolvers = {
+const resolvers: Resolvers = {
   Query: {
     movies: async () => {
       const movies = await moviesService.findAllMovies();
       return movies;
     },
     discover: async (
-      parent: undefined,
-      args: undefined,
+      parent,
+      args,
       context: { tmdbConfiguration: object | undefined },
     ) => {
       if (!context.tmdbConfiguration) {
@@ -37,7 +39,7 @@ const resolvers = {
 
       return (await authorizedFetch('/discover/movie')).results;
     },
-    movie: ({ id }: { id: number }) => authorizedFetch(`/movie/${id}`),
+    movie: async (parent, { id }) => authorizedFetch(`/movie/${id}`),
   },
 };
 

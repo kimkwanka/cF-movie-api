@@ -24,7 +24,7 @@ const typeDefs = gql`
     rating: Float!
   }
 
-  type TMDB_Configuration {
+  type TMDBConfiguration {
     base_url: String!
     secure_base_url: String!
     backdrop_sizes: [String!]!
@@ -34,7 +34,7 @@ const typeDefs = gql`
     still_sizes: [String!]!
   }
 
-  type TMDB_Movie_Simple {
+  type TMDBMovieSimple {
     adult: Boolean!
     backdrop_path: String!
     genre_ids: [String!]!
@@ -51,24 +51,24 @@ const typeDefs = gql`
     vote_count: Int!
   }
 
-  type TMDB_Production_Company {
+  type TMDBProductionCompany {
     name: String!
     id: Int!
     logo_path: String
     origin_country: String!
   }
 
-  type TMDB_Production_Country {
+  type TMDBProductionCountry {
     iso_3166_1: String!
     name: String!
   }
 
-  type TMDB_Production_Spoken_Languaeges {
+  type TMDBProductionSpokenLanguaeges {
     iso_639_1: String!
     name: String!
   }
 
-  type TMDB_Movie_Detailed {
+  type TMDBMovieDetailed {
     adult: Boolean!
     backdrop_path: String
     budget: Int!
@@ -81,12 +81,12 @@ const typeDefs = gql`
     overview: String
     popularity: Float!
     poster_path: String!
-    production_companies: [TMDB_Production_Company!]!
-    production_countries: [TMDB_Production_Country!]!
+    production_companies: [TMDBProductionCompany!]!
+    production_countries: [TMDBProductionCountry!]!
     release_date: String!
     revenue: Int!
     runtime: Int
-    spoken_languages: [TMDB_Production_Spoken_Languaeges!]!
+    spoken_languages: [TMDBProductionSpokenLanguaeges!]!
     status: String!
     tagline: String
     title: String!
@@ -97,8 +97,8 @@ const typeDefs = gql`
 
   type Query {
     movies: [Movie]
-    discover: [TMDB_Movie_Simple]
-    movie(id: Int!): TMDB_Movie_Detailed
+    discover: [TMDBMovieSimple]
+    movie(id: Int!): TMDBMovieDetailed
   }
 `;
 
