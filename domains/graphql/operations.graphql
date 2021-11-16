@@ -1,5 +1,0 @@
-query SampleQuery {
-  discover {
-    title
-  }
-}
