@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import { Resolvers } from './types';
 
 import moviesService from '../movies/moviesService';
+import usersService from '../users/usersService';
 
 const TMDB_BASE_API_URL = 'https://api.themoviedb.org/3';
 
@@ -40,6 +41,10 @@ const resolvers: Resolvers = {
       return (await authorizedFetch('/discover/movie')).results;
     },
     movie: async (parent, { id }) => authorizedFetch(`/movie/${id}`),
+    users: async () => {
+      const users = await usersService.findAllUsers();
+      return users;
+    },
   },
 };
 

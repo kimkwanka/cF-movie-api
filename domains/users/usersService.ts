@@ -2,9 +2,11 @@ import { Request } from 'express';
 
 import { body, validationResult } from 'express-validator';
 
-import Users, { IUserDocument } from './usersModel';
+import Users, { TUserDocument } from './usersModel';
 
 import Movies from '../movies/moviesModel';
+
+const findAllUsers = async () => Users.find({});
 
 const validateAddUserRequestBody = async (req: Request) => {
   await body('username', 'username needs to be at least 5 characters')
@@ -42,7 +44,7 @@ const addUser = async ({
   password,
   email,
   birthday,
-}: Partial<IUserDocument>) => {
+}: Partial<TUserDocument>) => {
   try {
     const userWithUsername = await Users.findOne({ username });
     if (userWithUsername) {
@@ -72,7 +74,7 @@ const addUser = async ({
 
 const updateUser = async (
   userId: string,
-  { username, password, email, birthday }: Partial<IUserDocument>,
+  { username, password, email, birthday }: Partial<TUserDocument>,
 ) => {
   try {
     const userToUpdate = await Users.findOne({ _id: userId });
@@ -226,4 +228,5 @@ export default {
   deleteUser,
   addFavoriteMovieToUser,
   removeFavoriteMovieFromUser,
+  findAllUsers,
 };

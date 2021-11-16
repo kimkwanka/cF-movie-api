@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
-import { IUserDocument } from './usersModel';
+import { TUserDocument } from './usersModel';
 
 import usersController from './usersController';
 
@@ -15,7 +15,7 @@ const allowRequestOnlyWithSameUserId = (
   const requestUserId = req.params.userId;
   // We need to cast to string or else equality check will never be true
   // (_id is an object for some reason, whereas userId is a regular string)
-  const userId = (req.user as Partial<IUserDocument>)._id?.toString();
+  const userId = (req.user as Partial<TUserDocument>)._id?.toString();
 
   if (requestUserId !== userId) {
     return res.status(401).send('Unauthorized request');

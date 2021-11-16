@@ -1,6 +1,15 @@
 import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
+  type User {
+    _id: ID
+    birthday: String!
+    email: String!
+    favoriteMovies: [String]!
+    password: String!
+    username: String!
+  }
+
   type Genre {
     name: String!
     description: String!
@@ -99,6 +108,7 @@ const typeDefs = gql`
     movies: [Movie]
     discover: [TMDBMovieSimple]
     movie(id: Int!): TMDBMovieDetailed
+    users: [User]
   }
 `;
 

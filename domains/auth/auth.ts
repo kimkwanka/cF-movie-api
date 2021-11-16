@@ -4,13 +4,13 @@ import passport from 'passport';
 
 import initStrategies from './passportStrategies';
 
-import { IUserDocument } from '../users/usersModel';
+import { TUserDocument } from '../users/usersModel';
 
 const authRouter = express.Router();
 
 initStrategies();
 
-const generateJWTToken = (user: Partial<IUserDocument>) =>
+const generateJWTToken = (user: Partial<TUserDocument>) =>
   jwt.sign(user, process.env.JWT_SECRET as jwt.Secret, {
     subject: user.username,
     expiresIn: '7d',
@@ -30,7 +30,7 @@ const promisifiedAuthenticate = (req: Request, res: Response) =>
 authRouter.post('/login', async (req, res) => {
   try {
     const { user, info } = (await promisifiedAuthenticate(req, res)) as {
-      user: IUserDocument;
+      user: TUserDocument;
       info: { message: string };
     };
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { IUserDocument } from './usersModel';
+import { TUserDocument } from './usersModel';
 
 import usersService from './usersService';
 
@@ -38,7 +38,7 @@ const updateUser = async (req: Request, res: Response) => {
     let { password } = req.body;
 
     if (!password) {
-      password = (req.user as Partial<IUserDocument>).password;
+      password = (req.user as Partial<TUserDocument>).password;
     }
 
     const requestBodyValidationErrors =

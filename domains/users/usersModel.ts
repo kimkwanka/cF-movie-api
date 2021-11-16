@@ -1,26 +1,23 @@
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 
+import { User } from '../graphql/types';
+
 mongoose.connect(process.env.MONGODB_URI || '', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-export interface IUserDocument extends mongoose.Document {
-  _id: string;
-  birthday: string;
-  email: string;
-  favoriteMovies: string[];
-  password: string;
-  username: string;
-  validatePassword(password: string): boolean;
-}
+export type TUserDocument = mongoose.Document &
+  User & {
+    validatePassword(password: string): boolean;
+  };
 
-export interface IUserModel extends mongoose.Model<IUserDocument> {
+export interface IUserModel extends mongoose.Model<TUserDocument> {
   hashPassword(password: string): string;
 }
 
-const userSchema = new mongoose.Schema<IUserDocument>({
+const userSchema = new mongoose.Schema<TUserDocument>({
   _id: { type: mongoose.Schema.Types.ObjectId },
   birthday: Date,
   email: { type: String, required: true },
@@ -38,4 +35,4 @@ userSchema.methods.validatePassword = async function validatePassword(
   return bcrypt.compare(password, this.password);
 };
 
-export default mongoose.model<IUserDocument, IUserModel>('User', userSchema);
+export default mongoose.model<TUserDocument, IUserModel>('User', userSchema);

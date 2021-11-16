@@ -54,6 +54,7 @@ export type Query = {
   discover?: Maybe<Array<Maybe<TmdbMovieSimple>>>;
   movie?: Maybe<TmdbMovieDetailed>;
   movies?: Maybe<Array<Maybe<Movie>>>;
+  users?: Maybe<Array<Maybe<User>>>;
 };
 
 export type QueryMovieArgs = {
@@ -135,6 +136,16 @@ export type TmdbProductionSpokenLanguaeges = {
   __typename?: 'TMDBProductionSpokenLanguaeges';
   iso_639_1: Scalars['String'];
   name: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  _id?: Maybe<Scalars['ID']>;
+  birthday: Scalars['String'];
+  email: Scalars['String'];
+  favoriteMovies: Array<Maybe<Scalars['String']>>;
+  password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -248,6 +259,7 @@ export type ResolversTypes = {
   Director: ResolverTypeWrapper<Director>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Genre: ResolverTypeWrapper<Genre>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Movie: ResolverTypeWrapper<Movie>;
   Query: ResolverTypeWrapper<{}>;
@@ -258,6 +270,7 @@ export type ResolversTypes = {
   TMDBProductionCompany: ResolverTypeWrapper<TmdbProductionCompany>;
   TMDBProductionCountry: ResolverTypeWrapper<TmdbProductionCountry>;
   TMDBProductionSpokenLanguaeges: ResolverTypeWrapper<TmdbProductionSpokenLanguaeges>;
+  User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -266,6 +279,7 @@ export type ResolversParentTypes = {
   Director: Director;
   Float: Scalars['Float'];
   Genre: Genre;
+  ID: Scalars['ID'];
   Int: Scalars['Int'];
   Movie: Movie;
   Query: {};
@@ -276,6 +290,7 @@ export type ResolversParentTypes = {
   TMDBProductionCompany: TmdbProductionCompany;
   TMDBProductionCountry: TmdbProductionCountry;
   TMDBProductionSpokenLanguaeges: TmdbProductionSpokenLanguaeges;
+  User: User;
 };
 
 export type DirectorResolvers<
@@ -330,6 +345,11 @@ export type QueryResolvers<
   >;
   movies?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['Movie']>>>,
+    ParentType,
+    ContextType
+  >;
+  users?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['User']>>>,
     ParentType,
     ContextType
   >;
@@ -486,6 +506,23 @@ export type TmdbProductionSpokenLanguaegesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User'],
+> = {
+  _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  birthday?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  favoriteMovies?: Resolver<
+    Array<Maybe<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >;
+  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Director?: DirectorResolvers<ContextType>;
   Genre?: GenreResolvers<ContextType>;
@@ -497,4 +534,5 @@ export type Resolvers<ContextType = any> = {
   TMDBProductionCompany?: TmdbProductionCompanyResolvers<ContextType>;
   TMDBProductionCountry?: TmdbProductionCountryResolvers<ContextType>;
   TMDBProductionSpokenLanguaeges?: TmdbProductionSpokenLanguaegesResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
