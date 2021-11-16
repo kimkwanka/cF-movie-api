@@ -2,7 +2,6 @@ import fetch from 'node-fetch';
 
 import { Resolvers } from './types';
 
-import moviesService from '../movies/moviesService';
 import usersService from '../users/usersService';
 
 const TMDB_BASE_API_URL = 'https://api.themoviedb.org/3';
@@ -23,10 +22,6 @@ const authorizedFetch = async (apiEndpoint: string) => {
 
 const resolvers: Resolvers = {
   Query: {
-    movies: async () => {
-      const movies = await moviesService.findAllMovies();
-      return movies;
-    },
     discover: async (
       parent,
       args,
