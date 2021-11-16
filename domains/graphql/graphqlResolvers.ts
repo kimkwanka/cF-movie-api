@@ -42,7 +42,9 @@ const resolvers: Resolvers = {
 
       return (await authorizedFetch('/discover/movie')).results;
     },
+
     movie: async (_, { id }) => authorizedFetch(`/movie/${id}`),
+
     users: async () => {
       const users = await usersService.findAllUsers();
       return users;
@@ -50,107 +52,57 @@ const resolvers: Resolvers = {
   },
   Mutation: {
     registerUser: async (_, { newUserData }) => {
-      try {
-        const userOrErrorMsg = (await usersService.addUser(newUserData)).body;
-
-        if (typeof userOrErrorMsg === 'string') {
-          return { message: userOrErrorMsg };
-        }
-
-        return userOrErrorMsg;
-      } catch (error) {
-        console.error(error);
-        return { message: error } as Error;
-      }
+      const { statusCode, data, errors } = await usersService.addUser(
+        newUserData,
+      );
+      return { statusCode, user: data, errors };
     },
+
     updateUser: async (_, { _id, newUserData }) => {
-      try {
-        const userOrErrorMsg = (await usersService.updateUser(_id, newUserData))
-          .body;
-
-        if (typeof userOrErrorMsg === 'string') {
-          return { message: userOrErrorMsg };
-        }
-
-        return userOrErrorMsg;
-      } catch (error) {
-        console.error(error);
-        return { message: error } as Error;
-      }
+      const { statusCode, data, errors } = await usersService.updateUser(
+        _id,
+        newUserData,
+      );
+      return { statusCode, user: data, errors };
     },
+
     deleteUser: async (_, { _id }) => {
-      try {
-        const userOrErrorMsg = (await usersService.deleteUser(_id)).body;
-
-        if (typeof userOrErrorMsg === 'string') {
-          return { message: userOrErrorMsg };
-        }
-
-        return userOrErrorMsg;
-      } catch (error) {
-        console.error(error);
-        return { message: error } as Error;
-      }
+      const { statusCode, data, errors } = await usersService.deleteUser(_id);
+      return { statusCode, user: data, errors };
     },
+
     addFavoriteMovieToUser: async (_, { _id, movieId }) => {
-      try {
-        const userOrErrorMsg = (
-          await usersService.addFavoriteMovieToUser(_id, movieId)
-        ).body;
-
-        if (typeof userOrErrorMsg === 'string') {
-          return { message: userOrErrorMsg };
-        }
-
-        return userOrErrorMsg;
-      } catch (error) {
-        console.error(error);
-        return { message: error } as Error;
-      }
+      const { statusCode, data, errors } =
+        await usersService.addFavoriteMovieToUser(_id, movieId);
+      return { statusCode, user: data, errors };
     },
+
     removeFavoriteMovieFromUser: async (_, { _id, movieId }) => {
-      try {
-        const userOrErrorMsg = (
-          await usersService.removeFavoriteMovieFromUser(_id, movieId)
-        ).body;
-
-        if (typeof userOrErrorMsg === 'string') {
-          return { message: userOrErrorMsg };
-        }
-
-        return userOrErrorMsg;
-      } catch (error) {
-        console.error(error);
-        return { message: error } as Error;
-      }
+      const { statusCode, data, errors } =
+        await usersService.removeFavoriteMovieFromUser(_id, movieId);
+      return { statusCode, user: data, errors };
     },
+
     loginUser: async (_, { username, password }) => {
       try {
-        const userOrErrorMsg = await usersService.loginUser({
+        const { statusCode, data, errors } = await usersService.loginUser({
           username,
           password,
         });
 
-        if ((userOrErrorMsg as Error).message) {
-          return userOrErrorMsg as Error;
-        }
+        const token = generateJWTToken((data as TUserDocument).toJSON());
 
-        const token = generateJWTToken(
-          (userOrErrorMsg as TUserDocument).toJSON(),
-        );
-
-        return { user: userOrErrorMsg, token } as AuthPayload;
+        return { statusCode, user: data, token, errors } as AuthPayload;
       } catch (err) {
-        console.error(err);
-        return { message: err } as Error;
+        const errorMessage = err instanceof Error ? err.message : err;
+
+        console.error(errorMessage);
+        return {
+          data: null,
+          errors: [{ message: errorMessage as string }],
+        };
       }
     },
-  },
-  UserOrError: {
-    __resolveType: (obj) => ((obj as Error).message ? 'Error' : 'User'),
-  },
-  AuthPayloadOrError: {
-    __resolveType: (obj) => ((obj as Error).message ? 'Error' : 'AuthPayload'),
   },
 };
 

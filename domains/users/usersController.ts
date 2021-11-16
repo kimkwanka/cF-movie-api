@@ -4,6 +4,28 @@ import { TUserDocument } from './usersModel';
 
 import usersService from './usersService';
 
+const getOperationResponse = async (
+  res: Response,
+  operation: () => Promise<{
+    statusCode: number;
+    data: object | null;
+    errors: Array<{ message: string }>;
+  }>,
+) => {
+  try {
+    const { statusCode, data, errors } = await operation();
+
+    return res.status(statusCode).send({ data, errors });
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+    return res
+      .status(500)
+      .send({ data: null, errors: [{ message: errorMessage as string }] });
+  }
+};
+
 const addUser = async (req: Request, res: Response) => {
   try {
     const { username, password, email, birthday } = req.body;
@@ -14,105 +36,67 @@ const addUser = async (req: Request, res: Response) => {
     if (!requestBodyValidationErrors.isEmpty()) {
       return res
         .status(422)
-        .json({ errors: requestBodyValidationErrors.array() });
+        .send({ data: null, errors: requestBodyValidationErrors.array() });
     }
 
-    const addUserResponse = await usersService.addUser({
-      username,
-      password,
-      email,
-      birthday,
-    });
+    return await getOperationResponse(res, async () =>
+      usersService.addUser({
+        username,
+        password,
+        email,
+        birthday,
+      }),
+    );
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
 
-    return res.status(addUserResponse.statusCode).send(addUserResponse.body);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send(`Error: ${error}`);
+    console.error(errorMessage);
+    return res
+      .status(500)
+      .send({ data: null, errors: [{ message: errorMessage as string }] });
   }
 };
 
 const updateUser = async (req: Request, res: Response) => {
-  try {
-    const { username, email, birthday } = req.body;
+  const { username, email, birthday } = req.body;
+  let { password } = req.body;
 
-    let { password } = req.body;
+  const { userId } = req.params;
 
-    if (!password) {
-      password = (req.user as Partial<TUserDocument>).password;
-    }
+  if (!password) {
+    password = (req.user as Partial<TUserDocument>).password;
+  }
 
-    const requestBodyValidationErrors =
-      await usersService.validateUpdateUserRequestBody(req);
-
-    if (!requestBodyValidationErrors.isEmpty()) {
-      return res
-        .status(422)
-        .json({ errors: requestBodyValidationErrors.array() });
-    }
-
-    const { userId } = req.params;
-
-    const updateUserResponse = await usersService.updateUser(userId, {
+  return getOperationResponse(res, async () =>
+    usersService.updateUser(userId, {
       username,
       password,
       email,
       birthday,
-    });
-
-    return res
-      .status(updateUserResponse.statusCode)
-      .send(updateUserResponse.body);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send(`Error: ${error}`);
-  }
+    }),
+  );
 };
 
 const deleteUser = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
+  const { userId } = req.params;
 
-    const deleteUserResponse = await usersService.deleteUser(userId);
-
-    return res
-      .status(deleteUserResponse.statusCode)
-      .send(deleteUserResponse.body);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send(`Error: ${error}`);
-  }
+  return getOperationResponse(res, async () => usersService.deleteUser(userId));
 };
 
 const addFavoriteMovieToUser = async (req: Request, res: Response) => {
-  try {
-    const { userId, movieId } = req.params;
+  const { userId, movieId } = req.params;
 
-    const addFavoriteMovieToUserResponse =
-      await usersService.addFavoriteMovieToUser(userId, movieId);
-
-    return res
-      .status(addFavoriteMovieToUserResponse.statusCode)
-      .send(addFavoriteMovieToUserResponse.body);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send(`Error: ${error}`);
-  }
+  return getOperationResponse(res, async () =>
+    usersService.addFavoriteMovieToUser(userId, movieId),
+  );
 };
 
 const removeFavoriteMovieFromUser = async (req: Request, res: Response) => {
-  try {
-    const { userId, movieId } = req.params;
+  const { userId, movieId } = req.params;
 
-    const removeFavoriteMovieFromUserResponse =
-      await usersService.removeFavoriteMovieFromUser(userId, movieId);
-
-    return res
-      .status(removeFavoriteMovieFromUserResponse.statusCode)
-      .send(removeFavoriteMovieFromUserResponse.body);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send(`Error: ${error}`);
-  }
+  return getOperationResponse(res, async () =>
+    usersService.removeFavoriteMovieFromUser(userId, movieId),
+  );
 };
 
 export default {

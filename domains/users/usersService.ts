@@ -51,19 +51,31 @@ const loginUser = async ({
 }) => {
   try {
     const user = await Users.findOne({ username });
-    if (!user) {
-      return { message: 'Incorrect username.' };
+
+    const passwordMatch = user?.validatePassword(password);
+
+    if (!user || !passwordMatch) {
+      return {
+        statusCode: 400,
+        data: null,
+        errors: [{ message: 'Invalid credentials.' }],
+      };
     }
 
-    const passwordMatch = await user.validatePassword(password);
-    if (!passwordMatch) {
-      return { message: 'Incorrect password.' };
-    }
-
-    return user;
+    return {
+      statusCode: 200,
+      data: user,
+      errors: [],
+    };
   } catch (err) {
-    console.error(err);
-    return { message: err as string };
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+    return {
+      statusCode: 500,
+      data: null,
+      errors: [{ message: errorMessage as string }],
+    };
   }
 };
 
@@ -74,14 +86,24 @@ const addUser = async ({
   birthday,
 }: Partial<TUserDocument>) => {
   try {
+    const errors: Array<{ message: string }> = [];
+
     const userWithUsername = await Users.findOne({ username });
     if (userWithUsername) {
-      return { statusCode: 400, body: `${username} already exists.` };
+      errors.push({ message: `'${username}' is already taken.` });
     }
 
     const userWithEmail = await Users.findOne({ email });
     if (userWithEmail) {
-      return { statusCode: 400, body: `${email} already exists.` };
+      errors.push({ message: `'${email}' is already taken.` });
+    }
+
+    if (errors.length) {
+      return {
+        statusCode: 400,
+        data: null,
+        errors,
+      };
     }
 
     const hashedPassword = Users.hashPassword(password || '');
@@ -94,10 +116,20 @@ const addUser = async ({
       birthday,
     });
 
-    return { statusCode: 201, body: newUser };
-  } catch (e) {
-    console.error(e);
-    return { statusCode: 500, body: `Error: ${e}` };
+    return {
+      statusCode: 201,
+      data: newUser,
+      errors: [],
+    };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+    return {
+      statusCode: 500,
+      data: null,
+      errors: [{ message: errorMessage as string }],
+    };
   }
 };
 
@@ -106,12 +138,15 @@ const updateUser = async (
   { username, password, email, birthday }: Partial<TUserDocument>,
 ) => {
   try {
+    const errors: Array<{ message: string }> = [];
+
     const userToUpdate = await Users.findOne({ _id: userId });
 
     if (!userToUpdate) {
       return {
         statusCode: 404,
-        body: `User with id: ${userId} doesn't exist.`,
+        data: null,
+        errors: [{ message: `User with id: '${userId}' doesn't exist.` }],
       };
     }
 
@@ -121,7 +156,7 @@ const updateUser = async (
       // We need to cast to string or else equality check will never be true
       // (_id is an object for some reason, whereas userId is a regular string)
       if (IdOfUserWithUsername !== userId) {
-        return { statusCode: 400, body: `${username} already exists.` };
+        errors.push({ message: `'${username}' is already taken.` });
       }
     }
 
@@ -130,8 +165,16 @@ const updateUser = async (
       const IdOfUserWithEmail = userWithEmail._id.toString();
 
       if (IdOfUserWithEmail !== userId) {
-        return { statusCode: 400, body: `${email} already exists.` };
+        errors.push({ message: `'${email}' is already taken.` });
       }
+    }
+
+    if (errors.length) {
+      return {
+        statusCode: 400,
+        data: null,
+        errors,
+      };
     }
 
     userToUpdate.username = username || '';
@@ -144,10 +187,20 @@ const updateUser = async (
 
     await userToUpdate.save();
 
-    return { statusCode: 200, body: userToUpdate };
-  } catch (e) {
-    console.error(e);
-    return { statusCode: 500, body: `Error: ${e}` };
+    return {
+      statusCode: 200,
+      data: userToUpdate,
+      errors,
+    };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+    return {
+      statusCode: 500,
+      data: null,
+      errors: [{ message: errorMessage as string }],
+    };
   }
 };
 
@@ -158,28 +211,38 @@ const deleteUser = async (userId: string) => {
     if (!userToDelete) {
       return {
         statusCode: 404,
-        body: `User with id: ${userId} doesn't exist.`,
+        data: null,
+        errors: [{ message: `User with id: '${userId}' doesn't exist.` }],
       };
     }
 
     return {
       statusCode: 200,
-      body: userToDelete,
+      data: userToDelete,
+      errors: [],
     };
-  } catch (e) {
-    console.error(e);
-    return { statusCode: 500, body: `Error: ${e}` };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+    return {
+      statusCode: 500,
+      data: null,
+      errors: [{ message: errorMessage as string }],
+    };
   }
 };
 
 const addFavoriteMovieToUser = async (userId: string, movieId: string) => {
   try {
+    const errors: Array<{ message: string }> = [];
     const userToUpdate = await Users.findOne({ _id: userId });
 
     if (!userToUpdate) {
       return {
         statusCode: 404,
-        body: `User with id: ${userId} doesn't exist.`,
+        data: null,
+        errors: [{ message: `User with id: ${userId} doesn't exist.` }],
       };
     }
 
@@ -189,16 +252,20 @@ const addFavoriteMovieToUser = async (userId: string, movieId: string) => {
     const movieWithIdExists = movieFoundById !== null;
 
     if (movieIdAlreadyInFavorites) {
-      return {
-        statusCode: 400,
-        body: `Movie with id: ${movieId} is already a favorite.`,
-      };
+      errors.push({
+        message: `Movie with id: ${movieId} is already a favorite.`,
+      });
     }
 
     if (!movieWithIdExists) {
+      errors.push({ message: `Movie with id: ${movieId} doesn't exist.` });
+    }
+
+    if (errors.length) {
       return {
-        statusCode: 404,
-        body: `Movie with id: ${movieId} doesn't exist.`,
+        statusCode: 400,
+        data: null,
+        errors,
       };
     }
 
@@ -207,11 +274,18 @@ const addFavoriteMovieToUser = async (userId: string, movieId: string) => {
 
     return {
       statusCode: 200,
-      body: userToUpdate,
+      data: userToUpdate,
+      errors: [],
     };
-  } catch (e) {
-    console.error(e);
-    return { statusCode: 500, body: `Error: ${e}` };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+    return {
+      statusCode: 500,
+      data: null,
+      errors: [{ message: errorMessage as string }],
+    };
   }
 };
 
@@ -222,7 +296,8 @@ const removeFavoriteMovieFromUser = async (userId: string, movieId: string) => {
     if (!userToUpdate) {
       return {
         statusCode: 404,
-        body: `User with id: ${userId} doesn't exist.`,
+        data: null,
+        errors: [{ message: `User with id: ${userId} doesn't exist.` }],
       };
     }
 
@@ -232,7 +307,12 @@ const removeFavoriteMovieFromUser = async (userId: string, movieId: string) => {
     if (!movieIdExistsInFavorites) {
       return {
         statusCode: 400,
-        body: `Movie with id: ${movieId} wasn't a favorite to begin with.`,
+        data: null,
+        errors: [
+          {
+            message: `Movie with id: ${movieId} wasn't a favorite to begin with.`,
+          },
+        ],
       };
     }
 
@@ -241,11 +321,18 @@ const removeFavoriteMovieFromUser = async (userId: string, movieId: string) => {
 
     return {
       statusCode: 200,
-      body: userToUpdate,
+      data: userToUpdate,
+      errors: [],
     };
-  } catch (e) {
-    console.error(e);
-    return { statusCode: 500, body: `Error: ${e}` };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+    return {
+      statusCode: 500,
+      data: null,
+      errors: [{ message: errorMessage as string }],
+    };
   }
 };
 

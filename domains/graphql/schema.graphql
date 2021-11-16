@@ -15,19 +15,22 @@
     username: String!
   }
 
+  type Error {
+    message: String!    
+  }
+
   type AuthPayload {
     token: String
+    statusCode: Int
     user: User
+    errors: [Error]!
   }
 
-  interface Error {
-    message: String!
-    statusCode: String
+  type UserPayload {
+    statusCode: Int
+    user: User
+    errors: [Error]!
   }
-
-  union UserOrError = User | Error
-
-  union AuthPayloadOrError = AuthPayload | Error
 
   type Genre {
     name: String!
@@ -131,10 +134,10 @@
   }
 
   type Mutation {
-    registerUser(newUserData: UserInput!): UserOrError
-    loginUser(username: String!, password: String!): AuthPayloadOrError
-    updateUser(_id: ID!, newUserData: UserInput!): UserOrError
-    deleteUser(_id: ID!): UserOrError
-    addFavoriteMovieToUser(_id: ID!, movieId: ID!): UserOrError
-    removeFavoriteMovieFromUser(_id: ID!, movieId: ID!): UserOrError
+    registerUser(newUserData: UserInput!): UserPayload
+    loginUser(username: String!, password: String!): AuthPayload
+    updateUser(_id: ID!, newUserData: UserInput!): UserPayload
+    deleteUser(_id: ID!): UserPayload
+    addFavoriteMovieToUser(_id: ID!, movieId: ID!): UserPayload
+    removeFavoriteMovieFromUser(_id: ID!, movieId: ID!): UserPayload
   }

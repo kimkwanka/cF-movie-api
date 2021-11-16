@@ -16,11 +16,11 @@ export type Scalars = {
 
 export type AuthPayload = {
   __typename?: 'AuthPayload';
+  errors: Array<Maybe<Error>>;
+  statusCode?: Maybe<Scalars['Int']>;
   token?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
 };
-
-export type AuthPayloadOrError = AuthPayload | Error;
 
 export type Director = {
   __typename?: 'Director';
@@ -33,7 +33,6 @@ export type Director = {
 export type Error = {
   __typename?: 'Error';
   message: Scalars['String'];
-  statusCode?: Maybe<Scalars['String']>;
 };
 
 export type Genre = {
@@ -56,12 +55,12 @@ export type Movie = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  addFavoriteMovieToUser?: Maybe<UserOrError>;
-  deleteUser?: Maybe<UserOrError>;
-  loginUser?: Maybe<AuthPayloadOrError>;
-  registerUser?: Maybe<UserOrError>;
-  removeFavoriteMovieFromUser?: Maybe<UserOrError>;
-  updateUser?: Maybe<UserOrError>;
+  addFavoriteMovieToUser?: Maybe<UserPayload>;
+  deleteUser?: Maybe<UserPayload>;
+  loginUser?: Maybe<AuthPayload>;
+  registerUser?: Maybe<UserPayload>;
+  removeFavoriteMovieFromUser?: Maybe<UserPayload>;
+  updateUser?: Maybe<UserPayload>;
 };
 
 
@@ -96,12 +95,6 @@ export type MutationRemoveFavoriteMovieFromUserArgs = {
 export type MutationUpdateUserArgs = {
   _id: Scalars['ID'];
   newUserData: UserInput;
-};
-
-export type Ok = {
-  __typename?: 'OK';
-  message: Scalars['String'];
-  statusCode?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -212,7 +205,12 @@ export type UserInput = {
   username: Scalars['String'];
 };
 
-export type UserOrError = Error | User;
+export type UserPayload = {
+  __typename?: 'UserPayload';
+  errors: Array<Maybe<Error>>;
+  statusCode?: Maybe<Scalars['Int']>;
+  user?: Maybe<User>;
+};
 
 
 
@@ -284,7 +282,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
-  AuthPayloadOrError: ResolversTypes['AuthPayload'] | ResolversTypes['Error'];
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Director: ResolverTypeWrapper<Director>;
   Error: ResolverTypeWrapper<Error>;
@@ -294,7 +291,6 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Movie: ResolverTypeWrapper<Movie>;
   Mutation: ResolverTypeWrapper<{}>;
-  OK: ResolverTypeWrapper<Ok>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   TMDBConfiguration: ResolverTypeWrapper<TmdbConfiguration>;
@@ -305,13 +301,12 @@ export type ResolversTypes = {
   TMDBProductionSpokenLanguaeges: ResolverTypeWrapper<TmdbProductionSpokenLanguaeges>;
   User: ResolverTypeWrapper<User>;
   UserInput: UserInput;
-  UserOrError: ResolversTypes['Error'] | ResolversTypes['User'];
+  UserPayload: ResolverTypeWrapper<UserPayload>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   AuthPayload: AuthPayload;
-  AuthPayloadOrError: ResolversParentTypes['AuthPayload'] | ResolversParentTypes['Error'];
   Boolean: Scalars['Boolean'];
   Director: Director;
   Error: Error;
@@ -321,7 +316,6 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   Movie: Movie;
   Mutation: {};
-  OK: Ok;
   Query: {};
   String: Scalars['String'];
   TMDBConfiguration: TmdbConfiguration;
@@ -332,17 +326,15 @@ export type ResolversParentTypes = {
   TMDBProductionSpokenLanguaeges: TmdbProductionSpokenLanguaeges;
   User: User;
   UserInput: UserInput;
-  UserOrError: ResolversParentTypes['Error'] | ResolversParentTypes['User'];
+  UserPayload: UserPayload;
 };
 
 export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
+  errors?: Resolver<Array<Maybe<ResolversTypes['Error']>>, ParentType, ContextType>;
+  statusCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type AuthPayloadOrErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayloadOrError'] = ResolversParentTypes['AuthPayloadOrError']> = {
-  __resolveType: TypeResolveFn<'AuthPayload' | 'Error', ParentType, ContextType>;
 };
 
 export type DirectorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Director'] = ResolversParentTypes['Director']> = {
@@ -355,7 +347,6 @@ export type DirectorResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type ErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  statusCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -378,18 +369,12 @@ export type MovieResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addFavoriteMovieToUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationAddFavoriteMovieToUserArgs, '_id' | 'movieId'>>;
-  deleteUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, '_id'>>;
-  loginUser?: Resolver<Maybe<ResolversTypes['AuthPayloadOrError']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'password' | 'username'>>;
-  registerUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'newUserData'>>;
-  removeFavoriteMovieFromUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationRemoveFavoriteMovieFromUserArgs, '_id' | 'movieId'>>;
-  updateUser?: Resolver<Maybe<ResolversTypes['UserOrError']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, '_id' | 'newUserData'>>;
-};
-
-export type OkResolvers<ContextType = any, ParentType extends ResolversParentTypes['OK'] = ResolversParentTypes['OK']> = {
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  statusCode?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  addFavoriteMovieToUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationAddFavoriteMovieToUserArgs, '_id' | 'movieId'>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, '_id'>>;
+  loginUser?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'password' | 'username'>>;
+  registerUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'newUserData'>>;
+  removeFavoriteMovieFromUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationRemoveFavoriteMovieFromUserArgs, '_id' | 'movieId'>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, '_id' | 'newUserData'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -486,19 +471,20 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserOrErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserOrError'] = ResolversParentTypes['UserOrError']> = {
-  __resolveType: TypeResolveFn<'Error' | 'User', ParentType, ContextType>;
+export type UserPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserPayload'] = ResolversParentTypes['UserPayload']> = {
+  errors?: Resolver<Array<Maybe<ResolversTypes['Error']>>, ParentType, ContextType>;
+  statusCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
-  AuthPayloadOrError?: AuthPayloadOrErrorResolvers<ContextType>;
   Director?: DirectorResolvers<ContextType>;
   Error?: ErrorResolvers<ContextType>;
   Genre?: GenreResolvers<ContextType>;
   Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  OK?: OkResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   TMDBConfiguration?: TmdbConfigurationResolvers<ContextType>;
   TMDBMovieDetailed?: TmdbMovieDetailedResolvers<ContextType>;
@@ -507,6 +493,6 @@ export type Resolvers<ContextType = any> = {
   TMDBProductionCountry?: TmdbProductionCountryResolvers<ContextType>;
   TMDBProductionSpokenLanguaeges?: TmdbProductionSpokenLanguaegesResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
-  UserOrError?: UserOrErrorResolvers<ContextType>;
+  UserPayload?: UserPayloadResolvers<ContextType>;
 };
 
