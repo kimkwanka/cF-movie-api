@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 
-import { TUserDocument } from './usersModel';
-
 import usersService from './usersService';
 
 const getOperationResponse = async (
@@ -27,45 +25,21 @@ const getOperationResponse = async (
 };
 
 const addUser = async (req: Request, res: Response) => {
-  try {
-    const { username, password, email, birthday } = req.body;
-
-    const requestBodyValidationErrors =
-      await usersService.validateAddUserRequestBody(req);
-
-    if (!requestBodyValidationErrors.isEmpty()) {
-      return res
-        .status(422)
-        .send({ data: null, errors: requestBodyValidationErrors.array() });
-    }
-
-    return await getOperationResponse(res, async () =>
-      usersService.addUser({
-        username,
-        password,
-        email,
-        birthday,
-      }),
-    );
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : err;
-
-    console.error(errorMessage);
-    return res
-      .status(500)
-      .send({ data: null, errors: [{ message: errorMessage as string }] });
-  }
+  const { username, password, email, birthday } = req.body;
+  return getOperationResponse(res, async () =>
+    usersService.addUser({
+      username,
+      password,
+      email,
+      birthday,
+    }),
+  );
 };
 
 const updateUser = async (req: Request, res: Response) => {
-  const { username, email, birthday } = req.body;
-  let { password } = req.body;
-
   const { userId } = req.params;
 
-  if (!password) {
-    password = (req.user as Partial<TUserDocument>).password;
-  }
+  const { username, email, birthday, password } = req.body;
 
   return getOperationResponse(res, async () =>
     usersService.updateUser(userId, {

@@ -1,7 +1,6 @@
-import { Request } from 'express';
 import mongoose from 'mongoose';
 
-import { body, validationResult } from 'express-validator';
+import validator from 'validator';
 
 import Users, { TUserDocument } from './usersModel';
 
@@ -11,35 +10,41 @@ const findAllUsers = async () => Users.find({});
 
 const findById = async (id: string) => Users.findById(id);
 
-const validateAddUserRequestBody = async (req: Request) => {
-  await body('username', 'username needs to be at least 5 characters')
-    .isLength({ min: 5 })
-    .run(req);
-  await body(
-    'username',
-    'username must not contain non-alphanumeric characters',
-  )
-    .isAlphanumeric()
-    .run(req);
-  await body('password', 'password is required').not().isEmpty().run(req);
-  await body('email', 'email does not appear to be valid').isEmail().run(req);
+const validateUserData = (
+  {
+    username,
+    password,
+    email,
+  }: { username: string; password: string; email: string },
+  validatePassword: boolean,
+) => {
+  const validationErrors = [];
 
-  return validationResult(req);
-};
+  if (!validator.isAlphanumeric(username)) {
+    validationErrors.push({
+      message: 'Username must not contain non-alphanumeric characters.',
+    });
+  }
 
-const validateUpdateUserRequestBody = async (req: Request) => {
-  await body('username', 'username needs to be at least 5 characters')
-    .isLength({ min: 5 })
-    .run(req);
-  await body(
-    'username',
-    'username must not contain non-alphanumeric characters',
-  )
-    .isAlphanumeric()
-    .run(req);
-  await body('email', 'email does not appear to be valid').isEmail().run(req);
+  if (!validator.isLength(username, { min: 5 })) {
+    validationErrors.push({
+      message: 'Username must have at least 5 characters.',
+    });
+  }
 
-  return validationResult(req);
+  if (!validator.isEmail(email)) {
+    validationErrors.push({
+      message: 'Email does not appear to be valid.',
+    });
+  }
+
+  if (validatePassword && validator.isEmpty(password)) {
+    validationErrors.push({
+      message: 'Password must not be empty.',
+    });
+  }
+
+  return validationErrors;
 };
 
 const loginUser = async ({
@@ -84,9 +89,16 @@ const addUser = async ({
   password,
   email,
   birthday,
-}: Partial<TUserDocument>) => {
+}: Pick<TUserDocument, 'username' | 'password' | 'email' | 'birthday'>) => {
   try {
-    const errors: Array<{ message: string }> = [];
+    let errors: Array<{ message: string }> = [];
+
+    const validationErrors = validateUserData(
+      { username, password, email },
+      true,
+    );
+
+    errors = errors.concat(validationErrors);
 
     const userWithUsername = await Users.findOne({ username });
     if (userWithUsername) {
@@ -135,10 +147,15 @@ const addUser = async ({
 
 const updateUser = async (
   userId: string,
-  { username, password, email, birthday }: Partial<TUserDocument>,
+  {
+    username,
+    password,
+    email,
+    birthday,
+  }: Pick<TUserDocument, 'username' | 'password' | 'email' | 'birthday'>,
 ) => {
   try {
-    const errors: Array<{ message: string }> = [];
+    let errors: Array<{ message: string }> = [];
 
     const userToUpdate = await Users.findOne({ _id: userId });
 
@@ -149,6 +166,13 @@ const updateUser = async (
         errors: [{ message: `User with id: '${userId}' doesn't exist.` }],
       };
     }
+
+    const validationErrors = validateUserData(
+      { username, password, email },
+      false,
+    );
+
+    errors = errors.concat(validationErrors);
 
     const userWithUsername = await Users.findOne({ username });
     if (userWithUsername) {
@@ -337,8 +361,6 @@ const removeFavoriteMovieFromUser = async (userId: string, movieId: string) => {
 };
 
 export default {
-  validateAddUserRequestBody,
-  validateUpdateUserRequestBody,
   addUser,
   updateUser,
   deleteUser,
@@ -347,4 +369,5 @@ export default {
   findAllUsers,
   loginUser,
   findById,
+  validateUserData,
 };
