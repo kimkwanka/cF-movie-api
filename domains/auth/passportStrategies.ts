@@ -16,16 +16,16 @@ const initLocalStrategy = () => {
     },
     async (username, password, done) => {
       try {
-        const userOrErrorMsg = await usersService.loginUser({
+        const { data, errors } = await usersService.loginUser({
           username,
           password,
         });
 
-        if (typeof userOrErrorMsg === 'string') {
-          return done(null, false, { message: userOrErrorMsg });
+        if (errors.length) {
+          return done(null, false, errors[0]);
         }
 
-        return done(null, userOrErrorMsg);
+        return done(null, data);
       } catch (err) {
         console.error(err);
         return { message: err };
