@@ -4,7 +4,9 @@ import path from 'path';
 
 import { ApolloServer } from 'apollo-server-express';
 
-import resolvers from './graphqlResolvers';
+import resolvers from './resolvers';
+
+import { getAuthStatus, TAuthorizedRequest } from './utils';
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, 'schema.graphql'),
@@ -14,6 +16,13 @@ const typeDefs = fs.readFileSync(
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }: { req: TAuthorizedRequest }) => {
+    return {
+      req,
+      tmdbConfiguration: {},
+      authStatus: await getAuthStatus(req),
+    };
+  },
 });
 
 const graphqlRouter = express.Router();

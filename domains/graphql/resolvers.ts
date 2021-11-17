@@ -3,7 +3,11 @@ import { Resolvers } from './types';
 
 import usersService from '../users/usersService';
 
-import { authorizedFetch, generateJWTToken } from './utils';
+import {
+  authorizedFetch,
+  generateJWTToken,
+  authenticateOperation,
+} from './utils';
 
 const resolvers: Resolvers = {
   Query: {
@@ -36,28 +40,43 @@ const resolvers: Resolvers = {
       return { statusCode, user: data, errors };
     },
 
-    updateUser: async (_, { _id, newUserData }) => {
-      const { statusCode, data, errors } = await usersService.updateUser(
+    updateUser: async (_, { _id, newUserData }, { authStatus }) => {
+      const { statusCode, data, errors } = await authenticateOperation(
+        authStatus,
         _id,
-        newUserData,
+        async () => usersService.updateUser(_id, newUserData),
       );
       return { statusCode, user: data, errors };
     },
 
-    deleteUser: async (_, { _id }) => {
-      const { statusCode, data, errors } = await usersService.deleteUser(_id);
+    deleteUser: async (_, { _id }, { authStatus }) => {
+      const { statusCode, data, errors } = await authenticateOperation(
+        authStatus,
+        _id,
+        async () => usersService.deleteUser(_id),
+      );
       return { statusCode, user: data, errors };
     },
 
-    addFavoriteMovieToUser: async (_, { _id, movieId }) => {
-      const { statusCode, data, errors } =
-        await usersService.addFavoriteMovieToUser(_id, movieId);
+    addFavoriteMovieToUser: async (_, { _id, movieId }, { authStatus }) => {
+      const { statusCode, data, errors } = await authenticateOperation(
+        authStatus,
+        _id,
+        async () => usersService.addFavoriteMovieToUser(_id, movieId),
+      );
       return { statusCode, user: data, errors };
     },
 
-    removeFavoriteMovieFromUser: async (_, { _id, movieId }) => {
-      const { statusCode, data, errors } =
-        await usersService.removeFavoriteMovieFromUser(_id, movieId);
+    removeFavoriteMovieFromUser: async (
+      _,
+      { _id, movieId },
+      { authStatus },
+    ) => {
+      const { statusCode, data, errors } = await authenticateOperation(
+        authStatus,
+        _id,
+        async () => usersService.removeFavoriteMovieFromUser(_id, movieId),
+      );
       return { statusCode, user: data, errors };
     },
 
@@ -68,7 +87,9 @@ const resolvers: Resolvers = {
           password,
         });
 
-        const token = generateJWTToken((data as TUserDocument).toJSON());
+        const token = data
+          ? generateJWTToken((data as TUserDocument).toJSON())
+          : '';
 
         return { statusCode, user: data, token, errors };
       } catch (err) {
