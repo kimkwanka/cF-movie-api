@@ -52,7 +52,7 @@ const loginUser = async ({
   try {
     const user = await Users.findOne({ username });
 
-    const passwordMatch = user?.validatePassword(password);
+    const passwordMatch = await user?.validatePassword(password);
 
     if (!user || !passwordMatch) {
       return {
