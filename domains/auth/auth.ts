@@ -35,12 +35,12 @@ authRouter.post('/login', async (req, res) => {
     };
 
     if (!user) {
-      return res.status(400).send(info.message);
+      return res.status(400).send({ data: null, errors: [info] });
     }
 
     return req.login(user, { session: false }, (loginError) => {
       if (loginError) {
-        return res.status(500).send(loginError);
+        return res.status(500).send({ data: null, errors: [loginError] });
       }
       const token = generateJWTToken(user.toJSON());
       return res.json({ user, token });
@@ -49,7 +49,9 @@ authRouter.post('/login', async (req, res) => {
     const errorMessage = err instanceof Error ? err.message : err;
 
     console.error(errorMessage);
-    return res.status(500).send(errorMessage);
+    return res
+      .status(500)
+      .send({ data: null, errors: [{ message: errorMessage }] });
   }
 });
 
