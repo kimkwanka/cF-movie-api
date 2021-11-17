@@ -97,7 +97,9 @@ const resolvers: Resolvers = {
 
         console.error(errorMessage);
         return {
+          statusCode: 500,
           data: null,
+          token: '',
           errors: [{ message: errorMessage as string }],
         };
       }
