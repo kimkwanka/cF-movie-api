@@ -1,31 +1,9 @@
-import fetch from 'node-fetch';
-import jwt from 'jsonwebtoken';
 import { TUserDocument } from '../users/usersModel';
-import { Resolvers, User, AuthPayload, Error } from './types';
+import { Resolvers } from './types';
 
 import usersService from '../users/usersService';
 
-const TMDB_BASE_API_URL = 'https://api.themoviedb.org/3';
-
-const authorizedFetch = async (apiEndpoint: string) => {
-  try {
-    const response = await fetch(`${TMDB_BASE_API_URL}${apiEndpoint}`, {
-      headers: { Authorization: `Bearer ${process.env.TMDB_API_TOKEN}` },
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return undefined;
-  }
-};
-
-const generateJWTToken = (user: User) =>
-  jwt.sign(user, process.env.JWT_SECRET as jwt.Secret, {
-    subject: user.username,
-    expiresIn: '7d',
-    algorithm: 'HS256',
-  });
+import { authorizedFetch, generateJWTToken } from './utils';
 
 const resolvers: Resolvers = {
   Query: {
@@ -92,7 +70,7 @@ const resolvers: Resolvers = {
 
         const token = generateJWTToken((data as TUserDocument).toJSON());
 
-        return { statusCode, user: data, token, errors } as AuthPayload;
+        return { statusCode, user: data, token, errors };
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : err;
 
