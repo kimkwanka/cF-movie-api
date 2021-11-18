@@ -120,7 +120,7 @@ const addUser = async ({
       };
     }
 
-    const hashedPassword = Users.hashPassword(password || '');
+    const hashedPassword = await Users.hashPassword(password);
 
     const newUser = await Users.create({
       _id: new mongoose.Types.ObjectId(),
@@ -203,7 +203,7 @@ const updateUser = async (
     userToUpdate.birthday = birthday || '';
 
     if (password && password !== userToUpdate.password) {
-      userToUpdate.password = Users.hashPassword(password);
+      userToUpdate.password = await Users.hashPassword(password);
     }
 
     await userToUpdate.save();

@@ -15,7 +15,7 @@ export type TUserDocument = mongoose.Document &
   };
 
 export interface IUserModel extends mongoose.Model<TUserDocument> {
-  hashPassword(password: string): string;
+  hashPassword(password: string): Promise<string>;
 }
 
 const userSchema = new mongoose.Schema<TUserDocument>({
@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema<TUserDocument>({
   username: { type: String, required: true },
 });
 
-userSchema.statics.hashPassword = (password: string) =>
-  bcrypt.hashSync(password, 10);
+userSchema.statics.hashPassword = async (password: string) =>
+  bcrypt.hash(password, 10);
 
 userSchema.methods.validatePassword = async function validatePassword(
   password: string,
