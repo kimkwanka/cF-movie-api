@@ -17,30 +17,30 @@ const validateUserData = (
     username,
     password,
     email,
-  }: { username: string; password: string; email: string },
+  }: { username?: string; password?: string; email?: string },
   validatePassword: boolean,
 ) => {
   const validationErrors = [];
 
-  if (!validator.isAlphanumeric(username)) {
+  if (username && !validator.isAlphanumeric(username)) {
     validationErrors.push({
       message: 'Username must not contain non-alphanumeric characters.',
     });
   }
 
-  if (!validator.isLength(username, { min: 5 })) {
+  if (username && !validator.isLength(username, { min: 5 })) {
     validationErrors.push({
       message: 'Username must have at least 5 characters.',
     });
   }
 
-  if (!validator.isEmail(email)) {
+  if (email && !validator.isEmail(email)) {
     validationErrors.push({
       message: 'Email does not appear to be valid.',
     });
   }
 
-  if (validatePassword && validator.isEmpty(password)) {
+  if (password && validatePassword && validator.isEmpty(password)) {
     validationErrors.push({
       message: 'Password must not be empty.',
     });
@@ -120,12 +120,12 @@ const addUser = async ({
       };
     }
 
-    const hashedPassword = await Users.hashPassword(password);
+    const passwordHash = await Users.hashPassword(password);
 
     const newUser = await Users.create({
       _id: new mongoose.Types.ObjectId(),
       username,
-      password: hashedPassword,
+      passwordHash,
       email,
       birthday,
     });
@@ -149,7 +149,7 @@ const addUser = async ({
 
 const updateUser = async (
   userId: string,
-  { username, password, email, birthday }: Omit<UserInput, 'favoriteMovies'>,
+  { username, password, email, birthday }: Partial<UserInput>,
 ) => {
   try {
     let errors: Array<{ message: string }> = [];
@@ -198,12 +198,12 @@ const updateUser = async (
       };
     }
 
-    userToUpdate.username = username || '';
-    userToUpdate.email = email || '';
-    userToUpdate.birthday = birthday || '';
+    userToUpdate.username = username || userToUpdate.username;
+    userToUpdate.email = email || userToUpdate.email;
+    userToUpdate.birthday = birthday || userToUpdate.birthday;
 
-    if (password && password !== userToUpdate.password) {
-      userToUpdate.password = await Users.hashPassword(password);
+    if (password && !userToUpdate.validatePassword(password)) {
+      userToUpdate.passwordHash = await Users.hashPassword(password);
     }
 
     await userToUpdate.save();

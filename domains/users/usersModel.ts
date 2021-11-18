@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema<TUserDocument>({
   birthday: Date,
   email: { type: String, required: true },
   favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
-  password: { type: String, required: true },
+  passwordHash: { type: String, required: true },
   username: { type: String, required: true },
 });
 
@@ -33,7 +33,7 @@ userSchema.statics.hashPassword = async (password: string) =>
 userSchema.methods.validatePassword = async function validatePassword(
   password: string,
 ) {
-  return bcrypt.compare(password, this.password);
+  return bcrypt.compare(password, this.passwordHash);
 };
 
 export default mongoose.model<TUserDocument, IUserModel>('User', userSchema);

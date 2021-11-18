@@ -3,7 +3,7 @@
     birthday: String
     email: String!
     favoriteMovies: [String]!
-    password: String!
+    passwordHash: String!
     username: String!
   }
 

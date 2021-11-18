@@ -193,7 +193,7 @@ export type User = {
   birthday?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   favoriteMovies: Array<Maybe<Scalars['String']>>;
-  password: Scalars['String'];
+  passwordHash: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -466,7 +466,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   birthday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   favoriteMovies?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  passwordHash?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
