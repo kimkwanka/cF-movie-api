@@ -202,7 +202,7 @@ const updateUser = async (
     userToUpdate.email = email || userToUpdate.email;
     userToUpdate.birthday = birthday || userToUpdate.birthday;
 
-    if (password && !userToUpdate.validatePassword(password)) {
+    if (password && !(await userToUpdate.validatePassword(password))) {
       userToUpdate.passwordHash = await Users.hashPassword(password);
     }
 
