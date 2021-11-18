@@ -51,11 +51,12 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.11.0",
     "validator": "^13.7.0"
   },
   "scripts": {
-    "start": "nodemon -r dotenv/config --exec 'ts-node --transpile-only' index.ts",
-    "dev": "nodemon -r dotenv/config --watch './**/*.ts' --exec 'ts-node' index.ts",
+    "start": "nodemon -r dotenv/config -r tsconfig-paths/register --exec 'ts-node --transpile-only' index.ts",
+    "dev": "nodemon -r dotenv/config -r tsconfig-paths/register --watch './**/*.ts' --exec 'ts-node' index.ts",
     "lint": "npx eslint \"**/*.{ts,tsx}\"; npx tsc --noEmit",
     "docs": "jsdoc -c jsdoc.conf",
     "generate": "graphql-codegen"
