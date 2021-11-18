@@ -1,5 +1,7 @@
 import express from 'express';
-import passport from 'passport';
+
+import authController from '@auth/authController';
+
 import moviesController from './moviesController';
 
 const moviesRouter = express.Router();
@@ -17,7 +19,7 @@ const moviesRouter = express.Router();
  */
 moviesRouter.get(
   '/movies',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   moviesController.getAllMovies,
 );
 
@@ -36,7 +38,7 @@ moviesRouter.get(
  */
 moviesRouter.get(
   '/movies/:title',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   moviesController.getMovieByTitle,
 );
 
@@ -55,7 +57,7 @@ moviesRouter.get(
  */
 moviesRouter.get(
   '/genres/:name',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   moviesController.getGenreByName,
 );
 
@@ -74,7 +76,7 @@ moviesRouter.get(
  */
 moviesRouter.get(
   '/directors/:name',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   moviesController.getDirectorByName,
 );
 

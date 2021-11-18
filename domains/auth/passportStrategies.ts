@@ -21,14 +21,15 @@ const initLocalStrategy = () => {
           password,
         });
 
+        // On login errors, pass first error as info message
         if (errors.length) {
-          return done(null, false, errors[0]);
+          return done(null, null, errors[0]);
         }
 
         return done(null, data);
-      } catch (err) {
-        console.error(err);
-        return { message: err };
+      } catch (serverError) {
+        // Bubble up server errors
+        return done(serverError);
       }
     },
   );
@@ -42,14 +43,20 @@ const initJWTStrategy = () => {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     },
-    async (jwtPayload, done) => {
+    async ({ userId }, done) => {
       try {
-        const user = await usersService.findById(jwtPayload._id);
+        const user = await usersService.findById(userId);
+
+        if (!user) {
+          return done(null, null, {
+            message: `Unauthorized: User couldn't be found.`,
+          });
+        }
 
         return done(null, user);
-      } catch (err) {
-        console.error(err);
-        return done(err);
+      } catch (serverError) {
+        // Bubble up server errors
+        return done(serverError);
       }
     },
   );

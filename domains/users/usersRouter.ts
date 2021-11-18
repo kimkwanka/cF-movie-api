@@ -1,7 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
-import passport from 'passport';
 
-import { TUserDocument } from './usersModel';
+import authController from '@auth/authController';
+
+import { getTokenPayload } from '@utils/jwt';
 
 import usersController from './usersController';
 
@@ -15,10 +16,27 @@ const allowRequestOnlyWithSameUserId = (
   const requestUserId = req.params.userId;
   // We need to cast to string or else equality check will never be true
   // (_id is an object for some reason, whereas userId is a regular string)
-  const userId = (req.user as Partial<TUserDocument>)._id?.toString();
+
+  const token = req?.headers?.authorization?.slice?.(7);
+
+  if (!token) {
+    return res.status(400).send({
+      data: null,
+      errors: {
+        message: "Authentication Error: Access token couldn't be found.",
+      },
+    });
+  }
+
+  const { userId } = getTokenPayload(token);
 
   if (requestUserId !== userId) {
-    return res.status(401).send('Unauthorized request');
+    return res.status(401).send({
+      data: null,
+      errors: {
+        message: `Unauthorized: Not allowed to access user with id '${requestUserId}'`,
+      },
+    });
   }
 
   return next();
@@ -57,7 +75,7 @@ usersRouter.post('/users', usersController.addUser);
  */
 usersRouter.put(
   '/users/:userId',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   allowRequestOnlyWithSameUserId,
   usersController.updateUser,
 );
@@ -77,7 +95,7 @@ usersRouter.put(
  */
 usersRouter.delete(
   '/users/:userId',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   allowRequestOnlyWithSameUserId,
   usersController.deleteUser,
 );
@@ -99,7 +117,7 @@ usersRouter.delete(
  */
 usersRouter.post(
   '/users/:userId/movies/:movieId',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   allowRequestOnlyWithSameUserId,
   usersController.addFavoriteMovieToUser,
 );
@@ -121,7 +139,7 @@ usersRouter.post(
  */
 usersRouter.delete(
   '/users/:userId/movies/:movieId',
-  passport.authenticate('jwt', { session: false }),
+  authController.requireJWTAuth,
   allowRequestOnlyWithSameUserId,
   usersController.removeFavoriteMovieFromUser,
 );

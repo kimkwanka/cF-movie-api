@@ -6,11 +6,10 @@ import cors from 'cors';
 
 import ip from 'ip';
 
-import auth from './domains/auth/auth';
-
-import moviesRouter from './domains/movies/moviesRouter';
-import usersRouter from './domains/users/usersRouter';
-import graphqlRouter from './domains/graphql/graphqlRouter';
+import authRouter from '@auth/authRouter';
+import moviesRouter from '@movies/moviesRouter';
+import usersRouter from '@users/usersRouter';
+import graphqlRouter from '@graphql/graphqlRouter';
 
 const PORT = process.env.PORT || 8080;
 
@@ -28,7 +27,10 @@ const errorHandlerMiddleware = (
   next: NextFunction,
 ) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send({
+    data: null,
+    errors: [{ message: 'Server Error: Something broke!' }],
+  });
 };
 
 const initMiddlewareAndRoutes = (expressApp: Application) => {
@@ -41,8 +43,8 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   // Enable body-parser
   expressApp.use(express.json());
 
-  // Enable Authentication
-  expressApp.use(auth);
+  // Enable Authentication and Authorization for REST API routes
+  expressApp.use(authRouter);
 
   // Enable Logger
   expressApp.use(morgan('common'));
