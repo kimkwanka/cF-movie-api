@@ -48,7 +48,7 @@ export const getAuthStatus = async (req: TAuthorizedRequest) => {
         validToken: false,
         errors: [
           {
-            message: `User with id '${userId}' couldn't be found.`,
+            message: `Authentication Error: User with id '${userId}' couldn't be found.`,
           },
         ],
       };
