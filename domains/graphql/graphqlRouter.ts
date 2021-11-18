@@ -4,9 +4,9 @@ import path from 'path';
 
 import { ApolloServer } from 'apollo-server-express';
 
-import resolvers from './resolvers';
+import { getAuthStatus, TAuthorizedRequest } from '@utils/graphql';
 
-import { getAuthStatus, TAuthorizedRequest } from './utils';
+import resolvers from './resolvers';
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, 'schema.graphql'),

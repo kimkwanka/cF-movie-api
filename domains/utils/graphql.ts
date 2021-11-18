@@ -1,8 +1,7 @@
 import fetch from 'node-fetch';
-import jwt from 'jsonwebtoken';
+import { getTokenPayload } from '@utils/jwt';
 
-import { User } from './types';
-import usersService from '../users/usersService';
+import usersService from '@users/usersService';
 
 const TMDB_BASE_API_URL = 'https://api.themoviedb.org/3';
 
@@ -23,15 +22,6 @@ export const authorizedFetch = async (apiEndpoint: string) => {
   }
 };
 
-export const generateJWTToken = (user: User) =>
-  jwt.sign({ userId: user._id }, process.env.JWT_SECRET as jwt.Secret, {
-    subject: user.username,
-    expiresIn: '7d',
-    algorithm: 'HS256',
-  });
-
-type TJWTUserPayload = jwt.JwtPayload & { userId: string };
-
 export const getAuthStatus = async (req: TAuthorizedRequest) => {
   try {
     const token = req?.headers?.authorization?.slice?.(7);
@@ -48,10 +38,7 @@ export const getAuthStatus = async (req: TAuthorizedRequest) => {
       };
     }
 
-    const { userId } = jwt.verify(
-      token,
-      process.env.JWT_SECRET as jwt.Secret,
-    ) as TJWTUserPayload;
+    const { userId } = getTokenPayload(token);
 
     const user = await usersService.findById(userId);
 

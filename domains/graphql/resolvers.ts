@@ -1,13 +1,10 @@
-import { TUserDocument } from '../users/usersModel';
-import { Resolvers } from './types';
+import { Resolvers } from '@generated/types';
+
+import { authorizedFetch, authenticateOperation } from '@utils/graphql';
+import { generateToken } from '@utils/jwt';
 
 import usersService from '../users/usersService';
-
-import {
-  authorizedFetch,
-  generateJWTToken,
-  authenticateOperation,
-} from './utils';
+import { TUserDocument } from '../users/usersModel';
 
 const resolvers: Resolvers = {
   Query: {
@@ -88,7 +85,7 @@ const resolvers: Resolvers = {
         });
 
         const token = data
-          ? generateJWTToken((data as TUserDocument).toJSON())
+          ? generateToken((data as TUserDocument).toJSON())
           : '';
 
         return { statusCode, user: data, token, errors };

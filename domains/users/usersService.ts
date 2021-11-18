@@ -2,7 +2,9 @@ import mongoose from 'mongoose';
 
 import validator from 'validator';
 
-import Users, { TUserDocument } from './usersModel';
+import { UserInput } from '@generated/types';
+
+import Users from './usersModel';
 
 import Movies from '../movies/moviesModel';
 
@@ -89,7 +91,7 @@ const addUser = async ({
   password,
   email,
   birthday,
-}: Pick<TUserDocument, 'username' | 'password' | 'email' | 'birthday'>) => {
+}: Omit<UserInput, 'favoriteMovies'>) => {
   try {
     let errors: Array<{ message: string }> = [];
 
@@ -147,12 +149,7 @@ const addUser = async ({
 
 const updateUser = async (
   userId: string,
-  {
-    username,
-    password,
-    email,
-    birthday,
-  }: Pick<TUserDocument, 'username' | 'password' | 'email' | 'birthday'>,
+  { username, password, email, birthday }: Omit<UserInput, 'favoriteMovies'>,
 ) => {
   try {
     let errors: Array<{ message: string }> = [];

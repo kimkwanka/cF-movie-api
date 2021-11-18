@@ -18,6 +18,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": "./domains",
+    "paths": {
+      "@generated/*": ["_generated/*"],
+      "@auth/*": ["auth/*"],
+      "@graphql/*": ["graphql/*"],
+      "@movies/*": ["movies/*"],
+      "@users/*": ["users/*"],
+      "@utils/*": ["utils/*"],
+    },
   },
   "include": [
     "**/*.ts",
