@@ -43,7 +43,7 @@ const requireJWTAuth = (req: Request, res: Response, next: NextFunction) => {
     if (!user) {
       // If we have no user, we encountered a JWT Error such as 'no auth token'
 
-      return res.status(400).send({
+      return res.status(401).send({
         errors: [{ message: `JWT Error: ${info.message}` }],
         data: null,
       });
