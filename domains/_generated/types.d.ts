@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -12,13 +12,15 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
 };
 
 export type AuthPayload = {
   __typename?: 'AuthPayload';
   errors: Array<Maybe<Error>>;
-  statusCode?: Maybe<Scalars['Int']>;
-  token?: Maybe<Scalars['String']>;
+  jwtToken?: Maybe<Scalars['String']>;
+  refreshToken?: Maybe<RefreshToken>;
+  statusCode: Scalars['Int'];
   user?: Maybe<User>;
 };
 
@@ -108,6 +110,13 @@ export type Query = {
 
 export type QueryMovieArgs = {
   id: Scalars['Int'];
+};
+
+export type RefreshToken = {
+  __typename?: 'RefreshToken';
+  expiresAt: Scalars['Date'];
+  refreshToken: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type TmdbConfiguration = {
@@ -208,7 +217,7 @@ export type UserInput = {
 export type UserPayload = {
   __typename?: 'UserPayload';
   errors: Array<Maybe<Error>>;
-  statusCode?: Maybe<Scalars['Int']>;
+  statusCode: Scalars['Int'];
   user?: Maybe<User>;
 };
 
@@ -283,6 +292,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
   Director: ResolverTypeWrapper<Director>;
   Error: ResolverTypeWrapper<Error>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
@@ -292,6 +302,7 @@ export type ResolversTypes = {
   Movie: ResolverTypeWrapper<Movie>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  RefreshToken: ResolverTypeWrapper<RefreshToken>;
   String: ResolverTypeWrapper<Scalars['String']>;
   TMDBConfiguration: ResolverTypeWrapper<TmdbConfiguration>;
   TMDBMovieDetailed: ResolverTypeWrapper<TmdbMovieDetailed>;
@@ -308,6 +319,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AuthPayload: AuthPayload;
   Boolean: Scalars['Boolean'];
+  Date: Scalars['Date'];
   Director: Director;
   Error: Error;
   Float: Scalars['Float'];
@@ -317,6 +329,7 @@ export type ResolversParentTypes = {
   Movie: Movie;
   Mutation: {};
   Query: {};
+  RefreshToken: RefreshToken;
   String: Scalars['String'];
   TMDBConfiguration: TmdbConfiguration;
   TMDBMovieDetailed: TmdbMovieDetailed;
@@ -331,11 +344,16 @@ export type ResolversParentTypes = {
 
 export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
   errors?: Resolver<Array<Maybe<ResolversTypes['Error']>>, ParentType, ContextType>;
-  statusCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  jwtToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  refreshToken?: Resolver<Maybe<ResolversTypes['RefreshToken']>, ParentType, ContextType>;
+  statusCode?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
 
 export type DirectorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Director'] = ResolversParentTypes['Director']> = {
   bio?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -382,6 +400,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   movie?: Resolver<Maybe<ResolversTypes['TMDBMovieDetailed']>, ParentType, ContextType, RequireFields<QueryMovieArgs, 'id'>>;
   movies?: Resolver<Maybe<Array<Maybe<ResolversTypes['Movie']>>>, ParentType, ContextType>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+};
+
+export type RefreshTokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['RefreshToken'] = ResolversParentTypes['RefreshToken']> = {
+  expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TmdbConfigurationResolvers<ContextType = any, ParentType extends ResolversParentTypes['TMDBConfiguration'] = ResolversParentTypes['TMDBConfiguration']> = {
@@ -473,19 +498,21 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type UserPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserPayload'] = ResolversParentTypes['UserPayload']> = {
   errors?: Resolver<Array<Maybe<ResolversTypes['Error']>>, ParentType, ContextType>;
-  statusCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  statusCode?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
+  Date?: GraphQLScalarType;
   Director?: DirectorResolvers<ContextType>;
   Error?: ErrorResolvers<ContextType>;
   Genre?: GenreResolvers<ContextType>;
   Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  RefreshToken?: RefreshTokenResolvers<ContextType>;
   TMDBConfiguration?: TmdbConfigurationResolvers<ContextType>;
   TMDBMovieDetailed?: TmdbMovieDetailedResolvers<ContextType>;
   TMDBMovieSimple?: TmdbMovieSimpleResolvers<ContextType>;

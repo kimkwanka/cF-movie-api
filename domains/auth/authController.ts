@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
-import { generateToken } from '@utils/jwt';
+import { generateJWTToken, generateRefreshToken } from '@utils/jwt';
 import initStrategies from './passportStrategies';
 
 initStrategies();
@@ -27,9 +27,10 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    const token = generateToken(user.toJSON());
+    const jwtToken = generateJWTToken(user.toJSON());
+    const refreshToken = generateRefreshToken(user.toJSON());
 
-    return res.send({ user, token, errors: [] });
+    return res.send({ data: { user, jwtToken, refreshToken }, errors: [] });
   })(req, res);
 };
 

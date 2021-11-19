@@ -1,7 +1,7 @@
 import { Resolvers } from '@generated/types';
 
 import { authorizedFetch, authenticateOperation } from '@utils/graphql';
-import { generateToken } from '@utils/jwt';
+import { generateJWTToken, generateRefreshToken } from '@utils/jwt';
 
 import usersService from '../users/usersService';
 import { TUserDocument } from '../users/usersModel';
@@ -84,11 +84,15 @@ const resolvers: Resolvers = {
           password,
         });
 
-        const token = data
-          ? generateToken((data as TUserDocument).toJSON())
+        const jwtToken = data
+          ? generateJWTToken((data as TUserDocument).toJSON())
           : '';
 
-        return { statusCode, user: data, token, errors };
+        const refreshToken = data
+          ? generateRefreshToken((data as TUserDocument).toJSON())
+          : null;
+
+        return { statusCode, user: data, jwtToken, refreshToken, errors };
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : err;
 
@@ -96,7 +100,8 @@ const resolvers: Resolvers = {
         return {
           statusCode: 500,
           data: null,
-          token: '',
+          jwtToken: '',
+          refreshToken: null,
           errors: [{ message: errorMessage as string }],
         };
       }
