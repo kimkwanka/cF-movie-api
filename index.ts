@@ -4,6 +4,8 @@ import express, { Request, Response, Application, NextFunction } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
+import cookieParser from 'cookie-parser';
+
 import ip from 'ip';
 
 import authRouter from '@auth/authRouter';
@@ -35,7 +37,16 @@ const errorHandlerMiddleware = (
 
 const initMiddlewareAndRoutes = (expressApp: Application) => {
   // Enable CORS for all domains
-  expressApp.use(cors());
+  expressApp.use(
+    cors({
+      exposedHeaders: ['Set-Authorization'],
+      origin: [
+        /http(s)?:\/\/(.+\.)?localhost(:\d{1,5})?$/,
+        'https://restflix.netlify.app',
+      ],
+      credentials: true,
+    }),
+  );
 
   // Remove the X-Powered-By headers
   expressApp.disable('x-powered-by');
@@ -43,11 +54,14 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   // Enable body-parser
   expressApp.use(express.json());
 
+  // Enable cookie-parser
+  expressApp.use(cookieParser());
+
   // Enable Authentication and Authorization for REST API routes
   expressApp.use(authRouter);
 
   // Enable Logger
-  expressApp.use(morgan('common'));
+  // expressApp.use(morgan('dev'));
 
   // Show documentation on root
   expressApp.get('/', (req: Request, res: Response) => {

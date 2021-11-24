@@ -23,7 +23,8 @@
 
   type AuthPayload {
     jwtToken: String
-    refreshToken: RefreshToken
+    jwtTokenExpiration: Date
+    refreshTokenData: RefreshTokenData
     statusCode: Int!
     user: User
     errors: [Error]!
@@ -35,7 +36,7 @@
     errors: [Error]!
   }
 
-  type RefreshToken {
+  type RefreshTokenData {
     refreshToken: String!
     expiresAt: Date!
     userId: String!

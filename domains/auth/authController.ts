@@ -1,7 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
-import { generateJWTToken, generateRefreshToken } from '@utils/jwt';
+import {
+  calculateExpirationDate,
+  generateJWTToken,
+  generateRefreshTokenData,
+  getRefreshTokenData,
+  isValidRefreshToken,
+  isOverHalfExpired,
+  JWT_TOKEN_EXPIRATION_IN_SECONDS,
+  removeRefreshTokenData,
+  storeRefreshTokenData,
+  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+} from '@utils/jwt';
+
+import usersService from '@users/usersService';
+
 import initStrategies from './passportStrategies';
 
 initStrategies();
@@ -26,12 +40,122 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
         data: null,
       });
     }
+    const userId = user._id.toString();
 
-    const jwtToken = generateJWTToken(user.toJSON());
-    const refreshToken = generateRefreshToken(user.toJSON());
+    const jwtToken = generateJWTToken(userId);
+    const refreshTokenData = generateRefreshTokenData(userId);
 
-    return res.send({ data: { user, jwtToken, refreshToken }, errors: [] });
+    res.cookie('refreshToken', refreshTokenData.refreshToken, {
+      maxAge: JWT_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+      httpOnly: true,
+      secure: false,
+    });
+
+    const jwtTokenExpiration = calculateExpirationDate(
+      JWT_TOKEN_EXPIRATION_IN_SECONDS,
+    );
+
+    storeRefreshTokenData(refreshTokenData);
+
+    return res.send({
+      data: { user, jwtToken, jwtTokenExpiration, refreshTokenData },
+      errors: [],
+    });
   })(req, res);
+};
+
+const loginUserSilently = async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+
+  if (isValidRefreshToken(refreshToken)) {
+    const { userId } = getRefreshTokenData(refreshToken);
+
+    const user = await usersService.findById(userId);
+
+    removeRefreshTokenData(refreshToken);
+
+    if (!user) {
+      res.cookie('refreshToken', '', {
+        expires: new Date(0),
+        httpOnly: true,
+        secure: false,
+      });
+
+      return res.status(401).send({
+        data: null,
+        errors: [{ message: 'Silent Login Error: User does not exist.' }],
+      });
+    }
+
+    const newRefreshTokenData = generateRefreshTokenData(userId);
+
+    storeRefreshTokenData(newRefreshTokenData);
+
+    const jwtToken = generateJWTToken(userId);
+
+    const jwtTokenExpiration = calculateExpirationDate(
+      JWT_TOKEN_EXPIRATION_IN_SECONDS,
+    );
+
+    res.cookie('refreshToken', newRefreshTokenData.refreshToken, {
+      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+      httpOnly: true,
+      secure: false,
+    });
+
+    return res.send({
+      data: {
+        jwtToken,
+        jwtTokenExpiration,
+        refreshTokenData: newRefreshTokenData,
+        user,
+      },
+      errors: [],
+    });
+  }
+
+  return res.status(400).send({
+    data: null,
+    errors: [
+      { message: 'Authentication error: Invalid or expired refresh token.' },
+    ],
+  });
+};
+
+const tokenRefresh = (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+  const jwtToken = req?.headers?.authorization?.slice?.(7);
+
+  if (isOverHalfExpired(jwtToken || '') && isValidRefreshToken(refreshToken)) {
+    const { userId } = getRefreshTokenData(refreshToken);
+
+    removeRefreshTokenData(refreshToken);
+
+    const newRefreshTokenData = generateRefreshTokenData(userId);
+
+    storeRefreshTokenData(newRefreshTokenData);
+
+    const newJwtToken = generateJWTToken(userId);
+    res.cookie('refreshToken', newRefreshTokenData.refreshToken, {
+      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+      httpOnly: true,
+      secure: false,
+    });
+
+    return res.send({
+      data: {
+        jwtToken: newJwtToken,
+        refreshTokenData: newRefreshTokenData,
+      },
+      errors: [],
+    });
+  }
+  return res.status(400).send({
+    data: null,
+    errors: [
+      { message: 'Authentication error: Invalid or expired refresh token.' },
+    ],
+  });
 };
 
 const requireJWTAuth = (req: Request, res: Response, next: NextFunction) => {
@@ -44,7 +168,7 @@ const requireJWTAuth = (req: Request, res: Response, next: NextFunction) => {
     if (!user) {
       // If we have no user, we encountered a JWT Error such as 'no auth token'
 
-      return res.status(400).send({
+      return res.status(401).send({
         errors: [{ message: `JWT Error: ${info.message}` }],
         data: null,
       });
@@ -57,4 +181,6 @@ const requireJWTAuth = (req: Request, res: Response, next: NextFunction) => {
 export default {
   loginUser,
   requireJWTAuth,
+  loginUserSilently,
+  tokenRefresh,
 };

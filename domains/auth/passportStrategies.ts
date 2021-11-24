@@ -6,7 +6,7 @@ import {
   ExtractJwt as ExtractJWT,
 } from 'passport-jwt';
 
-import usersService from '../users/usersService';
+import usersService from '@users/usersService';
 
 const initLocalStrategy = () => {
   const localStrategy = new LocalStrategy(
@@ -43,7 +43,7 @@ const initJWTStrategy = () => {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SECRET,
     },
-    async ({ userId }, done) => {
+    async ({ sub: userId }, done) => {
       try {
         const user = await usersService.findById(userId);
 

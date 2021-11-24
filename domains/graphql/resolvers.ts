@@ -1,10 +1,13 @@
 import { Resolvers } from '@generated/types';
 
 import { authorizedFetch, authenticateOperation } from '@utils/graphql';
-import { generateJWTToken, generateRefreshToken } from '@utils/jwt';
+import {
+  generateJWTToken,
+  generateRefreshTokenData,
+  storeRefreshTokenData,
+} from '@utils/jwt';
 
 import usersService from '../users/usersService';
-import { TUserDocument } from '../users/usersModel';
 
 const resolvers: Resolvers = {
   Query: {
@@ -84,13 +87,15 @@ const resolvers: Resolvers = {
           password,
         });
 
-        const jwtToken = data
-          ? generateJWTToken((data as TUserDocument).toJSON())
-          : '';
+        const userId = data?._id?.toString?.();
 
-        const refreshToken = data
-          ? generateRefreshToken((data as TUserDocument).toJSON())
-          : null;
+        const jwtToken = userId ? generateJWTToken(userId) : '';
+
+        const refreshToken = userId ? generateRefreshTokenData(userId) : null;
+
+        if (refreshToken) {
+          storeRefreshTokenData(refreshToken);
+        }
 
         return { statusCode, user: data, jwtToken, refreshToken, errors };
       } catch (err) {

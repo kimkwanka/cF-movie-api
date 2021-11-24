@@ -19,7 +19,8 @@ export type AuthPayload = {
   __typename?: 'AuthPayload';
   errors: Array<Maybe<Error>>;
   jwtToken?: Maybe<Scalars['String']>;
-  refreshToken?: Maybe<RefreshToken>;
+  jwtTokenExpiration?: Maybe<Scalars['Date']>;
+  refreshTokenData?: Maybe<RefreshTokenData>;
   statusCode: Scalars['Int'];
   user?: Maybe<User>;
 };
@@ -112,8 +113,8 @@ export type QueryMovieArgs = {
   id: Scalars['Int'];
 };
 
-export type RefreshToken = {
-  __typename?: 'RefreshToken';
+export type RefreshTokenData = {
+  __typename?: 'RefreshTokenData';
   expiresAt: Scalars['Date'];
   refreshToken: Scalars['String'];
   userId: Scalars['String'];
@@ -302,7 +303,7 @@ export type ResolversTypes = {
   Movie: ResolverTypeWrapper<Movie>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
-  RefreshToken: ResolverTypeWrapper<RefreshToken>;
+  RefreshTokenData: ResolverTypeWrapper<RefreshTokenData>;
   String: ResolverTypeWrapper<Scalars['String']>;
   TMDBConfiguration: ResolverTypeWrapper<TmdbConfiguration>;
   TMDBMovieDetailed: ResolverTypeWrapper<TmdbMovieDetailed>;
@@ -329,7 +330,7 @@ export type ResolversParentTypes = {
   Movie: Movie;
   Mutation: {};
   Query: {};
-  RefreshToken: RefreshToken;
+  RefreshTokenData: RefreshTokenData;
   String: Scalars['String'];
   TMDBConfiguration: TmdbConfiguration;
   TMDBMovieDetailed: TmdbMovieDetailed;
@@ -345,7 +346,8 @@ export type ResolversParentTypes = {
 export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
   errors?: Resolver<Array<Maybe<ResolversTypes['Error']>>, ParentType, ContextType>;
   jwtToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  refreshToken?: Resolver<Maybe<ResolversTypes['RefreshToken']>, ParentType, ContextType>;
+  jwtTokenExpiration?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  refreshTokenData?: Resolver<Maybe<ResolversTypes['RefreshTokenData']>, ParentType, ContextType>;
   statusCode?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -402,7 +404,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };
 
-export type RefreshTokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['RefreshToken'] = ResolversParentTypes['RefreshToken']> = {
+export type RefreshTokenDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['RefreshTokenData'] = ResolversParentTypes['RefreshTokenData']> = {
   expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -512,7 +514,7 @@ export type Resolvers<ContextType = any> = {
   Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  RefreshToken?: RefreshTokenResolvers<ContextType>;
+  RefreshTokenData?: RefreshTokenDataResolvers<ContextType>;
   TMDBConfiguration?: TmdbConfigurationResolvers<ContextType>;
   TMDBMovieDetailed?: TmdbMovieDetailedResolvers<ContextType>;
   TMDBMovieSimple?: TmdbMovieSimpleResolvers<ContextType>;
