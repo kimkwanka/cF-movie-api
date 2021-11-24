@@ -61,7 +61,7 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   expressApp.use(authRouter);
 
   // Enable Logger
-  // expressApp.use(morgan('dev'));
+  expressApp.use(morgan('dev'));
 
   // Show documentation on root
   expressApp.get('/', (req: Request, res: Response) => {
