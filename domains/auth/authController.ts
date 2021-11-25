@@ -122,6 +122,23 @@ const loginUserSilently = async (req: Request, res: Response) => {
   });
 };
 
+const logoutUser = (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+
+  removeRefreshTokenData(refreshToken);
+
+  res.cookie('refreshToken', '', {
+    expires: new Date(0),
+    httpOnly: true,
+    secure: false,
+  });
+
+  return res.send({
+    data: null,
+    errors: [],
+  });
+};
+
 const tokenRefresh = (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
   const jwtToken = req?.headers?.authorization?.slice?.(7);
@@ -182,5 +199,6 @@ export default {
   loginUser,
   requireJWTAuth,
   loginUserSilently,
+  logoutUser,
   tokenRefresh,
 };
