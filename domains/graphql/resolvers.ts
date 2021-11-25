@@ -4,7 +4,7 @@ import { authorizedFetch, authenticateOperation } from '@utils/graphql';
 import {
   generateJWTToken,
   generateRefreshTokenData,
-  storeRefreshTokenData,
+  addRefreshTokenToWhitelist,
 } from '@utils/jwt';
 
 import usersService from '../users/usersService';
@@ -94,7 +94,7 @@ const resolvers: Resolvers = {
         const refreshToken = userId ? generateRefreshTokenData(userId) : null;
 
         if (refreshToken) {
-          storeRefreshTokenData(refreshToken);
+          addRefreshTokenToWhitelist(refreshToken);
         }
 
         return { statusCode, user: data, jwtToken, refreshToken, errors };

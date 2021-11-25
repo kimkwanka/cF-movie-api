@@ -9,8 +9,8 @@ import {
   isValidRefreshToken,
   isOverHalfExpired,
   JWT_TOKEN_EXPIRATION_IN_SECONDS,
-  removeRefreshTokenData,
-  storeRefreshTokenData,
+  addRefreshTokenToWhitelist,
+  removeRefreshTokenFromWhitelist,
   REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
 } from '@utils/jwt';
 
@@ -21,58 +21,66 @@ import initStrategies from './passportStrategies';
 initStrategies();
 
 const loginUser = (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('local', { session: false }, (err, user, info) => {
-    if (err) {
-      // Pass server errors to error handler middleware
-      return next(err);
-    }
+  passport.authenticate(
+    'local',
+    { session: false },
+    async (err, user, info) => {
+      if (err) {
+        // Pass server errors to error handler middleware
+        return next(err);
+      }
 
-    if (!user) {
-      // If we have no user, we encountered a Login Error such as 'bad credentials'
+      if (!user) {
+        // If we have no user, we encountered a Login Error such as 'bad credentials'
 
-      // Even though we expect 'info' to have a 'message' property, passport strategies
-      // sometimes put Error objects in 'info'. Despite having a 'message', their properties are not enumerable
-      // and therefore can't be be send over directly with res.send().
-      // So just to be safe, we extract the message and put it in manually instead of passing 'info' directly.
+        // Even though we expect 'info' to have a 'message' property, passport strategies
+        // sometimes put Error objects in 'info'. Despite having a 'message', their properties are not enumerable
+        // and therefore can't be be send over directly with res.send().
+        // So just to be safe, we extract the message and put it in manually instead of passing 'info' directly.
 
-      return res.status(400).send({
-        errors: [{ message: `Login error: ${info.message}` }],
-        data: null,
+        return res.status(400).send({
+          errors: [{ message: `Login error: ${info.message}` }],
+          data: null,
+        });
+      }
+      const userId = user._id.toString();
+
+      const jwtToken = generateJWTToken(userId);
+      const refreshTokenData = generateRefreshTokenData(userId);
+
+      res.cookie('refreshToken', refreshTokenData.refreshToken, {
+        maxAge: JWT_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+        httpOnly: true,
+        secure: false,
       });
-    }
-    const userId = user._id.toString();
 
-    const jwtToken = generateJWTToken(userId);
-    const refreshTokenData = generateRefreshTokenData(userId);
+      const jwtTokenExpiration = calculateExpirationDate(
+        JWT_TOKEN_EXPIRATION_IN_SECONDS,
+      );
 
-    res.cookie('refreshToken', refreshTokenData.refreshToken, {
-      maxAge: JWT_TOKEN_EXPIRATION_IN_SECONDS * 1000,
-      httpOnly: true,
-      secure: false,
-    });
+      await addRefreshTokenToWhitelist(refreshTokenData);
 
-    const jwtTokenExpiration = calculateExpirationDate(
-      JWT_TOKEN_EXPIRATION_IN_SECONDS,
-    );
-
-    storeRefreshTokenData(refreshTokenData);
-
-    return res.send({
-      data: { user, jwtToken, jwtTokenExpiration, refreshTokenData },
-      errors: [],
-    });
-  })(req, res);
+      return res.send({
+        data: { user, jwtToken, jwtTokenExpiration, refreshTokenData },
+        errors: [],
+      });
+    },
+  )(req, res);
 };
 
 const loginUserSilently = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
-  if (isValidRefreshToken(refreshToken)) {
-    const { userId } = getRefreshTokenData(refreshToken);
+  if (refreshToken && (await isValidRefreshToken(refreshToken))) {
+    const refreshTokenData = await getRefreshTokenData(refreshToken);
 
-    const user = await usersService.findById(userId);
+    const user = refreshTokenData
+      ? await usersService.findById(refreshTokenData.userId)
+      : null;
 
-    removeRefreshTokenData(refreshToken);
+    const userId = refreshTokenData ? refreshTokenData.userId : '';
+
+    await removeRefreshTokenFromWhitelist(refreshToken);
 
     if (!user) {
       res.cookie('refreshToken', '', {
@@ -89,7 +97,7 @@ const loginUserSilently = async (req: Request, res: Response) => {
 
     const newRefreshTokenData = generateRefreshTokenData(userId);
 
-    storeRefreshTokenData(newRefreshTokenData);
+    await addRefreshTokenToWhitelist(newRefreshTokenData);
 
     const jwtToken = generateJWTToken(userId);
 
@@ -122,10 +130,10 @@ const loginUserSilently = async (req: Request, res: Response) => {
   });
 };
 
-const logoutUser = (req: Request, res: Response) => {
+const logoutUser = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
-  removeRefreshTokenData(refreshToken);
+  await removeRefreshTokenFromWhitelist(refreshToken);
 
   res.cookie('refreshToken', '', {
     expires: new Date(0),
@@ -139,18 +147,23 @@ const logoutUser = (req: Request, res: Response) => {
   });
 };
 
-const tokenRefresh = (req: Request, res: Response) => {
+const tokenRefresh = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
   const jwtToken = req?.headers?.authorization?.slice?.(7);
 
-  if (isOverHalfExpired(jwtToken || '') && isValidRefreshToken(refreshToken)) {
-    const { userId } = getRefreshTokenData(refreshToken);
+  if (
+    isOverHalfExpired(jwtToken || '') &&
+    (await isValidRefreshToken(refreshToken))
+  ) {
+    const refreshTokenData = await getRefreshTokenData(refreshToken);
 
-    removeRefreshTokenData(refreshToken);
+    const userId = refreshTokenData ? refreshTokenData.userId : '';
+
+    await removeRefreshTokenFromWhitelist(refreshToken);
 
     const newRefreshTokenData = generateRefreshTokenData(userId);
 
-    storeRefreshTokenData(newRefreshTokenData);
+    await addRefreshTokenToWhitelist(newRefreshTokenData);
 
     const newJwtToken = generateJWTToken(userId);
     res.cookie('refreshToken', newRefreshTokenData.refreshToken, {
@@ -167,6 +180,7 @@ const tokenRefresh = (req: Request, res: Response) => {
       errors: [],
     });
   }
+
   return res.status(400).send({
     data: null,
     errors: [

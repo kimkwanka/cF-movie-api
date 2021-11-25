@@ -1,15 +1,18 @@
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
+import { Tedis } from 'tedis';
+
 import { RefreshTokenData } from '@generated/types';
 
 export const JWT_TOKEN_EXPIRATION_IN_SECONDS = 5;
-export const REFRESH_TOKEN_EXPIRATION_IN_SECONDS = 20;
+export const REFRESH_TOKEN_EXPIRATION_IN_SECONDS = 60;
 
 type TJWTUserPayload = jwt.JwtPayload & { userId: string };
-type TRefreshTokenList = Record<string, RefreshTokenData>;
 
-const refreshTokenList: TRefreshTokenList = {};
+const redis = new Tedis({
+  password: 'TEDIS_PASS',
+});
 
 export const generateJWTToken = (userId: string) =>
   jwt.sign({}, process.env.JWT_SECRET as jwt.Secret, {
@@ -36,24 +39,51 @@ export const generateRefreshTokenData = (userId: string) => {
   };
 };
 
-export const storeRefreshTokenData = (refreshTokenData: RefreshTokenData) => {
-  refreshTokenList[refreshTokenData.refreshToken] = refreshTokenData;
+export const addRefreshTokenToWhitelist = async (
+  refreshTokenData: RefreshTokenData,
+) => {
+  try {
+    return await redis.set(
+      refreshTokenData.refreshToken,
+      JSON.stringify(refreshTokenData),
+    );
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
 
-export const removeRefreshTokenData = (refreshToken: string) => {
-  delete refreshTokenList[refreshToken];
+export const removeRefreshTokenFromWhitelist = async (refreshToken: string) => {
+  try {
+    return await redis.del(refreshToken);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
 
-export const getRefreshTokenData = (refreshToken: string) => {
-  return refreshTokenList[refreshToken];
+export const getRefreshTokenData = async (refreshToken: string) => {
+  try {
+    const refreshTokenDataString = (await redis.get(refreshToken)) as string;
+    return JSON.parse(refreshTokenDataString) as RefreshTokenData;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
 
-export const isValidRefreshToken = (refreshToken: string) => {
-  const refreshTokenData = refreshTokenList[refreshToken];
+export const isValidRefreshToken = async (refreshToken: string) => {
+  if (!refreshToken) {
+    return false;
+  }
+
+  const refreshTokenData = await getRefreshTokenData(refreshToken);
+
   if (!refreshTokenData) {
     return false;
   }
-  const isNotExpired = new Date(Date.now()) <= refreshTokenData.expiresAt;
+  const isNotExpired =
+    new Date(Date.now()) <= new Date(refreshTokenData.expiresAt);
   return isNotExpired;
 };
 

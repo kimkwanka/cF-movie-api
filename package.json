@@ -53,6 +53,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "tedis": "^0.1.12",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.11.0",
     "uuid": "^8.3.2",
