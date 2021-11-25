@@ -91,7 +91,9 @@ const resolvers: Resolvers = {
 
         const jwtToken = userId ? generateJWTToken(userId) : '';
 
-        const refreshToken = userId ? generateRefreshTokenData(userId) : null;
+        const refreshToken = userId
+          ? generateRefreshTokenData(userId, jwtToken)
+          : null;
 
         if (refreshToken) {
           addRefreshTokenToWhitelist(refreshToken);

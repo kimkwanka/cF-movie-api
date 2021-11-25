@@ -116,6 +116,7 @@ export type QueryMovieArgs = {
 export type RefreshTokenData = {
   __typename?: 'RefreshTokenData';
   expiresAt: Scalars['Date'];
+  jwtToken: Scalars['String'];
   refreshToken: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -406,6 +407,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type RefreshTokenDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['RefreshTokenData'] = ResolversParentTypes['RefreshTokenData']> = {
   expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  jwtToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

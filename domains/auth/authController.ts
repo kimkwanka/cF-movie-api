@@ -7,11 +7,12 @@ import {
   generateRefreshTokenData,
   getRefreshTokenData,
   isValidRefreshToken,
-  isOverHalfExpired,
   JWT_TOKEN_EXPIRATION_IN_SECONDS,
+  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
   addRefreshTokenToWhitelist,
   removeRefreshTokenFromWhitelist,
-  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+  addAccessTokenToBlacklist,
+  isBlacklistedAccessToken,
 } from '@utils/jwt';
 
 import usersService from '@users/usersService';
@@ -46,10 +47,10 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
       const userId = user._id.toString();
 
       const jwtToken = generateJWTToken(userId);
-      const refreshTokenData = generateRefreshTokenData(userId);
+      const refreshTokenData = generateRefreshTokenData(userId, jwtToken);
 
       res.cookie('refreshToken', refreshTokenData.refreshToken, {
-        maxAge: JWT_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+        maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
         httpOnly: true,
         secure: false,
       });
@@ -95,11 +96,11 @@ const loginUserSilently = async (req: Request, res: Response) => {
       });
     }
 
-    const newRefreshTokenData = generateRefreshTokenData(userId);
+    const jwtToken = generateJWTToken(userId);
+
+    const newRefreshTokenData = generateRefreshTokenData(userId, jwtToken);
 
     await addRefreshTokenToWhitelist(newRefreshTokenData);
-
-    const jwtToken = generateJWTToken(userId);
 
     const jwtTokenExpiration = calculateExpirationDate(
       JWT_TOKEN_EXPIRATION_IN_SECONDS,
@@ -132,6 +133,9 @@ const loginUserSilently = async (req: Request, res: Response) => {
 
 const logoutUser = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
+  const refreshTokenData = await getRefreshTokenData(refreshToken);
+
+  await addAccessTokenToBlacklist(refreshTokenData?.jwtToken);
 
   await removeRefreshTokenFromWhitelist(refreshToken);
 
@@ -149,23 +153,19 @@ const logoutUser = async (req: Request, res: Response) => {
 
 const tokenRefresh = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
-  const jwtToken = req?.headers?.authorization?.slice?.(7);
 
-  if (
-    isOverHalfExpired(jwtToken || '') &&
-    (await isValidRefreshToken(refreshToken))
-  ) {
+  if (await isValidRefreshToken(refreshToken)) {
     const refreshTokenData = await getRefreshTokenData(refreshToken);
-
     const userId = refreshTokenData ? refreshTokenData.userId : '';
 
     await removeRefreshTokenFromWhitelist(refreshToken);
 
-    const newRefreshTokenData = generateRefreshTokenData(userId);
+    const newJwtToken = generateJWTToken(userId);
+
+    const newRefreshTokenData = generateRefreshTokenData(userId, newJwtToken);
 
     await addRefreshTokenToWhitelist(newRefreshTokenData);
 
-    const newJwtToken = generateJWTToken(userId);
     res.cookie('refreshToken', newRefreshTokenData.refreshToken, {
       maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
       httpOnly: true,
@@ -190,17 +190,26 @@ const tokenRefresh = async (req: Request, res: Response) => {
 };
 
 const requireJWTAuth = (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+  passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err) {
       // Pass server errors to error handler middleware
       return next(err);
     }
+
+    const jwtToken = req?.headers?.authorization?.slice?.(7);
 
     if (!user) {
       // If we have no user, we encountered a JWT Error such as 'no auth token'
 
       return res.status(401).send({
         errors: [{ message: `JWT Error: ${info.message}` }],
+        data: null,
+      });
+    }
+
+    if (await isBlacklistedAccessToken(jwtToken)) {
+      return res.status(401).send({
+        errors: [{ message: `JWT Error: Blacklisted.` }],
         data: null,
       });
     }
