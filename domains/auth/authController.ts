@@ -133,10 +133,9 @@ const loginUserSilently = async (req: Request, res: Response) => {
 
 const logoutUser = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
-  const refreshTokenData = await getRefreshTokenData(refreshToken);
+  const jwtToken = req?.headers?.authorization?.slice?.(7);
 
-  await addAccessTokenToBlacklist(refreshTokenData?.jwtToken);
-
+  await addAccessTokenToBlacklist(jwtToken);
   await removeRefreshTokenFromWhitelist(refreshToken);
 
   res.cookie('refreshToken', '', {
