@@ -14,8 +14,6 @@ const allowRequestOnlyWithSameUserId = (
   next: NextFunction,
 ) => {
   const requestUserId = req.params.userId;
-  // We need to cast to string or else equality check will never be true
-  // (_id is an object for some reason, whereas userId is a regular string)
 
   const token = req?.headers?.authorization?.slice?.(7);
 
@@ -28,7 +26,7 @@ const allowRequestOnlyWithSameUserId = (
     });
   }
 
-  const { userId } = getTokenPayload(token);
+  const { sub: userId } = getTokenPayload(token);
 
   if (requestUserId !== userId) {
     return res.status(401).send({
