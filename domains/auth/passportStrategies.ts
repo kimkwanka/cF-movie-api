@@ -46,33 +46,30 @@ const initJWTStrategy = () => {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
       // secretOrKey: process.env.JWT_SECRET,
       secretOrKeyProvider: async (_, rawJwtToken, done) => {
-        const { sub: userId } = jwt.decode(rawJwtToken) as TJWTUserPayload;
+        try {
+          const { sub: userId } = jwt.decode(rawJwtToken) as TJWTUserPayload;
 
-        const user = await usersService.findById(userId || '');
+          const user = await usersService.findById(userId || '');
 
-        if (!user) {
-          return done(
-            {
-              message: `Unauthorized: User couldn't be found.`,
-            },
-            '',
-          );
+          if (!user) {
+            return done(
+              {
+                message: `Unauthorized: User couldn't be found.`,
+              },
+              '',
+            );
+          }
+
+          return done(null, user.passwordHash + process.env.JWT_SECRET);
+        } catch (serverError) {
+          // Bubble up server errors
+          return done(serverError, '');
         }
-
-        return done(null, user.passwordHash + process.env.JWT_SECRET);
       },
     },
-    async ({ sub: userId }, done) => {
+    async (payload, done) => {
       try {
-        const user = await usersService.findById(userId);
-
-        if (!user) {
-          return done(null, null, {
-            message: `Unauthorized: User couldn't be found.`,
-          });
-        }
-
-        return done(null, user);
+        return done(null, payload);
       } catch (serverError) {
         // Bubble up server errors
         return done(serverError);
