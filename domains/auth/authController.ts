@@ -4,16 +4,17 @@ import passport from 'passport';
 import { TUserDocument } from '@users/usersModel';
 
 import {
+  addAccessTokenToBlacklist,
+  addRefreshTokenToWhitelist,
   calculateExpirationDate,
   generateJWTToken,
   generateRefreshTokenData,
   getRefreshTokenData,
+  getTokenPayload,
+  isBlacklistedAccessToken,
   JWT_TOKEN_EXPIRATION_IN_SECONDS,
   REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
-  addRefreshTokenToWhitelist,
   removeRefreshTokenFromWhitelist,
-  addAccessTokenToBlacklist,
-  isBlacklistedAccessToken,
 } from '@utils/jwt';
 
 import usersService from '@users/usersService';
@@ -199,7 +200,11 @@ const tokenRefresh = async (req: Request, res: Response) => {
   });
 };
 
-const requireJWTAuth = (req: Request, res: Response, next: NextFunction) => {
+const requireAuthentication = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   passport.authenticate('jwt', { session: false }, async (err, user, info) => {
     if (err) {
       // Pass server errors to error handler middleware
@@ -228,9 +233,42 @@ const requireJWTAuth = (req: Request, res: Response, next: NextFunction) => {
   })(req, res);
 };
 
+const requireAuthorization = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const requestUserId = req.params.userId;
+
+  const token = req?.headers?.authorization?.slice?.(7);
+
+  if (!token) {
+    return res.status(400).send({
+      data: null,
+      errors: {
+        message: "Authentication Error: Access token couldn't be found.",
+      },
+    });
+  }
+
+  const { sub: userId } = getTokenPayload(token);
+
+  if (requestUserId !== userId) {
+    return res.status(401).send({
+      data: null,
+      errors: {
+        message: `Unauthorized: Not allowed to access user with id '${requestUserId}'`,
+      },
+    });
+  }
+
+  return next();
+};
+
 export default {
   loginUser,
-  requireJWTAuth,
+  requireAuthentication,
+  requireAuthorization,
   loginUserSilently,
   logoutUser,
   tokenRefresh,

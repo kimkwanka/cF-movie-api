@@ -19,7 +19,7 @@ const moviesRouter = express.Router();
  */
 moviesRouter.get(
   '/movies',
-  authController.requireJWTAuth,
+  authController.requireAuthentication,
   moviesController.getAllMovies,
 );
 
@@ -38,7 +38,7 @@ moviesRouter.get(
  */
 moviesRouter.get(
   '/movies/:title',
-  authController.requireJWTAuth,
+  authController.requireAuthentication,
   moviesController.getMovieByTitle,
 );
 
@@ -57,7 +57,7 @@ moviesRouter.get(
  */
 moviesRouter.get(
   '/genres/:name',
-  authController.requireJWTAuth,
+  authController.requireAuthentication,
   moviesController.getGenreByName,
 );
 
@@ -76,7 +76,7 @@ moviesRouter.get(
  */
 moviesRouter.get(
   '/directors/:name',
-  authController.requireJWTAuth,
+  authController.requireAuthentication,
   moviesController.getDirectorByName,
 );
 
