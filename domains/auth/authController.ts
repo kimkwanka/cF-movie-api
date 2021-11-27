@@ -76,29 +76,19 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
   )(req, res);
 };
 
-const loginUserSilently = async (req: Request, res: Response) => {
-  const { refreshToken } = req.cookies;
+export const refreshAllTokens = async (req: Request) => {
+  const { refreshToken }: { refreshToken: string } = req.cookies;
+
   const refreshTokenData = await getRefreshTokenData(refreshToken);
 
-  if (refreshTokenData) {
-    const user = await usersService.findById(refreshTokenData.userId);
+  const user = refreshTokenData
+    ? await usersService.findById(refreshTokenData.userId)
+    : null;
 
+  if (user) {
     await removeRefreshTokenFromWhitelist(refreshToken);
 
-    if (!user) {
-      res.cookie('refreshToken', '', {
-        expires: new Date(0),
-        httpOnly: true,
-        secure: false,
-      });
-
-      return res.status(401).send({
-        data: null,
-        errors: [{ message: 'Silent Login Error: User does not exist.' }],
-      });
-    }
-
-    const jwtToken = generateJWTToken({
+    const newJwtToken = generateJWTToken({
       userId: user._id.toString(),
       passwordHash: user.passwordHash,
     });
@@ -110,32 +100,45 @@ const loginUserSilently = async (req: Request, res: Response) => {
 
     await addRefreshTokenToWhitelist(newRefreshTokenData);
 
-    const jwtTokenExpiration = calculateExpirationDate(
-      JWT_TOKEN_EXPIRATION_IN_SECONDS,
-    );
+    return {
+      jwtToken: newJwtToken,
+      refreshTokenData: newRefreshTokenData,
+      user,
+    };
+  }
 
-    res.cookie('refreshToken', newRefreshTokenData.refreshToken, {
-      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+  return {};
+};
+
+const silentRefresh = async (req: Request, res: Response) => {
+  const { user, jwtToken, refreshTokenData } = await refreshAllTokens(req);
+
+  if (!refreshTokenData) {
+    res.cookie('refreshToken', '', {
+      expires: new Date(0),
       httpOnly: true,
       secure: false,
     });
 
-    return res.send({
-      data: {
-        jwtToken,
-        jwtTokenExpiration,
-        refreshTokenData: newRefreshTokenData,
-        user,
-      },
-      errors: [],
+    return res.status(400).send({
+      data: null,
+      errors: [{ message: 'Authentication Error: Invalid refresh token.' }],
     });
   }
 
-  return res.status(400).send({
-    data: null,
-    errors: [
-      { message: 'Authentication error: Invalid or expired refresh token.' },
-    ],
+  res.cookie('refreshToken', refreshTokenData.refreshToken, {
+    maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+    httpOnly: true,
+    secure: false,
+  });
+
+  return res.send({
+    data: {
+      jwtToken,
+      refreshTokenData,
+      user,
+    },
+    errors: [],
   });
 };
 
@@ -155,48 +158,6 @@ const logoutUser = async (req: Request, res: Response) => {
   return res.send({
     data: null,
     errors: [],
-  });
-};
-
-const tokenRefresh = async (req: Request, res: Response) => {
-  const { refreshToken } = req.cookies;
-
-  const refreshTokenData = await getRefreshTokenData(refreshToken);
-
-  if (refreshTokenData) {
-    const { userId, passwordHash } = refreshTokenData;
-
-    await removeRefreshTokenFromWhitelist(refreshToken);
-
-    const newJwtToken = generateJWTToken({ userId, passwordHash });
-
-    const newRefreshTokenData = generateRefreshTokenData({
-      userId,
-      passwordHash,
-    });
-
-    await addRefreshTokenToWhitelist(newRefreshTokenData);
-
-    res.cookie('refreshToken', newRefreshTokenData.refreshToken, {
-      maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
-      httpOnly: true,
-      secure: false,
-    });
-
-    return res.send({
-      data: {
-        jwtToken: newJwtToken,
-        refreshTokenData: newRefreshTokenData,
-      },
-      errors: [],
-    });
-  }
-
-  return res.status(400).send({
-    data: null,
-    errors: [
-      { message: 'Authentication error: Invalid or expired refresh token.' },
-    ],
   });
 };
 
@@ -269,7 +230,6 @@ export default {
   loginUser,
   requireAuthentication,
   requireAuthorization,
-  loginUserSilently,
+  silentRefresh,
   logoutUser,
-  tokenRefresh,
 };
