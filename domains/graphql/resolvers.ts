@@ -82,24 +82,37 @@ const resolvers: Resolvers = {
 
     loginUser: async (_, { username, password }) => {
       try {
-        const { statusCode, data, errors } = await usersService.loginUser({
+        const {
+          statusCode,
+          data: user,
+          errors,
+        } = await usersService.loginUser({
           username,
           password,
         });
+        let refreshTokenData = null;
+        let jwtToken = '';
 
-        const userId = data?._id?.toString?.();
+        if (user) {
+          const userId = user._id.toString();
+          const { passwordHash } = user;
 
-        const jwtToken = userId ? generateJWTToken(userId) : '';
+          refreshTokenData = generateRefreshTokenData({
+            userId,
+            passwordHash,
+          });
 
-        const refreshToken = userId
-          ? generateRefreshTokenData(userId, jwtToken)
-          : null;
+          jwtToken = generateJWTToken({
+            userId,
+            passwordHash,
+          });
 
-        if (refreshToken) {
-          addRefreshTokenToWhitelist(refreshToken);
+          if (refreshTokenData) {
+            addRefreshTokenToWhitelist(refreshTokenData);
+          }
         }
 
-        return { statusCode, user: data, jwtToken, refreshToken, errors };
+        return { statusCode, user, jwtToken, refreshTokenData, errors };
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : err;
 
@@ -108,7 +121,7 @@ const resolvers: Resolvers = {
           statusCode: 500,
           data: null,
           jwtToken: '',
-          refreshToken: null,
+          refreshTokenData: null,
           errors: [{ message: errorMessage as string }],
         };
       }

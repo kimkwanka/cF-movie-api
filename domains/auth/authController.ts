@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
+import { TUserDocument } from '@users/usersModel';
+
 import {
   calculateExpirationDate,
   generateJWTToken,
   generateRefreshTokenData,
   getRefreshTokenData,
-  isValidRefreshToken,
   JWT_TOKEN_EXPIRATION_IN_SECONDS,
   REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
   addRefreshTokenToWhitelist,
@@ -25,7 +26,7 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate(
     'local',
     { session: false },
-    async (err, user, info) => {
+    async (err, user: TUserDocument, info) => {
       if (err) {
         // Pass server errors to error handler middleware
         return next(err);
@@ -44,10 +45,15 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
           data: null,
         });
       }
-      const userId = user._id.toString();
 
-      const jwtToken = generateJWTToken(userId);
-      const refreshTokenData = generateRefreshTokenData(userId, jwtToken);
+      const jwtToken = generateJWTToken({
+        userId: user._id.toString(),
+        passwordHash: user.passwordHash,
+      });
+      const refreshTokenData = generateRefreshTokenData({
+        userId: user._id.toString(),
+        passwordHash: user.passwordHash,
+      });
 
       res.cookie('refreshToken', refreshTokenData.refreshToken, {
         maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
@@ -71,15 +77,10 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
 
 const loginUserSilently = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
+  const refreshTokenData = await getRefreshTokenData(refreshToken);
 
-  if (refreshToken && (await isValidRefreshToken(refreshToken))) {
-    const refreshTokenData = await getRefreshTokenData(refreshToken);
-
-    const user = refreshTokenData
-      ? await usersService.findById(refreshTokenData.userId)
-      : null;
-
-    const userId = refreshTokenData ? refreshTokenData.userId : '';
+  if (refreshTokenData) {
+    const user = await usersService.findById(refreshTokenData.userId);
 
     await removeRefreshTokenFromWhitelist(refreshToken);
 
@@ -96,9 +97,15 @@ const loginUserSilently = async (req: Request, res: Response) => {
       });
     }
 
-    const jwtToken = generateJWTToken(userId);
+    const jwtToken = generateJWTToken({
+      userId: user._id.toString(),
+      passwordHash: user.passwordHash,
+    });
 
-    const newRefreshTokenData = generateRefreshTokenData(userId, jwtToken);
+    const newRefreshTokenData = generateRefreshTokenData({
+      userId: user._id.toString(),
+      passwordHash: user.passwordHash,
+    });
 
     await addRefreshTokenToWhitelist(newRefreshTokenData);
 
@@ -153,15 +160,19 @@ const logoutUser = async (req: Request, res: Response) => {
 const tokenRefresh = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
 
-  if (await isValidRefreshToken(refreshToken)) {
-    const refreshTokenData = await getRefreshTokenData(refreshToken);
-    const userId = refreshTokenData ? refreshTokenData.userId : '';
+  const refreshTokenData = await getRefreshTokenData(refreshToken);
+
+  if (refreshTokenData) {
+    const { userId, passwordHash } = refreshTokenData;
 
     await removeRefreshTokenFromWhitelist(refreshToken);
 
-    const newJwtToken = generateJWTToken(userId);
+    const newJwtToken = generateJWTToken({ userId, passwordHash });
 
-    const newRefreshTokenData = generateRefreshTokenData(userId, newJwtToken);
+    const newRefreshTokenData = generateRefreshTokenData({
+      userId,
+      passwordHash,
+    });
 
     await addRefreshTokenToWhitelist(newRefreshTokenData);
 

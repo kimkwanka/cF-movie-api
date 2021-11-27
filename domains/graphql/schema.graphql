@@ -1,7 +1,8 @@
-  scalar Date  
+  scalar Date
+  scalar ObjectId
   
   type User {
-    _id: ID
+    _id: ObjectId!
     birthday: String
     email: String!
     favoriteMovies: [String]!
@@ -40,7 +41,7 @@
     refreshToken: String!
     expiresAt: Date!
     userId: String!
-    jwtToken: String!
+    passwordHash: String!
   }
 
   type Genre {
@@ -56,7 +57,7 @@
   }
 
   type Movie {
-    _id: String!
+    _id: ObjectId!
     title: String!
     description: String!
     genre: Genre!

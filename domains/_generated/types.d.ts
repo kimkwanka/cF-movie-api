@@ -13,6 +13,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   Date: any;
+  ObjectId: any;
 };
 
 export type AuthPayload = {
@@ -46,7 +47,7 @@ export type Genre = {
 
 export type Movie = {
   __typename?: 'Movie';
-  _id: Scalars['String'];
+  _id: Scalars['ObjectId'];
   description: Scalars['String'];
   director: Director;
   featured: Scalars['Boolean'];
@@ -116,7 +117,7 @@ export type QueryMovieArgs = {
 export type RefreshTokenData = {
   __typename?: 'RefreshTokenData';
   expiresAt: Scalars['Date'];
-  jwtToken: Scalars['String'];
+  passwordHash: Scalars['String'];
   refreshToken: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -200,7 +201,7 @@ export type TmdbProductionSpokenLanguaeges = {
 
 export type User = {
   __typename?: 'User';
-  _id?: Maybe<Scalars['ID']>;
+  _id: Scalars['ObjectId'];
   birthday?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   favoriteMovies: Array<Maybe<Scalars['String']>>;
@@ -303,6 +304,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Movie: ResolverTypeWrapper<Movie>;
   Mutation: ResolverTypeWrapper<{}>;
+  ObjectId: ResolverTypeWrapper<Scalars['ObjectId']>;
   Query: ResolverTypeWrapper<{}>;
   RefreshTokenData: ResolverTypeWrapper<RefreshTokenData>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -330,6 +332,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   Movie: Movie;
   Mutation: {};
+  ObjectId: Scalars['ObjectId'];
   Query: {};
   RefreshTokenData: RefreshTokenData;
   String: Scalars['String'];
@@ -378,7 +381,7 @@ export type GenreResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type MovieResolvers<ContextType = any, ParentType extends ResolversParentTypes['Movie'] = ResolversParentTypes['Movie']> = {
-  _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _id?: Resolver<ResolversTypes['ObjectId'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   director?: Resolver<ResolversTypes['Director'], ParentType, ContextType>;
   featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -398,6 +401,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, '_id' | 'newUserData'>>;
 };
 
+export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectId'], any> {
+  name: 'ObjectId';
+}
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discover?: Resolver<Maybe<Array<Maybe<ResolversTypes['TMDBMovieSimple']>>>, ParentType, ContextType>;
   movie?: Resolver<Maybe<ResolversTypes['TMDBMovieDetailed']>, ParentType, ContextType, RequireFields<QueryMovieArgs, 'id'>>;
@@ -407,7 +414,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type RefreshTokenDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['RefreshTokenData'] = ResolversParentTypes['RefreshTokenData']> = {
   expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  jwtToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  passwordHash?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -491,7 +498,7 @@ export type TmdbProductionSpokenLanguaegesResolvers<ContextType = any, ParentTyp
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  _id?: Resolver<ResolversTypes['ObjectId'], ParentType, ContextType>;
   birthday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   favoriteMovies?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -515,6 +522,7 @@ export type Resolvers<ContextType = any> = {
   Genre?: GenreResolvers<ContextType>;
   Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  ObjectId?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   RefreshTokenData?: RefreshTokenDataResolvers<ContextType>;
   TMDBConfiguration?: TmdbConfigurationResolvers<ContextType>;

@@ -1,4 +1,5 @@
 import passport from 'passport';
+import jwt from 'jsonwebtoken';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 import {
@@ -37,11 +38,29 @@ const initLocalStrategy = () => {
   passport.use(localStrategy);
 };
 
+type TJWTUserPayload = jwt.JwtPayload & { passwordHash: string };
+
 const initJWTStrategy = () => {
   const jwtStrategy = new JWTStrategy(
     {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
+      // secretOrKey: process.env.JWT_SECRET,
+      secretOrKeyProvider: async (_, rawJwtToken, done) => {
+        const { sub: userId } = jwt.decode(rawJwtToken) as TJWTUserPayload;
+
+        const user = await usersService.findById(userId || '');
+
+        if (!user) {
+          return done(
+            {
+              message: `Unauthorized: User couldn't be found.`,
+            },
+            '',
+          );
+        }
+
+        return done(null, user.passwordHash + process.env.JWT_SECRET);
+      },
     },
     async ({ sub: userId }, done) => {
       try {

@@ -14,8 +14,14 @@ const redis = new Tedis({
   password: 'TEDIS_PASS',
 });
 
-export const generateJWTToken = (userId: string) =>
-  jwt.sign({}, process.env.JWT_SECRET as jwt.Secret, {
+export const generateJWTToken = ({
+  userId,
+  passwordHash,
+}: {
+  userId: string;
+  passwordHash: string;
+}) =>
+  jwt.sign({}, (passwordHash + process.env.JWT_SECRET) as jwt.Secret, {
     issuer: 'MOVIE_API',
     subject: userId,
     expiresIn: JWT_TOKEN_EXPIRATION_IN_SECONDS,
@@ -31,15 +37,21 @@ export const calculateRemainingExpirationInSeconds = (expirationDate: Date) => {
 };
 
 export const getTokenPayload = (token: string) =>
-  jwt.verify(token, process.env.JWT_SECRET as jwt.Secret) as TJWTUserPayload;
+  jwt.decode(token) as TJWTUserPayload;
 
-export const generateRefreshTokenData = (userId: string, jwtToken: string) => {
+export const generateRefreshTokenData = ({
+  userId,
+  passwordHash,
+}: {
+  userId: string;
+  passwordHash: string;
+}) => {
   const refreshToken = uuidv4();
 
   return {
     refreshToken,
-    jwtToken,
     userId,
+    passwordHash,
     expiresAt: calculateExpirationDate(REFRESH_TOKEN_EXPIRATION_IN_SECONDS),
   };
 };
@@ -51,9 +63,7 @@ export const addAccessTokenToBlacklist = async (
     if (!jwtToken) {
       return 0;
     }
-    const { exp } = jwt.verify(jwtToken, process.env.JWT_SECRET as jwt.Secret, {
-      ignoreExpiration: true,
-    }) as TJWTUserPayload;
+    const { exp } = getTokenPayload(jwtToken);
 
     await redis.set(`ACCESS_TOKEN_BLACKLIST${jwtToken}`, jwtToken);
 
@@ -116,6 +126,9 @@ export const removeRefreshTokenFromWhitelist = async (refreshToken: string) => {
 };
 
 export const getRefreshTokenData = async (refreshToken: string) => {
+  if (!refreshToken) {
+    return null;
+  }
   try {
     const refreshTokenDataString = (await redis.get(
       `REFRESH_TOKEN_WHITELIST${refreshToken}`,
@@ -125,18 +138,4 @@ export const getRefreshTokenData = async (refreshToken: string) => {
     console.error(error);
     return null;
   }
-};
-
-export const isValidRefreshToken = async (refreshToken: string) => {
-  if (!refreshToken) {
-    return false;
-  }
-  // Since we let the refresh token keys in Redis expire when the refresh token would expire, we need to
-  // only check if the refresh token key still exists in our whitelist.
-  const refreshTokenData = await redis.get(
-    `REFRESH_TOKEN_WHITELIST${refreshToken}`,
-  );
-
-  // Coerce into boolean
-  return !!refreshTokenData;
 };

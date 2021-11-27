@@ -8,8 +8,9 @@ mongoose.connect(process.env.MONGODB_URI || '', {
   useUnifiedTopology: true,
 });
 
-export type TUserDocument = mongoose.Document &
-  User & {
+export type TUserDocument = Omit<mongoose.Document, '_id'> &
+  Omit<User, '_id'> & {
+    _id: mongoose.Types.ObjectId;
     validatePassword(password: string): Promise<boolean>;
     toJSON(): object;
   };
