@@ -1,6 +1,8 @@
 import { Resolvers } from '@generated/types';
 
-import { authorizedFetch, authenticateOperation } from '@utils/graphql';
+import { authenticateOperation } from '@utils/graphql';
+import { tmdbFetch } from '@utils/tmdb';
+
 import {
   generateJWTToken,
   generateRefreshTokenData,
@@ -11,21 +13,11 @@ import usersService from '../users/usersService';
 
 const resolvers: Resolvers = {
   Query: {
-    discover: async (
-      _,
-      __,
-      context: { tmdbConfiguration: object | undefined },
-    ) => {
-      if (!context.tmdbConfiguration) {
-        context.tmdbConfiguration = (
-          await authorizedFetch('/configuration')
-        ).images;
-      }
-
-      return (await authorizedFetch('/discover/movie')).results;
+    discover: async () => {
+      return (await tmdbFetch('/discover/movie')).results;
     },
 
-    movie: async (_, { id }) => authorizedFetch(`/movie/${id}`),
+    movie: async (_, { id }) => tmdbFetch(`/movie/${id}`),
 
     users: async () => {
       const users = await usersService.findAllUsers();

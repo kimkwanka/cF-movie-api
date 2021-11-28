@@ -5,6 +5,7 @@ import path from 'path';
 import { ApolloServer } from 'apollo-server-express';
 
 import { getAuthStatus, TAuthorizedRequest } from '@utils/graphql';
+import { tmdbFetch } from '@utils/tmdb';
 
 import resolvers from './resolvers';
 
@@ -19,7 +20,7 @@ const server = new ApolloServer({
   context: async ({ req }: { req: TAuthorizedRequest }) => {
     return {
       req,
-      tmdbConfiguration: {},
+      tmdbConfiguration: (await tmdbFetch('/configuration')).images,
       authStatus: await getAuthStatus(req),
     };
   },
