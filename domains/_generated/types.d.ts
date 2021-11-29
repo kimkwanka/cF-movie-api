@@ -26,35 +26,9 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
-export type Director = {
-  __typename?: 'Director';
-  bio: Scalars['String'];
-  birth: Scalars['String'];
-  death: Scalars['String'];
-  name: Scalars['String'];
-};
-
 export type Error = {
   __typename?: 'Error';
   message: Scalars['String'];
-};
-
-export type Genre = {
-  __typename?: 'Genre';
-  description: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type Movie = {
-  __typename?: 'Movie';
-  _id: Scalars['ObjectId'];
-  description: Scalars['String'];
-  director: Director;
-  featured: Scalars['Boolean'];
-  genre: Genre;
-  rating: Scalars['Float'];
-  slug: Scalars['String'];
-  title: Scalars['String'];
 };
 
 export type Mutation = {
