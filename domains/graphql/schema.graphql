@@ -44,29 +44,6 @@
     passwordHash: String!
   }
 
-  type Genre {
-    name: String!
-    description: String!
-  }
-
-  type Director {
-    name: String!
-    bio: String!
-    birth: String!
-    death: String!
-  }
-
-  type Movie {
-    _id: ObjectId!
-    title: String!
-    description: String!
-    genre: Genre!
-    director: Director!
-    slug: String!
-    featured: Boolean!
-    rating: Float!
-  }
-
   type TMDBConfiguration {
     base_url: String!
     secure_base_url: String!
