@@ -12,6 +12,7 @@ import authRouter from '@auth/authRouter';
 import moviesRouter from '@movies/moviesRouter';
 import usersRouter from '@users/usersRouter';
 import graphqlRouter from '@graphql/graphqlRouter';
+import tmdbRouter from '@tmdb/tmdbRouter';
 
 const PORT = process.env.PORT || 8080;
 
@@ -39,10 +40,10 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   // Enable CORS for all domains
   expressApp.use(
     cors({
-      exposedHeaders: ['Set-Authorization'],
       origin: [
         /http(s)?:\/\/(.+\.)?localhost(:\d{1,5})?$/,
         'https://restflix.netlify.app',
+        'https://studio.apollographql.com',
       ],
       credentials: true,
     }),
@@ -61,7 +62,9 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   expressApp.use(authRouter);
 
   // Enable Logger
-  expressApp.use(morgan('dev'));
+  if (process.env.NODE_ENV === 'production') {
+    expressApp.use(morgan('dev'));
+  }
 
   // Show documentation on root
   expressApp.get('/', (req: Request, res: Response) => {
