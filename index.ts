@@ -72,6 +72,9 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   expressApp.use(moviesRouter);
   expressApp.use(usersRouter);
 
+  // TMDB API route
+  expressApp.use(tmdbRouter);
+
   // GraphQL route
   expressApp.use(graphqlRouter);
 
