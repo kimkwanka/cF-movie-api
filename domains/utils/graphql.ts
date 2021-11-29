@@ -1,25 +1,9 @@
-import fetch from 'node-fetch';
 import { getTokenPayload } from '@utils/jwt';
 
 import usersService from '@users/usersService';
 
-const TMDB_BASE_API_URL = 'https://api.themoviedb.org/3';
-
 export type TAuthorizedRequest = Request & {
   headers: { authorization: string };
-};
-
-export const authorizedFetch = async (apiEndpoint: string) => {
-  try {
-    const response = await fetch(`${TMDB_BASE_API_URL}${apiEndpoint}`, {
-      headers: { Authorization: `Bearer ${process.env.TMDB_API_TOKEN}` },
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return undefined;
-  }
 };
 
 export const getAuthStatus = async (req: TAuthorizedRequest) => {

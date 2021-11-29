@@ -1,5 +1,8 @@
+  scalar Date
+  scalar ObjectId
+  
   type User {
-    _id: ID
+    _id: ObjectId!
     birthday: String
     email: String!
     favoriteMovies: [String]!
@@ -20,39 +23,25 @@
   }
 
   type AuthPayload {
-    token: String
-    statusCode: Int
+    jwtToken: String
+    jwtTokenExpiration: Date
+    refreshTokenData: RefreshTokenData
+    statusCode: Int!
     user: User
     errors: [Error]!
   }
 
   type UserPayload {
-    statusCode: Int
+    statusCode: Int!
     user: User
     errors: [Error]!
   }
 
-  type Genre {
-    name: String!
-    description: String!
-  }
-
-  type Director {
-    name: String!
-    bio: String!
-    birth: String!
-    death: String!
-  }
-
-  type Movie {
-    _id: String!
-    title: String!
-    description: String!
-    genre: Genre!
-    director: Director!
-    slug: String!
-    featured: Boolean!
-    rating: Float!
+  type RefreshTokenData {
+    refreshToken: String!
+    expiresAt: Date!
+    userId: String!
+    passwordHash: String!
   }
 
   type TMDBConfiguration {
@@ -69,7 +58,7 @@
     adult: Boolean!
     backdrop_path: String!
     genre_ids: [String!]!
-    id: Int!
+    id: ID!
     original_language: Boolean!
     original_title: String!
     overview: String!
@@ -127,7 +116,6 @@
   }
 
   type Query {
-    movies: [Movie]
     discover: [TMDBMovieSimple]
     movie(id: Int!): TMDBMovieDetailed
     users: [User]

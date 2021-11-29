@@ -8,8 +8,9 @@ mongoose.connect(process.env.MONGODB_URI || '', {
   useUnifiedTopology: true,
 });
 
-export type TUserDocument = mongoose.Document &
-  User & {
+export type TUserDocument = Omit<mongoose.Document, '_id'> &
+  Omit<User, '_id'> & {
+    _id: mongoose.Types.ObjectId;
     validatePassword(password: string): Promise<boolean>;
     toJSON(): object;
   };
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema<TUserDocument>({
   _id: { type: mongoose.Schema.Types.ObjectId },
   birthday: Date,
   email: { type: String, required: true },
-  favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
+  favoriteMovies: [{ type: String }],
   passwordHash: { type: String, required: true },
   username: { type: String, required: true },
 });

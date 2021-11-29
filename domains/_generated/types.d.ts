@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -12,45 +12,23 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
+  ObjectId: any;
 };
 
 export type AuthPayload = {
   __typename?: 'AuthPayload';
   errors: Array<Maybe<Error>>;
-  statusCode?: Maybe<Scalars['Int']>;
-  token?: Maybe<Scalars['String']>;
+  jwtToken?: Maybe<Scalars['String']>;
+  jwtTokenExpiration?: Maybe<Scalars['Date']>;
+  refreshTokenData?: Maybe<RefreshTokenData>;
+  statusCode: Scalars['Int'];
   user?: Maybe<User>;
-};
-
-export type Director = {
-  __typename?: 'Director';
-  bio: Scalars['String'];
-  birth: Scalars['String'];
-  death: Scalars['String'];
-  name: Scalars['String'];
 };
 
 export type Error = {
   __typename?: 'Error';
   message: Scalars['String'];
-};
-
-export type Genre = {
-  __typename?: 'Genre';
-  description: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type Movie = {
-  __typename?: 'Movie';
-  _id: Scalars['String'];
-  description: Scalars['String'];
-  director: Director;
-  featured: Scalars['Boolean'];
-  genre: Genre;
-  rating: Scalars['Float'];
-  slug: Scalars['String'];
-  title: Scalars['String'];
 };
 
 export type Mutation = {
@@ -101,13 +79,20 @@ export type Query = {
   __typename?: 'Query';
   discover?: Maybe<Array<Maybe<TmdbMovieSimple>>>;
   movie?: Maybe<TmdbMovieDetailed>;
-  movies?: Maybe<Array<Maybe<Movie>>>;
   users?: Maybe<Array<Maybe<User>>>;
 };
 
 
 export type QueryMovieArgs = {
   id: Scalars['Int'];
+};
+
+export type RefreshTokenData = {
+  __typename?: 'RefreshTokenData';
+  expiresAt: Scalars['Date'];
+  passwordHash: Scalars['String'];
+  refreshToken: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 export type TmdbConfiguration = {
@@ -154,7 +139,7 @@ export type TmdbMovieSimple = {
   adult: Scalars['Boolean'];
   backdrop_path: Scalars['String'];
   genre_ids: Array<Scalars['String']>;
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   original_language: Scalars['Boolean'];
   original_title: Scalars['String'];
   overview: Scalars['String'];
@@ -189,7 +174,7 @@ export type TmdbProductionSpokenLanguaeges = {
 
 export type User = {
   __typename?: 'User';
-  _id?: Maybe<Scalars['ID']>;
+  _id: Scalars['ObjectId'];
   birthday?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   favoriteMovies: Array<Maybe<Scalars['String']>>;
@@ -208,7 +193,7 @@ export type UserInput = {
 export type UserPayload = {
   __typename?: 'UserPayload';
   errors: Array<Maybe<Error>>;
-  statusCode?: Maybe<Scalars['Int']>;
+  statusCode: Scalars['Int'];
   user?: Maybe<User>;
 };
 
@@ -283,15 +268,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Director: ResolverTypeWrapper<Director>;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
   Error: ResolverTypeWrapper<Error>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
-  Genre: ResolverTypeWrapper<Genre>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  Movie: ResolverTypeWrapper<Movie>;
   Mutation: ResolverTypeWrapper<{}>;
+  ObjectId: ResolverTypeWrapper<Scalars['ObjectId']>;
   Query: ResolverTypeWrapper<{}>;
+  RefreshTokenData: ResolverTypeWrapper<RefreshTokenData>;
   String: ResolverTypeWrapper<Scalars['String']>;
   TMDBConfiguration: ResolverTypeWrapper<TmdbConfiguration>;
   TMDBMovieDetailed: ResolverTypeWrapper<TmdbMovieDetailed>;
@@ -308,15 +293,15 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AuthPayload: AuthPayload;
   Boolean: Scalars['Boolean'];
-  Director: Director;
+  Date: Scalars['Date'];
   Error: Error;
   Float: Scalars['Float'];
-  Genre: Genre;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
-  Movie: Movie;
   Mutation: {};
+  ObjectId: Scalars['ObjectId'];
   Query: {};
+  RefreshTokenData: RefreshTokenData;
   String: Scalars['String'];
   TMDBConfiguration: TmdbConfiguration;
   TMDBMovieDetailed: TmdbMovieDetailed;
@@ -331,40 +316,20 @@ export type ResolversParentTypes = {
 
 export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
   errors?: Resolver<Array<Maybe<ResolversTypes['Error']>>, ParentType, ContextType>;
-  statusCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  jwtToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  jwtTokenExpiration?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  refreshTokenData?: Resolver<Maybe<ResolversTypes['RefreshTokenData']>, ParentType, ContextType>;
+  statusCode?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DirectorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Director'] = ResolversParentTypes['Director']> = {
-  bio?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  birth?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  death?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
 
 export type ErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type GenreResolvers<ContextType = any, ParentType extends ResolversParentTypes['Genre'] = ResolversParentTypes['Genre']> = {
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type MovieResolvers<ContextType = any, ParentType extends ResolversParentTypes['Movie'] = ResolversParentTypes['Movie']> = {
-  _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  director?: Resolver<ResolversTypes['Director'], ParentType, ContextType>;
-  featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  genre?: Resolver<ResolversTypes['Genre'], ParentType, ContextType>;
-  rating?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -377,11 +342,22 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, '_id' | 'newUserData'>>;
 };
 
+export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectId'], any> {
+  name: 'ObjectId';
+}
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discover?: Resolver<Maybe<Array<Maybe<ResolversTypes['TMDBMovieSimple']>>>, ParentType, ContextType>;
   movie?: Resolver<Maybe<ResolversTypes['TMDBMovieDetailed']>, ParentType, ContextType, RequireFields<QueryMovieArgs, 'id'>>;
-  movies?: Resolver<Maybe<Array<Maybe<ResolversTypes['Movie']>>>, ParentType, ContextType>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+};
+
+export type RefreshTokenDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['RefreshTokenData'] = ResolversParentTypes['RefreshTokenData']> = {
+  expiresAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  passwordHash?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type TmdbConfigurationResolvers<ContextType = any, ParentType extends ResolversParentTypes['TMDBConfiguration'] = ResolversParentTypes['TMDBConfiguration']> = {
@@ -427,7 +403,7 @@ export type TmdbMovieSimpleResolvers<ContextType = any, ParentType extends Resol
   adult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   backdrop_path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   genre_ids?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   original_language?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   original_title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   overview?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -462,7 +438,7 @@ export type TmdbProductionSpokenLanguaegesResolvers<ContextType = any, ParentTyp
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  _id?: Resolver<ResolversTypes['ObjectId'], ParentType, ContextType>;
   birthday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   favoriteMovies?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -473,19 +449,19 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type UserPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserPayload'] = ResolversParentTypes['UserPayload']> = {
   errors?: Resolver<Array<Maybe<ResolversTypes['Error']>>, ParentType, ContextType>;
-  statusCode?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  statusCode?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
-  Director?: DirectorResolvers<ContextType>;
+  Date?: GraphQLScalarType;
   Error?: ErrorResolvers<ContextType>;
-  Genre?: GenreResolvers<ContextType>;
-  Movie?: MovieResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  ObjectId?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
+  RefreshTokenData?: RefreshTokenDataResolvers<ContextType>;
   TMDBConfiguration?: TmdbConfigurationResolvers<ContextType>;
   TMDBMovieDetailed?: TmdbMovieDetailedResolvers<ContextType>;
   TMDBMovieSimple?: TmdbMovieSimpleResolvers<ContextType>;

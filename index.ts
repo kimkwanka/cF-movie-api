@@ -4,12 +4,15 @@ import express, { Request, Response, Application, NextFunction } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
+import cookieParser from 'cookie-parser';
+
 import ip from 'ip';
 
 import authRouter from '@auth/authRouter';
 import moviesRouter from '@movies/moviesRouter';
 import usersRouter from '@users/usersRouter';
 import graphqlRouter from '@graphql/graphqlRouter';
+import tmdbRouter from '@tmdb/tmdbRouter';
 
 const PORT = process.env.PORT || 8080;
 
@@ -35,7 +38,16 @@ const errorHandlerMiddleware = (
 
 const initMiddlewareAndRoutes = (expressApp: Application) => {
   // Enable CORS for all domains
-  expressApp.use(cors());
+  expressApp.use(
+    cors({
+      origin: [
+        /http(s)?:\/\/(.+\.)?localhost(:\d{1,5})?$/,
+        'https://restflix.netlify.app',
+        'https://studio.apollographql.com',
+      ],
+      credentials: true,
+    }),
+  );
 
   // Remove the X-Powered-By headers
   expressApp.disable('x-powered-by');
@@ -43,11 +55,16 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   // Enable body-parser
   expressApp.use(express.json());
 
+  // Enable cookie-parser
+  expressApp.use(cookieParser());
+
   // Enable Authentication and Authorization for REST API routes
   expressApp.use(authRouter);
 
   // Enable Logger
-  expressApp.use(morgan('common'));
+  if (process.env.NODE_ENV === 'production') {
+    expressApp.use(morgan('dev'));
+  }
 
   // Show documentation on root
   expressApp.get('/', (req: Request, res: Response) => {
@@ -57,6 +74,9 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
   // API routes
   expressApp.use(moviesRouter);
   expressApp.use(usersRouter);
+
+  // TMDB API route
+  expressApp.use(tmdbRouter);
 
   // GraphQL route
   expressApp.use(graphqlRouter);

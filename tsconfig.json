@@ -24,6 +24,7 @@
       "@auth/*": ["auth/*"],
       "@graphql/*": ["graphql/*"],
       "@movies/*": ["movies/*"],
+      "@tmdb/*": ["tmdb/*"],
       "@users/*": ["users/*"],
       "@utils/*": ["utils/*"],
     },

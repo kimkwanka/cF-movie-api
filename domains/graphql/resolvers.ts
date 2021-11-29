@@ -1,28 +1,26 @@
 import { Resolvers } from '@generated/types';
 
-import { authorizedFetch, authenticateOperation } from '@utils/graphql';
-import { generateToken } from '@utils/jwt';
+import { authenticateOperation } from '@utils/graphql';
+import { tmdbFetch } from '@utils/tmdb';
+
+import {
+  generateJWTToken,
+  generateRefreshTokenData,
+  addRefreshTokenToWhitelist,
+} from '@utils/jwt';
 
 import usersService from '../users/usersService';
-import { TUserDocument } from '../users/usersModel';
 
 const resolvers: Resolvers = {
+  TMDBMovieSimple: {
+    id: (parent) => parent.id.toString(),
+  },
   Query: {
-    discover: async (
-      _,
-      __,
-      context: { tmdbConfiguration: object | undefined },
-    ) => {
-      if (!context.tmdbConfiguration) {
-        context.tmdbConfiguration = (
-          await authorizedFetch('/configuration')
-        ).images;
-      }
-
-      return (await authorizedFetch('/discover/movie')).results;
+    discover: async () => {
+      return (await tmdbFetch('/discover/movie')).results;
     },
 
-    movie: async (_, { id }) => authorizedFetch(`/movie/${id}`),
+    movie: async (_, { id }) => tmdbFetch(`/movie/${id}`),
 
     users: async () => {
       const users = await usersService.findAllUsers();
@@ -79,16 +77,37 @@ const resolvers: Resolvers = {
 
     loginUser: async (_, { username, password }) => {
       try {
-        const { statusCode, data, errors } = await usersService.loginUser({
+        const {
+          statusCode,
+          data: user,
+          errors,
+        } = await usersService.loginUser({
           username,
           password,
         });
+        let refreshTokenData = null;
+        let jwtToken = '';
 
-        const token = data
-          ? generateToken((data as TUserDocument).toJSON())
-          : '';
+        if (user) {
+          const userId = user._id.toString();
+          const { passwordHash } = user;
 
-        return { statusCode, user: data, token, errors };
+          refreshTokenData = generateRefreshTokenData({
+            userId,
+            passwordHash,
+          });
+
+          jwtToken = generateJWTToken({
+            userId,
+            passwordHash,
+          });
+
+          if (refreshTokenData) {
+            addRefreshTokenToWhitelist(refreshTokenData);
+          }
+        }
+
+        return { statusCode, user, jwtToken, refreshTokenData, errors };
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : err;
 
@@ -96,7 +115,8 @@ const resolvers: Resolvers = {
         return {
           statusCode: 500,
           data: null,
-          token: '',
+          jwtToken: '',
+          refreshTokenData: null,
           errors: [{ message: errorMessage as string }],
         };
       }

@@ -1,47 +1,10 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 
 import authController from '@auth/authController';
-
-import { getTokenPayload } from '@utils/jwt';
 
 import usersController from './usersController';
 
 const usersRouter = express.Router();
-
-const allowRequestOnlyWithSameUserId = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  const requestUserId = req.params.userId;
-  // We need to cast to string or else equality check will never be true
-  // (_id is an object for some reason, whereas userId is a regular string)
-
-  const token = req?.headers?.authorization?.slice?.(7);
-
-  if (!token) {
-    return res.status(400).send({
-      data: null,
-      errors: {
-        message: "Authentication Error: Access token couldn't be found.",
-      },
-    });
-  }
-
-  const { userId } = getTokenPayload(token);
-
-  if (requestUserId !== userId) {
-    return res.status(401).send({
-      data: null,
-      errors: {
-        message: `Unauthorized: Not allowed to access user with id '${requestUserId}'`,
-      },
-    });
-  }
-
-  return next();
-};
-
 /**
  * Register a new user
  *
@@ -75,8 +38,8 @@ usersRouter.post('/users', usersController.addUser);
  */
 usersRouter.put(
   '/users/:userId',
-  authController.requireJWTAuth,
-  allowRequestOnlyWithSameUserId,
+  authController.requireAuthentication,
+  authController.requireAuthorization,
   usersController.updateUser,
 );
 
@@ -95,8 +58,8 @@ usersRouter.put(
  */
 usersRouter.delete(
   '/users/:userId',
-  authController.requireJWTAuth,
-  allowRequestOnlyWithSameUserId,
+  authController.requireAuthentication,
+  authController.requireAuthorization,
   usersController.deleteUser,
 );
 
@@ -117,8 +80,8 @@ usersRouter.delete(
  */
 usersRouter.post(
   '/users/:userId/movies/:movieId',
-  authController.requireJWTAuth,
-  allowRequestOnlyWithSameUserId,
+  authController.requireAuthentication,
+  authController.requireAuthorization,
   usersController.addFavoriteMovieToUser,
 );
 
@@ -139,8 +102,8 @@ usersRouter.post(
  */
 usersRouter.delete(
   '/users/:userId/movies/:movieId',
-  authController.requireJWTAuth,
-  allowRequestOnlyWithSameUserId,
+  authController.requireAuthentication,
+  authController.requireAuthorization,
   usersController.removeFavoriteMovieFromUser,
 );
 

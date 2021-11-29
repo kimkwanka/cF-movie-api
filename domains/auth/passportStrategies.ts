@@ -1,4 +1,5 @@
 import passport from 'passport';
+import jwt from 'jsonwebtoken';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 import {
@@ -6,7 +7,7 @@ import {
   ExtractJwt as ExtractJWT,
 } from 'passport-jwt';
 
-import usersService from '../users/usersService';
+import usersService from '@users/usersService';
 
 const initLocalStrategy = () => {
   const localStrategy = new LocalStrategy(
@@ -37,23 +38,38 @@ const initLocalStrategy = () => {
   passport.use(localStrategy);
 };
 
+type TJWTUserPayload = jwt.JwtPayload & { passwordHash: string };
+
 const initJWTStrategy = () => {
   const jwtStrategy = new JWTStrategy(
     {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
-    },
-    async ({ userId }, done) => {
-      try {
-        const user = await usersService.findById(userId);
+      // secretOrKey: process.env.JWT_SECRET,
+      secretOrKeyProvider: async (_, rawJwtToken, done) => {
+        try {
+          const { sub: userId } = jwt.decode(rawJwtToken) as TJWTUserPayload;
 
-        if (!user) {
-          return done(null, null, {
-            message: `Unauthorized: User couldn't be found.`,
-          });
+          const user = await usersService.findById(userId || '');
+
+          if (!user) {
+            return done(
+              {
+                message: `Unauthorized: User couldn't be found.`,
+              },
+              '',
+            );
+          }
+
+          return done(null, user.passwordHash + process.env.JWT_SECRET);
+        } catch (serverError) {
+          // Bubble up server errors
+          return done(serverError, '');
         }
-
-        return done(null, user);
+      },
+    },
+    async (payload, done) => {
+      try {
+        return done(null, payload);
       } catch (serverError) {
         // Bubble up server errors
         return done(serverError);

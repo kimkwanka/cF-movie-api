@@ -6,8 +6,6 @@ import { UserInput } from '@generated/types';
 
 import Users from './usersModel';
 
-import Movies from '../movies/moviesModel';
-
 const findAllUsers = async () => Users.find({});
 
 const findById = async (id: string) => Users.findById(id);
@@ -256,7 +254,6 @@ const deleteUser = async (userId: string) => {
 
 const addFavoriteMovieToUser = async (userId: string, movieId: string) => {
   try {
-    const errors: Array<{ message: string }> = [];
     const userToUpdate = await Users.findOne({ _id: userId });
 
     if (!userToUpdate) {
@@ -269,24 +266,14 @@ const addFavoriteMovieToUser = async (userId: string, movieId: string) => {
 
     const movieIdAlreadyInFavorites =
       userToUpdate.favoriteMovies.includes(movieId);
-    const movieFoundById = await Movies.findOne({ _id: movieId });
-    const movieWithIdExists = movieFoundById !== null;
 
     if (movieIdAlreadyInFavorites) {
-      errors.push({
-        message: `Movie with id: ${movieId} is already a favorite.`,
-      });
-    }
-
-    if (!movieWithIdExists) {
-      errors.push({ message: `Movie with id: ${movieId} doesn't exist.` });
-    }
-
-    if (errors.length) {
       return {
         statusCode: 400,
         data: null,
-        errors,
+        errors: [
+          { message: `Movie with id: ${movieId} is already a favorite.` },
+        ],
       };
     }
 
