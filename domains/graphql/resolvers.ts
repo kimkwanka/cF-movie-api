@@ -12,6 +12,9 @@ import {
 import usersService from '../users/usersService';
 
 const resolvers: Resolvers = {
+  TMDBMovieSimple: {
+    id: (parent) => parent.id.toString(),
+  },
   Query: {
     discover: async () => {
       return (await tmdbFetch('/discover/movie')).results;

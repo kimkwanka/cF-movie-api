@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema<TUserDocument>({
   _id: { type: mongoose.Schema.Types.ObjectId },
   birthday: Date,
   email: { type: String, required: true },
-  favoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
+  favoriteMovies: [{ type: String }],
   passwordHash: { type: String, required: true },
   username: { type: String, required: true },
 });

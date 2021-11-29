@@ -58,7 +58,7 @@
     adult: Boolean!
     backdrop_path: String!
     genre_ids: [String!]!
-    id: Int!
+    id: ID!
     original_language: Boolean!
     original_title: String!
     overview: String!
@@ -116,7 +116,6 @@
   }
 
   type Query {
-    movies: [Movie]
     discover: [TMDBMovieSimple]
     movie(id: Int!): TMDBMovieDetailed
     users: [User]
