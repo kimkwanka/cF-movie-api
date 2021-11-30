@@ -6,8 +6,8 @@ A simple RESTful movie API.
 - Express
 - Node.js
 
-## Live Demo
-[Live Demo on Heroku](https://dry-sands-45830.herokuapp.com/)
+## Live Version
+You can find the live version at https://movie-api.cardinalzero.com/.
 
 ## Unique Features
 This REST API is structured by components following the [Node.js Best Practices Project](https://github.com/goldbergyoni/nodebestpractices) and tries to separate the concerns of the different logic layers as much as possible as outlined in [this article](https://www.coreycleary.me/project-structure-for-an-express-rest-api-when-there-is-no-standard-way)  by Corey Cleary.
