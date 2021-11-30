@@ -59,7 +59,8 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
       res.cookie('refreshToken', refreshTokenData.refreshToken, {
         maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
         httpOnly: true,
-        secure: false,
+        secure: true,
+        sameSite: 'none',
       });
 
       const jwtTokenExpiration = calculateExpirationDate(
@@ -117,7 +118,8 @@ const silentRefresh = async (req: Request, res: Response) => {
     res.cookie('refreshToken', '', {
       expires: new Date(0),
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: 'none',
     });
 
     return res.status(400).send({
@@ -129,7 +131,8 @@ const silentRefresh = async (req: Request, res: Response) => {
   res.cookie('refreshToken', refreshTokenData.refreshToken, {
     maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: 'none',
   });
 
   return res.send({
@@ -152,7 +155,8 @@ const logoutUser = async (req: Request, res: Response) => {
   res.cookie('refreshToken', '', {
     expires: new Date(0),
     httpOnly: true,
-    secure: false,
+    secure: true,
+    sameSite: 'none',
   });
 
   return res.send({
