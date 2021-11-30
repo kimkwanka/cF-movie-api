@@ -11,7 +11,9 @@ export const REFRESH_TOKEN_EXPIRATION_IN_SECONDS = 24 * 60 * 60;
 type TJWTUserPayload = jwt.JwtPayload & { userId: string };
 
 const redis = new Tedis({
-  password: 'TEDIS_PASS',
+  host: process.env.REDIS_HOST,
+  port: parseInt(process.env.REDIS_PORT || '', 10),
+  password: process.env.REDIS_PASS,
 });
 
 export const generateJWTToken = ({
