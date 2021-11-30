@@ -37,7 +37,7 @@ const errorHandlerMiddleware = (
 };
 
 const initMiddlewareAndRoutes = (expressApp: Application) => {
-  // Enable CORS for all domains
+  // Configure CORS
   expressApp.use(
     cors({
       origin: [
