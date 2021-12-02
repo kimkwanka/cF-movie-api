@@ -3,10 +3,11 @@ import { Request, Response } from 'express';
 import { tmdbFetch } from '@utils/tmdb';
 
 const tmdbQuery = async (req: Request, res: Response) => {
-  const endpoint = req.params[0];
+  const endpoint = req.originalUrl.replace('/tmdb', '');
 
   try {
-    const data = await tmdbFetch(`/${endpoint}`);
+    const data = await tmdbFetch(endpoint);
+
     return res.send({
       data,
       errors: [],
