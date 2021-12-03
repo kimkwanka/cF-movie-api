@@ -88,11 +88,16 @@
     name: String!
   }
 
+  type TMDBGenre {
+    id: Int!
+    name: String!
+  }
+
   type TMDBMovieDetailed {
     adult: Boolean!
     backdrop_path: String
     budget: Int!
-    genre_ids: [String!]!
+    genres: [TMDBGenre!]!
     homepage: String
     id: Int!
     imdb_id: String
