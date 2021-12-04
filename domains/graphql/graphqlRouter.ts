@@ -20,7 +20,7 @@ const server = new ApolloServer({
   context: async ({ req }: { req: TAuthorizedRequest }) => {
     return {
       req,
-      tmdbConfiguration: (await tmdbFetch('/configuration')).images,
+      tmdbConfiguration: (await tmdbFetch('/configuration')).data.images,
       authStatus: await getAuthStatus(req),
     };
   },

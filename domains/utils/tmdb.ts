@@ -7,11 +7,34 @@ export const tmdbFetch = async (apiEndpoint: string) => {
     const response = await fetch(`${TMDB_BASE_API_URL}${apiEndpoint}`, {
       headers: { Authorization: `Bearer ${process.env.TMDB_API_TOKEN}` },
     });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return undefined;
+
+    const resData = await response.json();
+
+    if (response.ok) {
+      return {
+        statusCode: response.status,
+        data: resData,
+        errors: [],
+      };
+    }
+
+    return {
+      statusCode: response.status,
+      data: null,
+      errors: resData.errors.map((eMsg: string) => ({
+        message: eMsg,
+      })),
+    };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : err;
+
+    console.error(errorMessage);
+
+    return {
+      statusCode: 500,
+      data: null,
+      errors: [{ message: errorMessage as string }],
+    };
   }
 };
 

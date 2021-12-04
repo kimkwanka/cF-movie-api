@@ -6,20 +6,21 @@ const tmdbQuery = async (req: Request, res: Response) => {
   const endpoint = req.originalUrl.replace('/tmdb', '');
 
   try {
-    const data = await tmdbFetch(endpoint);
+    const { data, errors, statusCode } = await tmdbFetch(endpoint);
 
-    return res.send({
+    return res.status(statusCode).send({
       data,
-      errors: [],
+      errors,
     });
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : err;
 
     console.error(errorMessage);
-    return {
+
+    return res.status(500).send({
       data: null,
       errors: [{ message: errorMessage as string }],
-    };
+    });
   }
 };
 

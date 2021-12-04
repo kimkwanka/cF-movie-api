@@ -17,10 +17,10 @@ const resolvers: Resolvers = {
   },
   Query: {
     discover: async () => {
-      return (await tmdbFetch('/discover/movie')).results;
+      return (await tmdbFetch('/discover/movie')).data.results;
     },
 
-    movie: async (_, { id }) => tmdbFetch(`/movie/${id}`),
+    movie: async (_, { id }) => (await tmdbFetch(`/movie/${id}`)).data,
 
     users: async () => {
       const users = await usersService.findAllUsers();
