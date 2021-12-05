@@ -86,9 +86,9 @@ export const refreshAllTokens = async (req: Request) => {
     ? await usersService.findById(refreshTokenData.userId)
     : null;
 
-  if (user) {
-    await removeRefreshTokenFromWhitelist(refreshToken);
+  await removeRefreshTokenFromWhitelist(refreshToken);
 
+  if (user) {
     const newJwtToken = generateJWTToken({
       userId: user._id.toString(),
       passwordHash: user.passwordHash,
