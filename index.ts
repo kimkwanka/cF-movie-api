@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser';
 import ip from 'ip';
 
 import authRouter from '@auth/authRouter';
-import moviesRouter from '@movies/moviesRouter';
 import usersRouter from '@users/usersRouter';
 import graphqlRouter from '@graphql/graphqlRouter';
 import tmdbRouter from '@tmdb/tmdbRouter';
@@ -71,8 +70,7 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
     res.redirect('/documentation.html');
   });
 
-  // API routes
-  expressApp.use(moviesRouter);
+  // CRUD API route
   expressApp.use(usersRouter);
 
   // TMDB API route
