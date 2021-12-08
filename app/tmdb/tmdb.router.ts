@@ -9,7 +9,7 @@ const tmdbRouter = express.Router();
 tmdbRouter.get(
   '/tmdb/*',
   authController.requireAuthentication,
-  tmdbController.tmdbQuery,
+  tmdbController.tmdbProxyRequest,
 );
 
 export default tmdbRouter;

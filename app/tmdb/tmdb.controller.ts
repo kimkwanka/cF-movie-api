@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
-const tmdbQuery = async (req: Request, res: Response) => {
+const tmdbProxyRequest = async (req: Request, res: Response) => {
   const endpoint = req.originalUrl.replace('/tmdb', '');
 
   try {
@@ -25,5 +25,5 @@ const tmdbQuery = async (req: Request, res: Response) => {
 };
 
 export default {
-  tmdbQuery,
+  tmdbProxyRequest,
 };
