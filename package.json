@@ -1,7 +1,7 @@
 {
   "name": "cf-movie-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app/server.ts",
   "repository": "git@github.com:kimkwanka/cf-movie-api",
   "author": "Kim Kwanka <kimkwanka@gmail.com>",
   "license": "MIT",
@@ -58,8 +58,8 @@
     "validator": "^13.7.0"
   },
   "scripts": {
-    "start": "nodemon -r dotenv/config -r tsconfig-paths/register --exec 'ts-node --transpile-only' index.ts",
-    "dev": "nodemon -r dotenv/config -r tsconfig-paths/register --watch './**/*.ts' --exec 'ts-node' index.ts",
+    "start": "nodemon -r dotenv/config -r tsconfig-paths/register --exec 'ts-node --transpile-only' app/server.ts",
+    "dev": "nodemon -r dotenv/config -r tsconfig-paths/register --watch './**/*.ts' --exec 'ts-node' app/server.ts",
     "lint": "npx eslint \"**/*.{ts,tsx}\"; npx tsc --noEmit",
     "docs": "jsdoc -c jsdoc.conf",
     "generate": "graphql-codegen"
