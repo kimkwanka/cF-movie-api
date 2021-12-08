@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Tedis } from 'tedis';
+import redis from '@auth/auth.redis';
 
 import { RefreshTokenData } from '@generated/types';
 
@@ -9,12 +9,6 @@ export const JWT_TOKEN_EXPIRATION_IN_SECONDS = 15 * 60;
 export const REFRESH_TOKEN_EXPIRATION_IN_SECONDS = 24 * 60 * 60;
 
 type TJWTUserPayload = jwt.JwtPayload & { userId: string };
-
-const redis = new Tedis({
-  host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT || '', 10),
-  password: process.env.REDIS_PASS,
-});
 
 export const generateJWTToken = ({
   userId,
