@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 import path from 'path';
 
@@ -27,4 +28,20 @@ const apolloServer = new ApolloServer({
   },
 });
 
-export default apolloServer;
+let isServerRunning = false;
+
+const apolloMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!isServerRunning) {
+    await apolloServer.start();
+    isServerRunning = true;
+  }
+  return apolloServer.getMiddleware({ path: '/graphql' })(req, res, next);
+};
+
+export default {
+  apolloMiddleware,
+};

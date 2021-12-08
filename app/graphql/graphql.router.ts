@@ -1,14 +1,9 @@
 import express from 'express';
 
-import apolloServer from '@graphql/graphql.server';
+import graphqlController from '@graphql/graphql.controller';
 
 const graphqlRouter = express.Router();
 
-const startApolloServer = async () => {
-  await apolloServer.start();
-  graphqlRouter.use(apolloServer.getMiddleware({ path: '/graphql' }));
-};
-
-startApolloServer();
+graphqlRouter.use(graphqlController.apolloMiddleware);
 
 export default graphqlRouter;
