@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 import express, { Request, Response, Application, NextFunction } from 'express';
 
+import helmet from 'helmet';
+
 import morgan from 'morgan';
 import cors from 'cors';
 
@@ -36,6 +38,9 @@ const errorHandlerMiddleware = (
 };
 
 const initMiddlewareAndRoutes = (expressApp: Application) => {
+  // Enable helmet
+  expressApp.use(helmet());
+
   // Configure CORS
   expressApp.use(
     cors({
