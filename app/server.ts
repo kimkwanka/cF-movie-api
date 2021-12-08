@@ -8,10 +8,10 @@ import cookieParser from 'cookie-parser';
 
 import ip from 'ip';
 
-import authRouter from '@auth/authRouter';
-import usersRouter from '@users/usersRouter';
-import graphqlRouter from '@graphql/graphqlRouter';
-import tmdbRouter from '@tmdb/tmdbRouter';
+import authRouter from '@auth/auth.router';
+import usersRouter from '@users/users.router';
+import graphqlRouter from '@graphql/graphql.router';
+import tmdbRouter from '@tmdb/tmdb.router';
 
 const PORT = process.env.PORT || 8080;
 

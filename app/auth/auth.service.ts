@@ -141,3 +141,5 @@ export const getRefreshTokenData = async (refreshToken: string) => {
     return null;
   }
 };
+
+export { default as initStrategies } from '@auth/auth.strategies';

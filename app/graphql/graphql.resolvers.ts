@@ -1,15 +1,15 @@
 import { Resolvers } from '@generated/types';
 
-import { authenticateOperation } from '@utils/graphql';
-import { tmdbFetch } from '@utils/tmdb';
+import { authenticateOperation } from '@graphql/graphql.service';
+import { tmdbFetch } from '@tmdb/tmdb.service';
 
 import {
   generateJWTToken,
   generateRefreshTokenData,
   addRefreshTokenToWhitelist,
-} from '@utils/jwt';
+} from '@auth/auth.service';
 
-import usersService from '../users/usersService';
+import usersService from '@users/users.service';
 
 const resolvers: Resolvers = {
   TMDBMovieSimple: {

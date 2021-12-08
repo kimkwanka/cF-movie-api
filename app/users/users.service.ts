@@ -4,7 +4,7 @@ import validator from 'validator';
 
 import { UserInput } from '@generated/types';
 
-import Users from './usersModel';
+import Users from '@users/users.model';
 
 const findAllUsers = async () => Users.find({});
 

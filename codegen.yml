@@ -1,6 +1,6 @@
-schema: "./domains/graphql/*.graphql"
+schema: "./app/graphql/*.graphql"
 generates:
-  ./domains/_generated/types.d.ts:
+  ./app/_generated/types.d.ts:
     plugins:
       - typescript
       - typescript-resolvers

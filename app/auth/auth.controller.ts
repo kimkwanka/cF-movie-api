@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
-import { TUserDocument } from '@users/usersModel';
+import { TUserDocument } from '@users/users.model';
+import usersService from '@users/users.service';
 
 import {
   addAccessTokenToBlacklist,
@@ -11,15 +12,12 @@ import {
   generateRefreshTokenData,
   getRefreshTokenData,
   getTokenPayload,
+  initStrategies,
   isBlacklistedAccessToken,
   JWT_TOKEN_EXPIRATION_IN_SECONDS,
   REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
   removeRefreshTokenFromWhitelist,
-} from '@utils/jwt';
-
-import usersService from '@users/usersService';
-
-import initStrategies from './passportStrategies';
+} from '@auth/auth.service';
 
 initStrategies();
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import usersService from './usersService';
+import usersService from '@users/users.service';
 
 const getOperationResponse = async (
   res: Response,

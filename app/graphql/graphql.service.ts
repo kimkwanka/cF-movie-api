@@ -1,15 +1,13 @@
-import { getTokenPayload } from '@utils/jwt';
+import { getTokenPayload } from '@auth/auth.service';
 
-import usersService from '@users/usersService';
+import usersService from '@users/users.service';
 
 export type TAuthorizedRequest = Request & {
   headers: { authorization: string };
 };
 
-export const getAuthStatus = async (req: TAuthorizedRequest) => {
+export const getAuthStatus = async (token: string) => {
   try {
-    const token = req?.headers?.authorization?.slice?.(7);
-
     if (!token) {
       return {
         userId: '',

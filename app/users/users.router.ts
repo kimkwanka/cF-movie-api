@@ -1,8 +1,8 @@
 import express from 'express';
 
-import authController from '@auth/authController';
+import authController from '@auth/auth.controller';
 
-import usersController from './usersController';
+import usersController from '@users/users.controller';
 
 const usersRouter = express.Router();
 /**
