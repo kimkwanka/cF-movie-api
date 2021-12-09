@@ -3,10 +3,7 @@ import mongoose from 'mongoose';
 
 import { User } from '@generated/types';
 
-mongoose.connect(process.env.MONGODB_URI || '', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGODB_URI || '');
 
 export type TUserDocument = Omit<mongoose.Document, '_id'> &
   Omit<User, '_id'> & {
