@@ -53,7 +53,7 @@ export const getAuthStatus = async (token: string) => {
   }
 };
 
-export const authenticateOperation = async <T>(
+export const requireAuthorization = async <T>(
   authStatus: {
     userId: string;
     validToken: boolean;

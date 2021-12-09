@@ -1,6 +1,7 @@
 import { Resolvers } from '@generated/types';
 
-import { authenticateOperation } from '@graphql/graphql.service';
+import { requireAuthorization } from '@graphql/graphql.service';
+
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
 import {
@@ -36,7 +37,7 @@ const resolvers: Resolvers = {
     },
 
     updateUser: async (_, { _id, newUserData }, { authStatus }) => {
-      const { statusCode, data, errors } = await authenticateOperation(
+      const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
         _id,
         async () => usersService.updateUser(_id, newUserData),
@@ -45,7 +46,7 @@ const resolvers: Resolvers = {
     },
 
     deleteUser: async (_, { _id }, { authStatus }) => {
-      const { statusCode, data, errors } = await authenticateOperation(
+      const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
         _id,
         async () => usersService.deleteUser(_id),
@@ -54,7 +55,7 @@ const resolvers: Resolvers = {
     },
 
     addFavoriteMovieToUser: async (_, { _id, movieId }, { authStatus }) => {
-      const { statusCode, data, errors } = await authenticateOperation(
+      const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
         _id,
         async () => usersService.addFavoriteMovieToUser(_id, movieId),
@@ -67,7 +68,7 @@ const resolvers: Resolvers = {
       { _id, movieId },
       { authStatus },
     ) => {
-      const { statusCode, data, errors } = await authenticateOperation(
+      const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
         _id,
         async () => usersService.removeFavoriteMovieFromUser(_id, movieId),
