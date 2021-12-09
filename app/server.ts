@@ -39,7 +39,15 @@ const errorHandlerMiddleware = (
 
 const initMiddlewareAndRoutes = (expressApp: Application) => {
   // Enable helmet
-  expressApp.use(helmet());
+  expressApp.use(
+    helmet({
+      // To enable Apollo Studio / Playground in development, we need to disable the
+      // Content-Security-Policy header and only set it in production
+      // ('undefined' is the default value for 'contentSecurityPolicy', 'false' disables the header).
+      contentSecurityPolicy:
+        process.env.NODE_ENV === 'production' ? undefined : false,
+    }),
+  );
 
   // Configure CORS
   expressApp.use(
