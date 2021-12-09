@@ -1,6 +1,11 @@
+import { AuthenticationError } from 'apollo-server-express';
+
 import { Resolvers } from '@generated/types';
 
-import { requireAuthorization } from '@graphql/graphql.service';
+import {
+  requireAuthentication,
+  requireAuthorization,
+} from '@graphql/graphql.service';
 
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
@@ -17,8 +22,17 @@ const resolvers: Resolvers = {
     id: (parent) => parent.id.toString(),
   },
   Query: {
-    discover: async () => {
-      return (await tmdbFetch('/discover/movie')).data.results;
+    discover: async (_, __, { authStatus }) => {
+      const { data, errors } = await requireAuthentication(
+        authStatus,
+        async () => tmdbFetch('/discover/movie'),
+      );
+
+      if (data?.results) {
+        return data.results;
+      }
+
+      throw new AuthenticationError(errors[0].message);
     },
 
     movie: async (_, { id }) => (await tmdbFetch(`/movie/${id}`)).data,

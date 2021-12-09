@@ -85,3 +85,35 @@ export const requireAuthorization = async <T>(
   const { statusCode, data, errors } = await operation();
   return { statusCode, data, errors };
 };
+
+export const requireAuthentication = async <T>(
+  authStatus: {
+    userId: string;
+    validToken: boolean;
+    errors: Array<{ message: string }>;
+  },
+  operation: () => Promise<{
+    statusCode: number;
+    data: T | null;
+    errors: Array<{ message: string }>;
+  }>,
+) => {
+  const { validToken, errors: authErrors } = authStatus;
+
+  if (!validToken) {
+    return {
+      statusCode: 401,
+      data: null,
+      errors: authErrors.length
+        ? authErrors
+        : [
+            {
+              message: `Authentication Error: No valid access token.`,
+            },
+          ],
+    };
+  }
+
+  const { statusCode, data, errors } = await operation();
+  return { statusCode, data, errors };
+};
