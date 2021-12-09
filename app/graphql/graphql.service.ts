@@ -1,4 +1,4 @@
-import { getTokenPayload } from '@auth/auth.service';
+import { getTokenPayload, isValidToken } from '@auth/auth.service';
 
 import usersService from '@users/users.service';
 
@@ -20,7 +20,7 @@ export const getAuthStatus = async (token: string) => {
       };
     }
 
-    const { userId } = getTokenPayload(token);
+    const { sub: userId } = getTokenPayload(token);
 
     const user = await usersService.findById(userId);
 
@@ -31,6 +31,18 @@ export const getAuthStatus = async (token: string) => {
         errors: [
           {
             message: `Authentication Error: User with id '${userId}' couldn't be found.`,
+          },
+        ],
+      };
+    }
+
+    if (!isValidToken(token, user.passwordHash + process.env.JWT_SECRET)) {
+      return {
+        userId: '',
+        validToken: false,
+        errors: [
+          {
+            message: 'Authentication Error: No valid access token.',
           },
         ],
       };

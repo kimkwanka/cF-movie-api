@@ -8,7 +8,12 @@ import { RefreshTokenData } from '@generated/types';
 export const JWT_TOKEN_EXPIRATION_IN_SECONDS = 15 * 60;
 export const REFRESH_TOKEN_EXPIRATION_IN_SECONDS = 24 * 60 * 60;
 
-type TJWTUserPayload = jwt.JwtPayload & { userId: string };
+type TJWTUserPayload = jwt.JwtPayload & {
+  iat: number;
+  exp: number;
+  iss: string;
+  sub: string;
+};
 
 export const generateJWTToken = ({
   userId,
@@ -34,6 +39,16 @@ export const calculateRemainingExpirationInSeconds = (expirationDate: Date) => {
 
 export const getTokenPayload = (token: string) =>
   jwt.decode(token) as TJWTUserPayload;
+
+export const isValidToken = (token: string, secretOrPublicKey: string) => {
+  try {
+    const payload = jwt.verify(token, secretOrPublicKey) as TJWTUserPayload;
+
+    return !!payload;
+  } catch (error) {
+    return false;
+  }
+};
 
 export const generateRefreshTokenData = ({
   userId,
