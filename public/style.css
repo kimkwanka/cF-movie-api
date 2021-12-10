@@ -30,3 +30,11 @@ tr:first-child {
 tr:first-child th {
   font-weight: 700;
 }
+
+code {
+  background: #F8F8FF;
+  border: black dashed 1px;
+  display: block;
+  white-space: pre-wrap;
+  padding: 6px;
+}

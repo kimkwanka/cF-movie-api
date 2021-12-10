@@ -5,6 +5,7 @@ Movie data is provided via [TMDb API](https://developers.themoviedb.org/3/gettin
 
 In the same vein, User Management (CRUD) functionality can also be accessed via the corresponding REST endpoints or GraphQL operations.
 
+For more information, check the [API documentation](https://movie-api.cardinalzero.com/documentation.html).
 ## Built With
 - MongoDB
 - Express
@@ -69,3 +70,4 @@ Optionally, the ``PORT`` variable can be set to change the server's port (defaul
 
 ### Usage
 Use ``yarn start`` or ``npm start`` to run the API server.
+

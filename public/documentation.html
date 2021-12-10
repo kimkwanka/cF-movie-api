@@ -4,16 +4,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" class="style">
+    <link rel="stylesheet" href="style.css" class="style" />
     <title>Documentation</title>
   </head>
   <body>
-    <h1>Movie API</h1>
-    <p>
-      All the movie data you'll ever need in one place, easily accessible
-      through a modern RESTful API.
-    </p>
-    <p>Below is a table of all available API endpoints.</p>
+    <h1>Flix Backend Documentation</h1>
+    <p>Below is a table of all available API endpoints:</p>
     <table>
       <tr>
         <th>Business Logic</th>
@@ -24,52 +20,43 @@
         <th>Response body format</th>
       </tr>
       <tr>
-        <th>Returns a list of all movies</th>
-        <th>/movies</th>
-        <th>None</th>
+        <th>Proxy to TMDb</th>
+        <th>/tmdb/*</th>
+        <th>* = any TMDb endpoint with corresponding query parameters</th>
         <th>GET</th>
         <th>None</th>
-        <th>JSON object holding data about all movies</th>
+        <th>{ data: any | null; errors: { message: string }[] }</th>
       </tr>
       <tr>
-        <th>Returns data about a single movie by title</th>
-        <th>/movies/:title</th>
-        <th>title</th>
-        <th>GET</th>
+        <th>Login user</th>
+        <th>/login</th>
+        <th>None</th>
+        <th>POST</th>
         <th>None</th>
         <th>
-          { "_id": "60c26e28a640a21b749adfeb", "title": "Joker", "genre": "Drama" "description": "In Gotham City,
-          mentally troubled comedian Arthur Flec ...", "director": "Todd
-          Phillips", "slug": "joker",
-          "featured": false, rating: 8.4 }
+          { data: { user: any, jwtToken: string, jwtTokenExpiration: Date,
+          refreshTokenData: any } | null; errors: { message: string }[] }
         </th>
       </tr>
       <tr>
-        <th>Returns data about a genre by name</th>
-        <th>/genres/:name</th>
-        <th>name</th>
-        <th>GET</th>
+        <th>Logout user</th>
+        <th>/logout</th>
         <th>None</th>
-        <th>
-          { "name": "Thriller", "description": "Thriller is a genre of fiction,
-          having numerous, often overlapping subgenres. Thrillers are
-          characterized and defined by the moods they elicit, giving viewers
-          heightened feelings of suspense, excitement, surprise, anticipation
-          and anxiety. Successful examples of thrillers are the films of Alfred
-          Hitchcock." }
-        </th>
+        <th>POST</th>
+        <th>None</th>
+        <th>{ data: null; errors: { message: string }[] }</th>
       </tr>
       <tr>
-        <th>Returns data about a director by name</th>
-        <th>/directors/:name</th>
-        <th>name</th>
-        <th>GET</th>
+        <th>
+          Attempt a silent login / token refresh
+        </th>
+        <th>/silentrefresh</th>
+        <th>None</th>
+        <th>POST</th>
         <th>None</th>
         <th>
-          { "name": "Todd Phillips", "birth": 1970, "death": "", "bio":
-          "Todd Phillips was born on December 20, 1970 in Brooklyn, New York
-          City, New York, USA as Todd Bunzl. He is a producer and director,
-          known for Joker (2019), Old School (2003) and Due Date (2010)." }
+          { data: { jwtToken: string; refreshTokenData: any; user: any; } | null; errors: { message: string
+          }[] }
         </th>
       </tr>
       <tr>
@@ -77,21 +64,14 @@
         <th>/users</th>
         <th>None</th>
         <th>POST</th>
-        <th>{
-          "username": "MangoChicken22",
-          "password": "test123",
-          "email":"mangochicken22@gmail.com",
-          "birthday": "06/11/1973"
-        }</th>
         <th>
-          {
-            "_id": "60c26e28a640a21b749adfeb",
-            "username": "MangoChicken22",
-            "password": "test123",
-            "email":"mangochicken22@gmail.com",
-            "birthday": "06/11/1973",
-            "favoriteMovies": [],
+          { username: string; password: string; email: string; birthday: string;
           }
+        </th>
+        <th>
+          { data: { _id: ObjectId; username: string; password: string; email:
+          string; birthday: string; favoriteMovies: string[], } | null; errors:
+          { message: string }[] }
         </th>
       </tr>
       <tr>
@@ -99,21 +79,14 @@
         <th>/users/:userId</th>
         <th>userId</th>
         <th>PUT</th>
-        <th>{
-          "username": "MangoChicken22",
-          "password": "test123",
-          "email":"mangochicken22@gmail.com",
-          "birthday": "06/11/1973"
-        }</th>
         <th>
-          {
-            "_id": "60c26e28a640a21b749adfeb",
-            "username": "MangoChicken22",
-            "password": "test123",
-            "email":"mangochicken22@gmail.com",
-            "birthday": "06/11/1973",
-            "favoriteMovies": [],
+          { username: string; password: string; email: string; birthday: string;
           }
+        </th>
+        <th>
+          { data: { _id: ObjectId; username: string; password: string; email:
+          string; birthday: string; favoriteMovies: string[], } | null; errors:
+          { message: string }[] }
         </th>
       </tr>
       <tr>
@@ -123,8 +96,9 @@
         <th>POST</th>
         <th>None</th>
         <th>
-          Text message indicating whether the movie was successfully added
-          or not
+          { data: { _id: ObjectId; username: string; password: string; email:
+          string; birthday: string; favoriteMovies: string[], } | null; errors:
+          { message: string }[] }
         </th>
       </tr>
       <tr>
@@ -134,8 +108,9 @@
         <th>DELETE</th>
         <th>None</th>
         <th>
-          Text message indicating whether the movie was successfully removed
-          or not
+          { data: { _id: ObjectId; username: string; password: string; email:
+          string; birthday: string; favoriteMovies: string[], } | null; errors:
+          { message: string }[] }
         </th>
       </tr>
       <tr>
@@ -145,10 +120,31 @@
         <th>DELETE</th>
         <th>None</th>
         <th>
-          Text message indicating whether the user was successfully removed
-          or not
+          { data: { _id: ObjectId; username: string; password: string; email:
+          string; birthday: string; favoriteMovies: string[], } | null; errors:
+          { message: string }[] }
         </th>
       </tr>
     </table>
+    <p>
+      Additionally, the Flix Backend exposes a GraphQL interface (endpoint
+      '/graphql') to mirror the REST APIs feature set:
+    </p>
+    <code>
+      type Query {
+        discover: [TMDBMovieSimple]
+        movie(id: Int!): TMDBMovieDetailed
+        users: [User]
+      }
+    
+      type Mutation {
+        registerUser(newUserData: UserInput!): UserPayload
+        loginUser(username: String!, password: String!): AuthPayload
+        updateUser(_id: ID!, newUserData: UserInput!): UserPayload
+        deleteUser(_id: ID!): UserPayload
+        addFavoriteMovieToUser(_id: ID!, movieId: ID!): UserPayload
+        removeFavoriteMovieFromUser(_id: ID!, movieId: ID!): UserPayload
+      }
+    </code>
   </body>
 </html>
