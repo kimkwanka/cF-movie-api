@@ -1,18 +1,25 @@
-## cf-movie-api
-A simple RESTful movie API.
+## flix-backend
+REST-API and GraphQL server for the [RESTFlix](https://github.com/kimkwanka/RESTFlix) app and a future GraphQL frontend.
+
+Movie data is provided via [TMDb API](https://developers.themoviedb.org/3/getting-started/introduction) and can be retrived via REST proxy (endpoint `/tmdb`) or a GraphQL wrapper (endpoint` /graphql`).
+
+In the same vein, User Management (CRUD) functionality can also be accessed via the corresponding REST endpoints or GraphQL operations.
 
 ## Built With
 - MongoDB
 - Express
 - Node.js
+- GraphQL / Apollo
+- Redis
+- TypeScript
 
 ## Live Version
 You can find the live version at https://movie-api.cardinalzero.com/.
 
 ## Project Structure
-This REST API is structured by components following the [Node.js Best Practices Project](https://github.com/goldbergyoni/nodebestpractices) and tries to separate the concerns of the different logic layers as much as possible as outlined in [this article](https://www.coreycleary.me/project-structure-for-an-express-rest-api-when-there-is-no-standard-way) by Corey Cleary.
+This project is structured 'by components' following the [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices) and tries to separate the concerns of the different logic layers as much as possible as outlined in [this article](https://www.coreycleary.me/project-structure-for-an-express-rest-api-when-there-is-no-standard-way) by Corey Cleary.
 
-Each feature/component has its own folder containing at least a router, controller and a service file representing the different logic layers.
+Each feature/component has its own folder containing at least a router, controller and a service file representing the different logic layers:
 
 ### HTTP Logic Layer
 #### Router
@@ -30,6 +37,10 @@ calls to the data access layer / models or external APIs.
 
 ### Data Access Layer / Models
 This layer contains the logic for accessing persistent data (database, Redis server, etc.) - either directly or via an ORM / ODM Model.
+
+## Authentication / Authorization
+
+Authentication and authorization is realized using [JWTs](https://jwt.io/) and refresh token rotation with silent refresh. As the refresh tokens are provided as http-only, secure cookies it is imperative that the backend uses an encrypted HTTPS connection in production or the cookies can't be set by the server and therefore, auth won't be persistant. This is not an issue in development as most browsers ignore the "secure" setting from "localhost" and cookies can be set regardless.
 
 ## Getting started
 
