@@ -1,8 +1,8 @@
 {
-  "name": "cf-movie-api",
+  "name": "flix-backend",
   "version": "1.0.0",
   "main": "app/server.ts",
-  "repository": "git@github.com:kimkwanka/cf-movie-api",
+  "repository": "git@github.com:kimkwanka/flix-backend",
   "author": "Kim Kwanka <kimkwanka@gmail.com>",
   "license": "MIT",
   "devDependencies": {
