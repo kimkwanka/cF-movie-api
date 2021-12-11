@@ -41,7 +41,7 @@ This layer contains the logic for accessing persistent data (database, Redis ser
 
 ## Authentication / Authorization
 
-Authentication and authorization is realized using [JWTs](https://jwt.io/) and refresh token rotation with silent refresh. As the refresh tokens are provided as http-only, secure cookies it is imperative that the backend uses an encrypted HTTPS connection in production or the cookies can't be set by the server and therefore, auth won't be persistent i. This is not an issue in development as most browsers ignore the "secure" setting from "localhost" and cookies can be set regardless.
+Authentication and authorization is realized using [JWTs](https://jwt.io/) and refresh token rotation with silent refresh. As the refresh tokens are provided as http-only, secure cookies it is imperative that the backend uses an encrypted HTTPS connection in production or the cookies can't be set by the server and therefore, auth won't be persistent. This is not an issue in development as most browsers ignore the "secure" setting from "localhost" and cookies can be set regardless.
 
 ## Getting started
 
