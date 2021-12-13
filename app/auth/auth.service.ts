@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import redis from '@auth/auth.redis';
 
+import usersService from '@users/users.service';
+
 import { RefreshTokenData } from '@generated/types';
 
 export const JWT_TOKEN_EXPIRATION_IN_SECONDS = 15 * 60;
@@ -149,6 +151,38 @@ export const getRefreshTokenData = async (refreshToken: string) => {
     console.error(error);
     return null;
   }
+};
+
+export const refreshAllTokens = async (refreshToken: string) => {
+  const refreshTokenData = await getRefreshTokenData(refreshToken);
+
+  const user = refreshTokenData
+    ? await usersService.findById(refreshTokenData.userId)
+    : null;
+
+  await removeRefreshTokenFromWhitelist(refreshToken);
+
+  if (user) {
+    const newJwtToken = generateJWTToken({
+      userId: user._id.toString(),
+      passwordHash: user.passwordHash,
+    });
+
+    const newRefreshTokenData = generateRefreshTokenData({
+      userId: user._id.toString(),
+      passwordHash: user.passwordHash,
+    });
+
+    await addRefreshTokenToWhitelist(newRefreshTokenData);
+
+    return {
+      jwtToken: newJwtToken,
+      refreshTokenData: newRefreshTokenData,
+      user,
+    };
+  }
+
+  return {};
 };
 
 export { default as initStrategies } from '@auth/auth.strategies';

@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 
 import { TUserDocument } from '@users/users.model';
-import usersService from '@users/users.service';
 
 import {
   addAccessTokenToBlacklist,
@@ -10,12 +9,12 @@ import {
   calculateExpirationDate,
   generateJWTToken,
   generateRefreshTokenData,
-  getRefreshTokenData,
   getTokenPayload,
   initStrategies,
   isBlacklistedAccessToken,
   JWT_TOKEN_EXPIRATION_IN_SECONDS,
   REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+  refreshAllTokens,
   removeRefreshTokenFromWhitelist,
 } from '@auth/auth.service';
 
@@ -75,42 +74,12 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
   )(req, res);
 };
 
-export const refreshAllTokens = async (req: Request) => {
+const silentRefresh = async (req: Request, res: Response) => {
   const { refreshToken }: { refreshToken: string } = req.cookies;
 
-  const refreshTokenData = await getRefreshTokenData(refreshToken);
-
-  const user = refreshTokenData
-    ? await usersService.findById(refreshTokenData.userId)
-    : null;
-
-  await removeRefreshTokenFromWhitelist(refreshToken);
-
-  if (user) {
-    const newJwtToken = generateJWTToken({
-      userId: user._id.toString(),
-      passwordHash: user.passwordHash,
-    });
-
-    const newRefreshTokenData = generateRefreshTokenData({
-      userId: user._id.toString(),
-      passwordHash: user.passwordHash,
-    });
-
-    await addRefreshTokenToWhitelist(newRefreshTokenData);
-
-    return {
-      jwtToken: newJwtToken,
-      refreshTokenData: newRefreshTokenData,
-      user,
-    };
-  }
-
-  return {};
-};
-
-const silentRefresh = async (req: Request, res: Response) => {
-  const { user, jwtToken, refreshTokenData } = await refreshAllTokens(req);
+  const { user, jwtToken, refreshTokenData } = await refreshAllTokens(
+    refreshToken,
+  );
 
   if (!refreshTokenData) {
     res.cookie('refreshToken', '', {

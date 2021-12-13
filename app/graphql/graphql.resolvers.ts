@@ -10,9 +10,11 @@ import {
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
 import {
+  addRefreshTokenToWhitelist,
   generateJWTToken,
   generateRefreshTokenData,
-  addRefreshTokenToWhitelist,
+  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+  refreshAllTokens,
 } from '@auth/auth.service';
 
 import usersService from '@users/users.service';
@@ -127,7 +129,7 @@ const resolvers: Resolvers = {
       return { statusCode, user: data, errors };
     },
 
-    loginUser: async (_, { username, password }) => {
+    loginUser: async (_, { username, password }, { res }) => {
       try {
         const {
           statusCode,
@@ -157,6 +159,13 @@ const resolvers: Resolvers = {
           if (refreshTokenData) {
             addRefreshTokenToWhitelist(refreshTokenData);
           }
+
+          res.cookie('refreshToken', refreshTokenData.refreshToken, {
+            maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+          });
         }
 
         return { statusCode, user, jwtToken, refreshTokenData, errors };
@@ -166,12 +175,50 @@ const resolvers: Resolvers = {
         console.error(errorMessage);
         return {
           statusCode: 500,
-          data: null,
+          user: null,
           jwtToken: '',
           refreshTokenData: null,
           errors: [{ message: errorMessage as string }],
         };
       }
+    },
+
+    silentRefresh: async (_, __, { req, res }) => {
+      const { refreshToken }: { refreshToken: string } = req.cookies;
+
+      const { user, jwtToken, refreshTokenData } = await refreshAllTokens(
+        refreshToken,
+      );
+
+      if (!refreshTokenData) {
+        res.cookie('refreshToken', '', {
+          expires: new Date(0),
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none',
+        });
+
+        return {
+          statusCode: 400,
+          user: null,
+          jwtToken: '',
+          errors: [{ message: 'Authentication Error: Invalid refresh token.' }],
+        };
+      }
+
+      res.cookie('refreshToken', refreshTokenData.refreshToken, {
+        maxAge: REFRESH_TOKEN_EXPIRATION_IN_SECONDS * 1000,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
+
+      return {
+        statusCode: 200,
+        user,
+        jwtToken,
+        errors: [],
+      };
     },
   },
 };
