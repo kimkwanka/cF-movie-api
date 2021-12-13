@@ -39,7 +39,17 @@ const apolloMiddleware = async (
     await apolloServer.start();
     isServerRunning = true;
   }
-  return apolloServer.getMiddleware({ path: '/graphql' })(req, res, next);
+  return apolloServer.getMiddleware({
+    cors: {
+      origin: [
+        /http(s)?:\/\/(.+\.)?localhost(:\d{1,5})?$/,
+        'https://graphflix.netlify.app',
+        'https://studio.apollographql.com',
+      ],
+      credentials: true,
+    },
+    path: '/graphql',
+  })(req, res, next);
 };
 
 export default {
