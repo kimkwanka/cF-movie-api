@@ -24,8 +24,6 @@
 
   type AuthPayload {
     jwtToken: String
-    jwtTokenExpiration: Date
-    refreshTokenData: RefreshTokenData
     statusCode: Int!
     user: User
     errors: [Error]!
@@ -54,16 +52,25 @@
     still_sizes: [String!]!
   }
 
+  type TmdbImageBaseUrls {
+    posterBaseUrl: String!
+    profileBaseUrl: String!
+    backdropBaseUrl: String!
+  }
+
   type TMDBMovieSimple {
     adult: Boolean!
     backdrop_path: String!
+    backdropUrl: String
     genre_ids: [String!]!
+    genres: [TMDBGenre!]!
     id: ID!
     original_language: Boolean!
     original_title: String!
     overview: String!
     popularity: Float!
     poster_path: String!
+    posterUrl: String
     release_date: String!
     title: String!
     video: Boolean!
@@ -96,16 +103,18 @@
   type TMDBMovieDetailed {
     adult: Boolean!
     backdrop_path: String
+    backdropUrl: String
     budget: Int!
     genres: [TMDBGenre!]!
     homepage: String
-    id: Int!
+    id: String!
     imdb_id: String
     original_language: Boolean!
     original_title: String!
     overview: String
     popularity: Float!
-    poster_path: String!
+    poster_path: String
+    posterUrl: String
     production_companies: [TMDBProductionCompany!]!
     production_countries: [TMDBProductionCountry!]!
     release_date: String!
@@ -120,15 +129,35 @@
     vote_count: Int!
   }
 
+  input DiscoverOptions {
+    page: Int
+    with_genres: String
+    without_genres: String
+    with_cast: String
+    with_crew: String
+    with_people: String
+    with_keywords: String
+    without_keywords: String
+    with_watch_providers: String
+    with_watch_monetization_types: String
+  }
+
+  type MoviesPayload {
+    movies: [TMDBMovieSimple]!
+    totalPages: Int!
+    totalResults: Int!
+  }
+
   type Query {
-    discover: [TMDBMovieSimple]
-    movie(id: Int!): TMDBMovieDetailed
+    discover(options: DiscoverOptions!): MoviesPayload
+    movie(id: String!): TMDBMovieDetailed
     users: [User]
   }
 
   type Mutation {
     registerUser(newUserData: UserInput!): UserPayload
     loginUser(username: String!, password: String!): AuthPayload
+    silentRefresh: AuthPayload
     updateUser(_id: ID!, newUserData: UserInput!): UserPayload
     deleteUser(_id: ID!): UserPayload
     addFavoriteMovieToUser(_id: ID!, movieId: ID!): UserPayload

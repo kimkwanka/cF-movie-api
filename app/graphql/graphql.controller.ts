@@ -9,20 +9,65 @@ import { tmdbFetch } from '@tmdb/tmdb.service';
 
 import resolvers from '@graphql/graphql.resolvers';
 
+import { TmdbImageBaseUrls, TmdbGenre } from '@generated/types';
+
 const typeDefs = fs.readFileSync(
   path.join(__dirname, 'schema.graphql'),
   'utf8',
 );
 
+let imageBaseUrls: TmdbImageBaseUrls | undefined;
+let genreLookupTable: Record<number, TmdbGenre> | undefined;
+
+const getImageBaseUrls = async () => {
+  if (!imageBaseUrls) {
+    const config = (await tmdbFetch('/configuration')).data.images;
+
+    if (config) {
+      imageBaseUrls = {
+        posterBaseUrl:
+          config.secure_base_url +
+          config.poster_sizes[config.poster_sizes.length - 2],
+        profileBaseUrl:
+          config.secure_base_url +
+          config.profile_sizes[config.profile_sizes.length - 2],
+        backdropBaseUrl:
+          config.secure_base_url +
+          config.backdrop_sizes[config.backdrop_sizes.length - 2],
+      };
+    }
+  }
+  return imageBaseUrls;
+};
+
+const getGenreLookupTable = async () => {
+  if (!genreLookupTable) {
+    const { genres } = (await tmdbFetch('/genre/movie/list')).data;
+
+    if (genres) {
+      genreLookupTable = genres.reduce(
+        (acc: Record<number, TmdbGenre>, genre: TmdbGenre) => {
+          acc[genre.id] = genre;
+          return acc;
+        },
+        {},
+      );
+    }
+  }
+  return genreLookupTable;
+};
+
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  context: async ({ req }: { req: TAuthorizedRequest }) => {
+  context: async ({ req, res }: { req: TAuthorizedRequest; res: Response }) => {
     const token = req?.headers?.authorization?.slice?.(7);
 
     return {
       req,
-      tmdbConfiguration: (await tmdbFetch('/configuration')).data.images,
+      res,
+      imageBaseUrls: await getImageBaseUrls(),
+      genreLookupTable: await getGenreLookupTable(),
       authStatus: await getAuthStatus(token),
     };
   },

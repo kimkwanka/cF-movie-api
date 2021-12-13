@@ -19,17 +19,54 @@ import usersService from '@users/users.service';
 
 const resolvers: Resolvers = {
   TMDBMovieSimple: {
-    id: (parent) => parent.id.toString(),
+    id: (movie) => movie.id.toString(),
+    backdropUrl: (movie, _, { imageBaseUrls }) =>
+      movie.backdrop_path && imageBaseUrls
+        ? imageBaseUrls.backdropBaseUrl + movie.backdrop_path
+        : '',
+    posterUrl: (movie, _, { imageBaseUrls }) =>
+      movie.poster_path && imageBaseUrls
+        ? imageBaseUrls.posterBaseUrl + movie.poster_path
+        : '',
+    genres: (movie, _, { genreLookupTable }) =>
+      movie.genre_ids.map((genreId) =>
+        genreLookupTable ? genreLookupTable[genreId] : { id: -1, name: '' },
+      ),
+  },
+  TMDBMovieDetailed: {
+    id: (movie) => movie.id.toString(),
+    backdropUrl: (movie, _, { imageBaseUrls }) =>
+      movie.backdrop_path && imageBaseUrls
+        ? imageBaseUrls.backdropBaseUrl + movie.backdrop_path
+        : '',
+    posterUrl: (movie, _, { imageBaseUrls }) =>
+      movie.poster_path && imageBaseUrls
+        ? imageBaseUrls.posterBaseUrl + movie.poster_path
+        : '',
   },
   Query: {
-    discover: async (_, __, { authStatus }) => {
+    discover: async (
+      _,
+      { options: { page = 1, ...restArgs } },
+      { authStatus },
+    ) => {
+      const queryArgsArray: string[] = [];
+      Object.entries(restArgs).forEach(([key, value]) => {
+        queryArgsArray.push(`&${key}=${value}`);
+      });
+
       const { data, errors } = await requireAuthentication(
         authStatus,
-        async () => tmdbFetch('/discover/movie'),
+        async () =>
+          tmdbFetch(`/discover/movie?page=${page}${queryArgsArray.join('')}`),
       );
 
       if (data?.results) {
-        return data.results;
+        return {
+          movies: data.results,
+          totalPages: data.total_pages,
+          totalResults: data.total_results,
+        };
       }
 
       throw new AuthenticationError(errors[0].message);
