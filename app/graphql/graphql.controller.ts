@@ -4,6 +4,8 @@ import path from 'path';
 
 import { ApolloServer } from 'apollo-server-express';
 
+import { makeExecutableSchema } from '@graphql-tools/schema';
+
 import { getAuthStatus, TAuthorizedRequest } from '@graphql/graphql.service';
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
@@ -57,9 +59,14 @@ const getGenreLookupTable = async () => {
   return genreLookupTable;
 };
 
-const apolloServer = new ApolloServer({
+const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
+  inheritResolversFromInterfaces: true,
+});
+
+const apolloServer = new ApolloServer({
+  schema,
   context: async ({ req, res }: { req: TAuthorizedRequest; res: Response }) => {
     const token = req?.headers?.authorization?.slice?.(7);
 
