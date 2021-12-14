@@ -10,11 +10,13 @@ import {
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
 import {
+  addAccessTokenToBlacklist,
   addRefreshTokenToWhitelist,
   generateJWTToken,
   generateRefreshTokenData,
   REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
   refreshAllTokens,
+  removeRefreshTokenFromWhitelist,
 } from '@auth/auth.service';
 
 import usersService from '@users/users.service';
@@ -241,6 +243,22 @@ const resolvers: Resolvers = {
         jwtToken,
         errors: [],
       };
+    },
+    logoutUser: async (_, __, { req, res }) => {
+      const { refreshToken } = req.cookies;
+      const jwtToken = req?.headers?.authorization?.slice?.(7);
+
+      await addAccessTokenToBlacklist(jwtToken);
+      await removeRefreshTokenFromWhitelist(refreshToken);
+
+      res.cookie('refreshToken', '', {
+        expires: new Date(0),
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
+
+      return { statusCode: 200, user: null, errors: [] };
     },
   },
 };
