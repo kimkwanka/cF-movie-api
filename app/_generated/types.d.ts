@@ -110,7 +110,9 @@ export type QueryDiscoverArgs = {
 
 
 export type QueryMovieArgs = {
-  id: Scalars['String'];
+  movieId: Scalars['String'];
+};
+
 };
 
 
@@ -413,7 +415,7 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discover?: Resolver<Maybe<ResolversTypes['MoviesPayload']>, ParentType, ContextType, RequireFields<QueryDiscoverArgs, 'options'>>;
-  movie?: Resolver<Maybe<ResolversTypes['TMDBMovieDetailed']>, ParentType, ContextType, RequireFields<QueryMovieArgs, 'id'>>;
+  movie?: Resolver<Maybe<ResolversTypes['TMDBMovieDetailed']>, ParentType, ContextType, RequireFields<QueryMovieArgs, 'movieId'>>;
   search?: Resolver<Maybe<ResolversTypes['MoviesPayload']>, ParentType, ContextType, RequireFields<QuerySearchArgs, 'query'>>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };

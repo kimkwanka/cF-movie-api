@@ -98,7 +98,8 @@ const resolvers: Resolvers = {
       throw new AuthenticationError(errors[0].message);
     },
 
-    movie: async (_, { id }) => (await tmdbFetch(`/movie/${id}`)).data,
+    movie: async (_, { movieId }) =>
+      (await tmdbFetch(`/movie/${movieId}`)).data,
 
     users: async () => {
       const users = await usersService.findAllUsers();
