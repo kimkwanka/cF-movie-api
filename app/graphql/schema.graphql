@@ -151,12 +151,14 @@
   type Query {
     discover(options: DiscoverOptions!): MoviesPayload
     movie(id: String!): TMDBMovieDetailed
+    search(query: String!, page: Int): MoviesPayload
     users: [User]
   }
 
   type Mutation {
     registerUser(newUserData: UserInput!): UserPayload
     loginUser(username: String!, password: String!): AuthPayload
+    logoutUser: UserPayload
     silentRefresh: AuthPayload
     updateUser(_id: ID!, newUserData: UserInput!): UserPayload
     deleteUser(_id: ID!): UserPayload

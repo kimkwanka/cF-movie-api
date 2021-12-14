@@ -19,6 +19,9 @@ import {
 
 import usersService from '@users/users.service';
 
+const isURIEncoded = (str: string) =>
+  !str.match('.*[\\ "\\<\\>\\{\\}|\\\\^~\\[\\]].*');
+
 const resolvers: Resolvers = {
   TMDBMovieSimple: {
     id: (movie) => movie.id.toString(),
@@ -61,6 +64,25 @@ const resolvers: Resolvers = {
         authStatus,
         async () =>
           tmdbFetch(`/discover/movie?page=${page}${queryArgsArray.join('')}`),
+      );
+
+      if (data?.results) {
+        return {
+          movies: data.results,
+          totalPages: data.total_pages,
+          totalResults: data.total_results,
+        };
+      }
+
+      throw new AuthenticationError(errors[0].message);
+    },
+    search: async (_, { query, page }, { authStatus }) => {
+      const encodedQuery = isURIEncoded(query) ? query : encodeURI(query);
+
+      const { data, errors } = await requireAuthentication(
+        authStatus,
+        async () =>
+          tmdbFetch(`/search/movie?query=${encodedQuery}&page=${page}`),
       );
 
       if (data?.results) {

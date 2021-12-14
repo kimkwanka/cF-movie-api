@@ -54,6 +54,7 @@ export type Mutation = {
   addFavoriteMovieToUser?: Maybe<UserPayload>;
   deleteUser?: Maybe<UserPayload>;
   loginUser?: Maybe<AuthPayload>;
+  logoutUser?: Maybe<UserPayload>;
   registerUser?: Maybe<UserPayload>;
   removeFavoriteMovieFromUser?: Maybe<UserPayload>;
   silentRefresh?: Maybe<AuthPayload>;
@@ -98,6 +99,7 @@ export type Query = {
   __typename?: 'Query';
   discover?: Maybe<MoviesPayload>;
   movie?: Maybe<TmdbMovieDetailed>;
+  search?: Maybe<MoviesPayload>;
   users?: Maybe<Array<Maybe<User>>>;
 };
 
@@ -109,6 +111,12 @@ export type QueryDiscoverArgs = {
 
 export type QueryMovieArgs = {
   id: Scalars['String'];
+};
+
+
+export type QuerySearchArgs = {
+  page?: InputMaybe<Scalars['Int']>;
+  query: Scalars['String'];
 };
 
 export type RefreshTokenData = {
@@ -392,6 +400,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   addFavoriteMovieToUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationAddFavoriteMovieToUserArgs, '_id' | 'movieId'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, '_id'>>;
   loginUser?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'password' | 'username'>>;
+  logoutUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType>;
   registerUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'newUserData'>>;
   removeFavoriteMovieFromUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationRemoveFavoriteMovieFromUserArgs, '_id' | 'movieId'>>;
   silentRefresh?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType>;
@@ -405,6 +414,7 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discover?: Resolver<Maybe<ResolversTypes['MoviesPayload']>, ParentType, ContextType, RequireFields<QueryDiscoverArgs, 'options'>>;
   movie?: Resolver<Maybe<ResolversTypes['TMDBMovieDetailed']>, ParentType, ContextType, RequireFields<QueryMovieArgs, 'id'>>;
+  search?: Resolver<Maybe<ResolversTypes['MoviesPayload']>, ParentType, ContextType, RequireFields<QuerySearchArgs, 'query'>>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };
 
