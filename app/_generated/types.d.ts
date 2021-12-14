@@ -146,22 +146,41 @@ export type TmdbGenre = {
   name: Scalars['String'];
 };
 
-export type TmdbMovieDetailed = {
+export type TmdbMovie = {
+  adult: Scalars['Boolean'];
+  backdropUrl?: Maybe<Scalars['String']>;
+  backdrop_path: Scalars['String'];
+  genres: Array<TmdbGenre>;
+  id: Scalars['ID'];
+  original_language: Scalars['Boolean'];
+  original_title: Scalars['String'];
+  overview?: Maybe<Scalars['String']>;
+  popularity: Scalars['Float'];
+  posterUrl?: Maybe<Scalars['String']>;
+  poster_path: Scalars['String'];
+  release_date: Scalars['String'];
+  title: Scalars['String'];
+  video: Scalars['Boolean'];
+  vote_average: Scalars['Float'];
+  vote_count: Scalars['Int'];
+};
+
+export type TmdbMovieDetailed = TmdbMovie & {
   __typename?: 'TMDBMovieDetailed';
   adult: Scalars['Boolean'];
   backdropUrl?: Maybe<Scalars['String']>;
-  backdrop_path?: Maybe<Scalars['String']>;
+  backdrop_path: Scalars['String'];
   budget: Scalars['Int'];
   genres: Array<TmdbGenre>;
   homepage?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['ID'];
   imdb_id?: Maybe<Scalars['String']>;
   original_language: Scalars['Boolean'];
   original_title: Scalars['String'];
   overview?: Maybe<Scalars['String']>;
   popularity: Scalars['Float'];
   posterUrl?: Maybe<Scalars['String']>;
-  poster_path?: Maybe<Scalars['String']>;
+  poster_path: Scalars['String'];
   production_companies: Array<TmdbProductionCompany>;
   production_countries: Array<TmdbProductionCountry>;
   release_date: Scalars['String'];
@@ -176,7 +195,7 @@ export type TmdbMovieDetailed = {
   vote_count: Scalars['Int'];
 };
 
-export type TmdbMovieSimple = {
+export type TmdbMovieSimple = TmdbMovie & {
   __typename?: 'TMDBMovieSimple';
   adult: Scalars['Boolean'];
   backdropUrl?: Maybe<Scalars['String']>;
@@ -334,6 +353,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   TMDBConfiguration: ResolverTypeWrapper<TmdbConfiguration>;
   TMDBGenre: ResolverTypeWrapper<TmdbGenre>;
+  TMDBMovie: ResolversTypes['TMDBMovieDetailed'] | ResolversTypes['TMDBMovieSimple'];
   TMDBMovieDetailed: ResolverTypeWrapper<TmdbMovieDetailed>;
   TMDBMovieSimple: ResolverTypeWrapper<TmdbMovieSimple>;
   TMDBProductionCompany: ResolverTypeWrapper<TmdbProductionCompany>;
@@ -363,6 +383,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   TMDBConfiguration: TmdbConfiguration;
   TMDBGenre: TmdbGenre;
+  TMDBMovie: ResolversParentTypes['TMDBMovieDetailed'] | ResolversParentTypes['TMDBMovieSimple'];
   TMDBMovieDetailed: TmdbMovieDetailed;
   TMDBMovieSimple: TmdbMovieSimple;
   TMDBProductionCompany: TmdbProductionCompany;
@@ -445,21 +466,41 @@ export type TmdbGenreResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TmdbMovieResolvers<ContextType = any, ParentType extends ResolversParentTypes['TMDBMovie'] = ResolversParentTypes['TMDBMovie']> = {
+  __resolveType: TypeResolveFn<'TMDBMovieDetailed' | 'TMDBMovieSimple', ParentType, ContextType>;
+  adult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  backdropUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  backdrop_path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  genres?: Resolver<Array<ResolversTypes['TMDBGenre']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  original_language?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  original_title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  overview?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  popularity?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  posterUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  poster_path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  release_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  video?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  vote_average?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  vote_count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+};
+
 export type TmdbMovieDetailedResolvers<ContextType = any, ParentType extends ResolversParentTypes['TMDBMovieDetailed'] = ResolversParentTypes['TMDBMovieDetailed']> = {
   adult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   backdropUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  backdrop_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  backdrop_path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   budget?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   genres?: Resolver<Array<ResolversTypes['TMDBGenre']>, ParentType, ContextType>;
   homepage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   imdb_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   original_language?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   original_title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   overview?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   popularity?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   posterUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  poster_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  poster_path?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   production_companies?: Resolver<Array<ResolversTypes['TMDBProductionCompany']>, ParentType, ContextType>;
   production_countries?: Resolver<Array<ResolversTypes['TMDBProductionCountry']>, ParentType, ContextType>;
   release_date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -551,6 +592,7 @@ export type Resolvers<ContextType = any> = {
   RefreshTokenData?: RefreshTokenDataResolvers<ContextType>;
   TMDBConfiguration?: TmdbConfigurationResolvers<ContextType>;
   TMDBGenre?: TmdbGenreResolvers<ContextType>;
+  TMDBMovie?: TmdbMovieResolvers<ContextType>;
   TMDBMovieDetailed?: TmdbMovieDetailedResolvers<ContextType>;
   TMDBMovieSimple?: TmdbMovieSimpleResolvers<ContextType>;
   TMDBProductionCompany?: TmdbProductionCompanyResolvers<ContextType>;

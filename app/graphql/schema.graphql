@@ -58,26 +58,6 @@
     backdropBaseUrl: String!
   }
 
-  type TMDBMovieSimple {
-    adult: Boolean!
-    backdrop_path: String!
-    backdropUrl: String
-    genre_ids: [String!]!
-    genres: [TMDBGenre!]!
-    id: ID!
-    original_language: Boolean!
-    original_title: String!
-    overview: String!
-    popularity: Float!
-    poster_path: String!
-    posterUrl: String
-    release_date: String!
-    title: String!
-    video: Boolean!
-    vote_average: Float!
-    vote_count: Int!
-  }
-
   type TMDBProductionCompany {
     name: String!
     id: Int!
@@ -100,20 +80,59 @@
     name: String!
   }
 
-  type TMDBMovieDetailed {
+  interface TMDBMovie {
     adult: Boolean!
-    backdrop_path: String
+    backdrop_path: String!
+    backdropUrl: String
+    genres: [TMDBGenre!]!
+    id: ID!
+    original_language: Boolean!
+    original_title: String!
+    overview: String
+    popularity: Float!
+    poster_path: String!
+    posterUrl: String
+    release_date: String!
+    title: String!
+    video: Boolean!
+    vote_average: Float!
+    vote_count: Int!
+  }
+
+  type TMDBMovieSimple implements TMDBMovie {
+    adult: Boolean!
+    backdrop_path: String!
+    backdropUrl: String
+    genre_ids: [String!]!
+    genres: [TMDBGenre!]!
+    id: ID!
+    original_language: Boolean!
+    original_title: String!
+    overview: String!
+    popularity: Float!
+    poster_path: String!
+    posterUrl: String
+    release_date: String!
+    title: String!
+    video: Boolean!
+    vote_average: Float!
+    vote_count: Int!
+  }
+
+  type TMDBMovieDetailed implements TMDBMovie {
+    adult: Boolean!
+    backdrop_path: String!
     backdropUrl: String
     budget: Int!
     genres: [TMDBGenre!]!
     homepage: String
-    id: String!
+    id: ID!
     imdb_id: String
     original_language: Boolean!
     original_title: String!
     overview: String
     popularity: Float!
-    poster_path: String
+    poster_path: String!
     posterUrl: String
     production_companies: [TMDBProductionCompany!]!
     production_countries: [TMDBProductionCountry!]!
@@ -127,6 +146,7 @@
     video: Boolean!
     vote_average: Float!
     vote_count: Int!
+    
   }
 
   input DiscoverOptions {
@@ -143,7 +163,7 @@
   }
 
   type MoviesPayload {
-    movies: [TMDBMovieSimple]!
+    movies: [TMDBMovie]!
     totalPages: Int!
     totalResults: Int!
   }

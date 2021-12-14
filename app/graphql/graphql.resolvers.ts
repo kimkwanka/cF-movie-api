@@ -25,7 +25,10 @@ const isURIEncoded = (str: string) =>
   !str.match('.*[\\ "\\<\\>\\{\\}|\\\\^~\\[\\]].*');
 
 const resolvers: Resolvers = {
-  TMDBMovieSimple: {
+  TMDBMovie: {
+    __resolveType: (movie) => {
+      return 'budget' in movie ? 'TMDBMovieDetailed' : 'TMDBMovieSimple';
+    },
     id: (movie) => movie.id.toString(),
     backdropUrl: (movie, _, { imageBaseUrls }) =>
       movie.backdrop_path && imageBaseUrls
@@ -35,21 +38,13 @@ const resolvers: Resolvers = {
       movie.poster_path && imageBaseUrls
         ? imageBaseUrls.posterBaseUrl + movie.poster_path
         : '',
-    genres: (movie, _, { genreLookupTable }) =>
-      movie.genre_ids.map((genreId) =>
-        genreLookupTable ? genreLookupTable[genreId] : { id: -1, name: '' },
-      ),
-  },
-  TMDBMovieDetailed: {
-    id: (movie) => movie.id.toString(),
-    backdropUrl: (movie, _, { imageBaseUrls }) =>
-      movie.backdrop_path && imageBaseUrls
-        ? imageBaseUrls.backdropBaseUrl + movie.backdrop_path
-        : '',
-    posterUrl: (movie, _, { imageBaseUrls }) =>
-      movie.poster_path && imageBaseUrls
-        ? imageBaseUrls.posterBaseUrl + movie.poster_path
-        : '',
+    genres: (movie, _, { genreLookupTable }) => {
+      return 'genre_ids' in movie
+        ? movie.genre_ids.map((genreId) =>
+            genreLookupTable ? genreLookupTable[genreId] : { id: -1, name: '' },
+          )
+        : movie.genres;
+    },
   },
   Query: {
     discover: async (
