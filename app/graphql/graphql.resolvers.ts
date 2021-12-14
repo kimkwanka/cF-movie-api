@@ -113,42 +113,42 @@ const resolvers: Resolvers = {
       return { statusCode, user: data, errors };
     },
 
-    updateUser: async (_, { _id, newUserData }, { authStatus }) => {
+    updateUser: async (_, { userId, newUserData }, { authStatus }) => {
       const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
-        _id,
-        async () => usersService.updateUser(_id, newUserData),
+        userId,
+        async () => usersService.updateUser(userId, newUserData),
       );
       return { statusCode, user: data, errors };
     },
 
-    deleteUser: async (_, { _id }, { authStatus }) => {
+    deleteUser: async (_, { userId }, { authStatus }) => {
       const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
-        _id,
-        async () => usersService.deleteUser(_id),
+        userId,
+        async () => usersService.deleteUser(userId),
       );
       return { statusCode, user: data, errors };
     },
 
-    addFavoriteMovieToUser: async (_, { _id, movieId }, { authStatus }) => {
+    addFavoriteMovieToUser: async (_, { userId, movieId }, { authStatus }) => {
       const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
-        _id,
-        async () => usersService.addFavoriteMovieToUser(_id, movieId),
+        userId,
+        async () => usersService.addFavoriteMovieToUser(userId, movieId),
       );
       return { statusCode, user: data, errors };
     },
 
     removeFavoriteMovieFromUser: async (
       _,
-      { _id, movieId },
+      { userId, movieId },
       { authStatus },
     ) => {
       const { statusCode, data, errors } = await requireAuthorization(
         authStatus,
-        _id,
-        async () => usersService.removeFavoriteMovieFromUser(_id, movieId),
+        userId,
+        async () => usersService.removeFavoriteMovieFromUser(userId, movieId),
       );
       return { statusCode, user: data, errors };
     },

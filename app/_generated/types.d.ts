@@ -63,13 +63,13 @@ export type Mutation = {
 
 
 export type MutationAddFavoriteMovieToUserArgs = {
-  _id: Scalars['ID'];
   movieId: Scalars['ID'];
+  userId: Scalars['ID'];
 };
 
 
 export type MutationDeleteUserArgs = {
-  _id: Scalars['ID'];
+  userId: Scalars['ID'];
 };
 
 
@@ -85,14 +85,14 @@ export type MutationRegisterUserArgs = {
 
 
 export type MutationRemoveFavoriteMovieFromUserArgs = {
-  _id: Scalars['ID'];
   movieId: Scalars['ID'];
+  userId: Scalars['ID'];
 };
 
 
 export type MutationUpdateUserArgs = {
-  _id: Scalars['ID'];
   newUserData: UserInput;
+  userId: Scalars['ID'];
 };
 
 export type Query = {
@@ -397,14 +397,14 @@ export type MoviesPayloadResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addFavoriteMovieToUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationAddFavoriteMovieToUserArgs, '_id' | 'movieId'>>;
-  deleteUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, '_id'>>;
+  addFavoriteMovieToUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationAddFavoriteMovieToUserArgs, 'movieId' | 'userId'>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'userId'>>;
   loginUser?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginUserArgs, 'password' | 'username'>>;
   logoutUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType>;
   registerUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationRegisterUserArgs, 'newUserData'>>;
-  removeFavoriteMovieFromUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationRemoveFavoriteMovieFromUserArgs, '_id' | 'movieId'>>;
+  removeFavoriteMovieFromUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationRemoveFavoriteMovieFromUserArgs, 'movieId' | 'userId'>>;
   silentRefresh?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType>;
-  updateUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, '_id' | 'newUserData'>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['UserPayload']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'newUserData' | 'userId'>>;
 };
 
 export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ObjectId'], any> {

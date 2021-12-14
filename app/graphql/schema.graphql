@@ -160,8 +160,8 @@
     loginUser(username: String!, password: String!): AuthPayload
     logoutUser: UserPayload
     silentRefresh: AuthPayload
-    updateUser(_id: ID!, newUserData: UserInput!): UserPayload
-    deleteUser(_id: ID!): UserPayload
-    addFavoriteMovieToUser(_id: ID!, movieId: ID!): UserPayload
-    removeFavoriteMovieFromUser(_id: ID!, movieId: ID!): UserPayload
+    updateUser(userId: ID!, newUserData: UserInput!): UserPayload
+    deleteUser(userId: ID!): UserPayload
+    addFavoriteMovieToUser(userId: ID!, movieId: ID!): UserPayload
+    removeFavoriteMovieFromUser(userId: ID!, movieId: ID!): UserPayload
   }
