@@ -235,7 +235,7 @@ export type User = {
 export type UserInput = {
   birthday?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
-  favoriteMovies: Array<InputMaybe<Scalars['String']>>;
+  favoriteMovies?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   password: Scalars['String'];
   username: Scalars['String'];
 };

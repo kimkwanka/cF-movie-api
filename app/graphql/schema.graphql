@@ -13,7 +13,7 @@
   input UserInput {
     birthday: String
     email: String!
-    favoriteMovies: [String]!
+    favoriteMovies: [String]
     password: String!
     username: String!
   }
