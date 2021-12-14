@@ -96,6 +96,32 @@ const resolvers: Resolvers = {
     movie: async (_, { movieId }) =>
       (await tmdbFetch(`/movie/${movieId}`)).data,
 
+    movies: async (_, { movieIds }) => {
+      const movies: TmdbMovieDetailed[] = [];
+
+      // Note that 'map' is deliberately used here to iterate instead of forEach or for...of to
+      // allow for parallel execution of queries.
+      // Check https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop/37576787#37576787
+      // for more details.
+
+      await Promise.all(
+        movieIds.map(async (movieId) => {
+          const response = (await tmdbFetch(`/movie/${movieId}`)).data;
+
+          if (response.data) {
+            const movie = response.data;
+            movies.push(movie);
+          }
+        }),
+      );
+
+      return {
+        movies,
+        totalPages: 1,
+        totalResults: movies.length,
+      };
+    },
+
     users: async () => {
       const users = await usersService.findAllUsers();
       return users;

@@ -171,6 +171,7 @@
   type Query {
     discover(options: DiscoverOptions!): MoviesPayload
     movie(movieId: String!): TMDBMovieDetailed
+    movies(movieIds: [String!]!): MoviesPayload
     search(query: String!, page: Int): MoviesPayload
     users: [User]
   }

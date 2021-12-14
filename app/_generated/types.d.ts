@@ -44,7 +44,7 @@ export type Error = {
 
 export type MoviesPayload = {
   __typename?: 'MoviesPayload';
-  movies: Array<Maybe<TmdbMovieSimple>>;
+  movies: Array<Maybe<TmdbMovie>>;
   totalPages: Scalars['Int'];
   totalResults: Scalars['Int'];
 };
@@ -99,6 +99,7 @@ export type Query = {
   __typename?: 'Query';
   discover?: Maybe<MoviesPayload>;
   movie?: Maybe<TmdbMovieDetailed>;
+  movies?: Maybe<MoviesPayload>;
   search?: Maybe<MoviesPayload>;
   users?: Maybe<Array<Maybe<User>>>;
 };
@@ -113,6 +114,9 @@ export type QueryMovieArgs = {
   movieId: Scalars['String'];
 };
 
+
+export type QueryMoviesArgs = {
+  movieIds: Array<Scalars['String']>;
 };
 
 
@@ -413,7 +417,7 @@ export type ErrorResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type MoviesPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['MoviesPayload'] = ResolversParentTypes['MoviesPayload']> = {
-  movies?: Resolver<Array<Maybe<ResolversTypes['TMDBMovieSimple']>>, ParentType, ContextType>;
+  movies?: Resolver<Array<Maybe<ResolversTypes['TMDBMovie']>>, ParentType, ContextType>;
   totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   totalResults?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -437,6 +441,7 @@ export interface ObjectIdScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   discover?: Resolver<Maybe<ResolversTypes['MoviesPayload']>, ParentType, ContextType, RequireFields<QueryDiscoverArgs, 'options'>>;
   movie?: Resolver<Maybe<ResolversTypes['TMDBMovieDetailed']>, ParentType, ContextType, RequireFields<QueryMovieArgs, 'movieId'>>;
+  movies?: Resolver<Maybe<ResolversTypes['MoviesPayload']>, ParentType, ContextType, RequireFields<QueryMoviesArgs, 'movieIds'>>;
   search?: Resolver<Maybe<ResolversTypes['MoviesPayload']>, ParentType, ContextType, RequireFields<QuerySearchArgs, 'query'>>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };
