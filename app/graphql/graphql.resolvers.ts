@@ -106,7 +106,7 @@ const resolvers: Resolvers = {
 
       await Promise.all(
         movieIds.map(async (movieId) => {
-          const response = (await tmdbFetch(`/movie/${movieId}`)).data;
+          const response = await tmdbFetch(`/movie/${movieId}`);
 
           if (response.data) {
             const movie = response.data;
