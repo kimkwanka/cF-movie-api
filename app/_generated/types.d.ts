@@ -250,7 +250,7 @@ export type TmdbImageBaseUrls = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ObjectId'];
-  birthday?: Maybe<Scalars['String']>;
+  birthday?: Maybe<Scalars['Date']>;
   email: Scalars['String'];
   favoriteMovies: Array<Maybe<Scalars['String']>>;
   passwordHash: Scalars['String'];
@@ -258,7 +258,7 @@ export type User = {
 };
 
 export type UserInput = {
-  birthday?: InputMaybe<Scalars['String']>;
+  birthday?: InputMaybe<Scalars['Date']>;
   email: Scalars['String'];
   favoriteMovies?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   password: Scalars['String'];
@@ -571,7 +571,7 @@ export type TmdbImageBaseUrlsResolvers<ContextType = any, ParentType extends Res
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id?: Resolver<ResolversTypes['ObjectId'], ParentType, ContextType>;
-  birthday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  birthday?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   favoriteMovies?: Resolver<Array<Maybe<ResolversTypes['String']>>, ParentType, ContextType>;
   passwordHash?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
