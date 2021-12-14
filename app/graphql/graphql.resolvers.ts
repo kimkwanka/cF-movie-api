@@ -1,6 +1,6 @@
 import { AuthenticationError } from 'apollo-server-express';
 
-import { Resolvers } from '@generated/types';
+import { Resolvers, TmdbMovieDetailed } from '@generated/types';
 
 import {
   requireAuthentication,
