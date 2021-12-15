@@ -6,7 +6,7 @@ import { ApolloServer } from 'apollo-server-express';
 
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-import { getAuthStatus, TAuthorizedRequest } from '@graphql/graphql.service';
+import { getAuthStatus } from '@graphql/graphql.service';
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
 import resolvers from '@graphql/graphql.resolvers';
@@ -67,8 +67,8 @@ const schema = makeExecutableSchema({
 
 const apolloServer = new ApolloServer({
   schema,
-  context: async ({ req, res }: { req: TAuthorizedRequest; res: Response }) => {
-    const token = req?.headers?.authorization?.slice?.(7);
+  context: async ({ req, res }: { req: Request; res: Response }) => {
+    const token = req?.headers?.authorization?.slice?.(7) || '';
 
     return {
       req,

@@ -2,10 +2,6 @@ import { getTokenPayload, isValidToken } from '@auth/auth.service';
 
 import usersService from '@users/users.service';
 
-export type TAuthorizedRequest = Request & {
-  headers: { authorization: string };
-};
-
 export const getAuthStatus = async (token: string) => {
   try {
     if (!token) {
