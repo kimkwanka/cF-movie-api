@@ -1,11 +1,8 @@
-import { AuthenticationError } from 'apollo-server-express';
+import { AuthenticationError, ApolloError } from 'apollo-server-express';
 
 import { Resolvers, TmdbMovieDetailed } from '@generated/types';
 
-import {
-  requireAuthentication,
-  requireAuthorization,
-} from '@graphql/graphql.service';
+import { runIfAuthenticated, runIfAuthorized } from '@graphql/graphql.service';
 
 import { tmdbFetch } from '@tmdb/tmdb.service';
 
@@ -14,10 +11,11 @@ import {
   addRefreshTokenToWhitelist,
   generateJWTToken,
   generateRefreshTokenData,
-  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
   refreshAllTokens,
   removeRefreshTokenFromWhitelist,
 } from '@auth/auth.service';
+
+import { REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from '@auth/auth.config';
 
 import usersService from '@users/users.service';
 
@@ -57,46 +55,65 @@ const resolvers: Resolvers = {
         queryArgsArray.push(`&${key}=${value}`);
       });
 
-      const { data, errors } = await requireAuthentication(
+      const { data, errors, statusCode } = await runIfAuthenticated({
         authStatus,
-        async () =>
+        operation: async () =>
           tmdbFetch(`/discover/movie?page=${page}${queryArgsArray.join('')}`),
-      );
+      });
 
-      if (data?.results) {
-        return {
-          movies: data.results,
-          totalPages: data.total_pages,
-          totalResults: data.total_results,
-        };
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
       }
 
-      throw new AuthenticationError(errors[0].message);
+      return {
+        movies: data.results,
+        totalPages: data.total_pages,
+        totalResults: data.total_results,
+      };
     },
     search: async (_, { query, page }, { authStatus }) => {
       const encodedQuery = isURIEncoded(query) ? query : encodeURI(query);
 
-      const { data, errors } = await requireAuthentication(
+      const { data, errors, statusCode } = await runIfAuthenticated({
         authStatus,
-        async () =>
+        operation: async () =>
           tmdbFetch(`/search/movie?query=${encodedQuery}&page=${page}`),
-      );
+      });
 
-      if (data?.results) {
-        return {
-          movies: data.results,
-          totalPages: data.total_pages,
-          totalResults: data.total_results,
-        };
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
       }
 
-      throw new AuthenticationError(errors[0].message);
+      return {
+        movies: data.results,
+        totalPages: data.total_pages,
+        totalResults: data.total_results,
+      };
     },
 
-    movie: async (_, { movieId }) =>
-      (await tmdbFetch(`/movie/${movieId}`)).data,
+    movie: async (_, { movieId }, { authStatus }) => {
+      const { data, errors, statusCode } = await runIfAuthenticated({
+        authStatus,
+        operation: async () => tmdbFetch(`/movie/${movieId}`),
+      });
 
-    movies: async (_, { movieIds }) => {
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
+      }
+
+      return data;
+    },
+
+    movies: async (_, { movieIds }, { authStatus }) => {
       const movies: TmdbMovieDetailed[] = [];
 
       // Note that 'map' is deliberately used here to iterate instead of forEach or for...of to
@@ -104,16 +121,27 @@ const resolvers: Resolvers = {
       // Check https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop/37576787#37576787
       // for more details.
 
-      await Promise.all(
-        movieIds.map(async (movieId) => {
-          const response = await tmdbFetch(`/movie/${movieId}`);
+      const { errors, statusCode } = await runIfAuthenticated({
+        authStatus,
+        operation: async () =>
+          Promise.all(
+            movieIds.map(async (movieId) => {
+              const response = await tmdbFetch(`/movie/${movieId}`);
 
-          if (response.data) {
-            const movie = response.data;
-            movies.push(movie);
-          }
-        }),
-      );
+              if (response.data) {
+                const movie = response.data;
+                movies.push(movie);
+              }
+            }),
+          ),
+      });
+
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
+      }
 
       return {
         movies,
@@ -122,9 +150,20 @@ const resolvers: Resolvers = {
       };
     },
 
-    users: async () => {
-      const users = await usersService.findAllUsers();
-      return users;
+    users: async (_, __, { authStatus }) => {
+      const { data, errors, statusCode } = await runIfAuthenticated({
+        authStatus,
+        operation: async () => usersService.findAllUsers(),
+      });
+
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
+      }
+
+      return data;
     },
   },
   Mutation: {
@@ -136,29 +175,54 @@ const resolvers: Resolvers = {
     },
 
     updateUser: async (_, { userId, newUserData }, { authStatus }) => {
-      const { statusCode, data, errors } = await requireAuthorization(
+      const { data, errors, statusCode } = await runIfAuthorized({
         authStatus,
-        userId,
-        async () => usersService.updateUser(userId, newUserData),
-      );
+        targetUserId: userId,
+        operation: async () => usersService.updateUser(userId, newUserData),
+      });
+
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
+      }
+
       return { statusCode, user: data, errors };
     },
 
     deleteUser: async (_, { userId }, { authStatus }) => {
-      const { statusCode, data, errors } = await requireAuthorization(
+      const { data, errors, statusCode } = await runIfAuthorized({
         authStatus,
-        userId,
-        async () => usersService.deleteUser(userId),
-      );
+        targetUserId: userId,
+        operation: async () => usersService.deleteUser(userId),
+      });
+
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
+      }
+
       return { statusCode, user: data, errors };
     },
 
     addFavoriteMovieToUser: async (_, { userId, movieId }, { authStatus }) => {
-      const { statusCode, data, errors } = await requireAuthorization(
+      const { data, errors, statusCode } = await runIfAuthorized({
         authStatus,
-        userId,
-        async () => usersService.addFavoriteMovieToUser(userId, movieId),
-      );
+        targetUserId: userId,
+        operation: async () =>
+          usersService.addFavoriteMovieToUser(userId, movieId),
+      });
+
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
+      }
+
       return { statusCode, user: data, errors };
     },
 
@@ -167,11 +231,20 @@ const resolvers: Resolvers = {
       { userId, movieId },
       { authStatus },
     ) => {
-      const { statusCode, data, errors } = await requireAuthorization(
+      const { data, errors, statusCode } = await runIfAuthorized({
         authStatus,
-        userId,
-        async () => usersService.removeFavoriteMovieFromUser(userId, movieId),
-      );
+        targetUserId: userId,
+        operation: async () =>
+          usersService.removeFavoriteMovieFromUser(userId, movieId),
+      });
+
+      if (errors.length) {
+        if (statusCode === 401) {
+          throw new AuthenticationError(errors[0].message);
+        }
+        throw new ApolloError(errors[0].message);
+      }
+
       return { statusCode, user: data, errors };
     },
 
@@ -266,6 +339,7 @@ const resolvers: Resolvers = {
         errors: [],
       };
     },
+
     logoutUser: async (_, __, { req, res }) => {
       const { refreshToken } = req.cookies;
       const jwtToken = req?.headers?.authorization?.slice?.(7);

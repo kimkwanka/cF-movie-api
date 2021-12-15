@@ -61,67 +61,83 @@ export const getAuthStatus = async (token: string) => {
   }
 };
 
-export const requireAuthorization = async <T>(
+type TRunIfAuthenticatedParams<T> = {
   authStatus: {
     userId: string;
     validToken: boolean;
     errors: Array<{ message: string }>;
-  },
-  targetUserId: string,
-  operation: () => Promise<{
-    statusCode: number;
-    data: T | null;
-    errors: Array<{ message: string }>;
-  }>,
-) => {
-  const { userId, validToken, errors: authErrors } = authStatus;
-
-  if (!validToken || userId !== targetUserId) {
-    return {
-      statusCode: 401,
-      data: null,
-      errors: authErrors.length
-        ? authErrors
-        : [
-            {
-              message: `Unauthorized: Not allowed to access user with id '${targetUserId}'`,
-            },
-          ],
-    };
-  }
-
-  const { statusCode, data, errors } = await operation();
-  return { statusCode, data, errors };
+  };
+  operation: () =>
+    | Promise<{
+        statusCode: number;
+        data: T | null;
+        errors: Array<{ message: string }>;
+      }>
+    | Promise<T>;
 };
 
-export const requireAuthentication = async <T>(
-  authStatus: {
-    userId: string;
-    validToken: boolean;
-    errors: Array<{ message: string }>;
-  },
-  operation: () => Promise<{
-    statusCode: number;
-    data: T | null;
-    errors: Array<{ message: string }>;
-  }>,
-) => {
+type TRunIfAuthorizedParams<T> = TRunIfAuthenticatedParams<T> & {
+  targetUserId: string;
+};
+
+export const runIfAuthenticated = async <T>({
+  authStatus,
+  operation,
+}: TRunIfAuthenticatedParams<T>) => {
   const { validToken, errors: authErrors } = authStatus;
 
   if (!validToken) {
     return {
       statusCode: 401,
       data: null,
-      errors: authErrors.length
-        ? authErrors
-        : [
-            {
-              message: `Authentication Error: No valid access token.`,
-            },
-          ],
+      errors: authErrors,
+    };
+  }
+  const opResult = await operation();
+
+  if ('statusCode' in opResult) {
+    const { statusCode, data, errors } = opResult;
+
+    return { statusCode, data, errors };
+  }
+
+  return { statusCode: 200, data: opResult, errors: [] };
+};
+
+export const runIfAuthorized = async <T>({
+  authStatus,
+  operation,
+  targetUserId,
+}: TRunIfAuthorizedParams<T>) => {
+  const { validToken, userId, errors: authErrors } = authStatus;
+
+  if (!validToken) {
+    return {
+      statusCode: 401,
+      data: null,
+      errors: authErrors,
     };
   }
 
-  const { statusCode, data, errors } = await operation();
-  return { statusCode, data, errors };
+  if (userId !== targetUserId) {
+    return {
+      statusCode: 401,
+      data: null,
+      errors: [
+        {
+          message: `Unauthorized: Not allowed to access user with id '${targetUserId}'`,
+        },
+      ],
+    };
+  }
+
+  const opResult = await operation();
+
+  if ('statusCode' in opResult) {
+    const { statusCode, data, errors } = opResult;
+
+    return { statusCode, data, errors };
+  }
+
+  return { statusCode: 200, data: opResult, errors: [] };
 };
