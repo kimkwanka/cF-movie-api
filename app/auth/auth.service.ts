@@ -7,8 +7,10 @@ import usersService from '@users/users.service';
 
 import { RefreshTokenData } from '@generated/types';
 
-export const JWT_TOKEN_EXPIRATION_IN_SECONDS = 15 * 60;
-export const REFRESH_TOKEN_EXPIRATION_IN_SECONDS = 24 * 60 * 60;
+import {
+  JWT_TOKEN_EXPIRATION_IN_SECONDS,
+  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+} from '@auth/auth.config';
 
 type TJWTUserPayload = jwt.JwtPayload & {
   iat: number;

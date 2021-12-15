@@ -12,11 +12,14 @@ import {
   getTokenPayload,
   initStrategies,
   isBlacklistedAccessToken,
-  JWT_TOKEN_EXPIRATION_IN_SECONDS,
-  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
   refreshAllTokens,
   removeRefreshTokenFromWhitelist,
 } from '@auth/auth.service';
+
+import {
+  JWT_TOKEN_EXPIRATION_IN_SECONDS,
+  REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
+} from '@auth/auth.config';
 
 initStrategies();
 
