@@ -132,18 +132,22 @@
     </p>
     <code>
       type Query {
-        discover: [TMDBMovieSimple]
-        movie(id: Int!): TMDBMovieDetailed
+        discover(options: DiscoverOptions!): MoviesPayload
+        movie(movieId: String!): TMDBMovieDetailed
+        movies(movieIds: [String!]!): MoviesPayload
+        search(query: String!, page: Int): MoviesPayload
         users: [User]
       }
     
       type Mutation {
         registerUser(newUserData: UserInput!): UserPayload
         loginUser(username: String!, password: String!): AuthPayload
-        updateUser(_id: ID!, newUserData: UserInput!): UserPayload
-        deleteUser(_id: ID!): UserPayload
-        addFavoriteMovieToUser(_id: ID!, movieId: ID!): UserPayload
-        removeFavoriteMovieFromUser(_id: ID!, movieId: ID!): UserPayload
+        logoutUser: UserPayload
+        silentRefresh: AuthPayload
+        updateUser(userId: ID!, newUserData: UserInput!): UserPayload
+        deleteUser(userId: ID!): UserPayload
+        addFavoriteMovieToUser(userId: ID!, movieId: ID!): UserPayload
+        removeFavoriteMovieFromUser(userId: ID!, movieId: ID!): UserPayload
       }
     </code>
   </body>
