@@ -1,7 +1,7 @@
 ## flix-backend
 REST-API and GraphQL server for the [RESTFlix](https://github.com/kimkwanka/RESTFlix) and  [GraphFlix](https://github.com/kimkwanka/GraphFlix) apps.
 
-Movie data is provided via [TMDb API](https://developers.themoviedb.org/3/getting-started/introduction) and can be retrieved via REST proxy (endpoint `/tmdb`) or a GraphQL wrapper (endpoint` /graphql`).
+Movie data is provided via [TMDb API](https://developers.themoviedb.org/3/getting-started/introduction) and can be retrieved via REST proxy (endpoint `/tmdb`) or a GraphQL wrapper (endpoint `/graphql`).
 
 In the same vein, User Management (CRUD) functionality can also be accessed via the corresponding REST endpoints or GraphQL operations.
 
