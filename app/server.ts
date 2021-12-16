@@ -55,6 +55,7 @@ const initMiddlewareAndRoutes = (expressApp: Application) => {
       origin: [
         /http(s)?:\/\/(.+\.)?localhost(:\d{1,5})?$/,
         'https://restflix.netlify.app',
+        'https://graphflix.netlify.app',
         'https://studio.apollographql.com',
       ],
       credentials: true,
