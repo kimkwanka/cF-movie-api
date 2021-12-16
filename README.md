@@ -1,16 +1,19 @@
 ## flix-backend
-REST-API and GraphQL server for the [RESTFlix](https://github.com/kimkwanka/RESTFlix) app and a future GraphQL frontend.
+REST-API and GraphQL server for the [RESTFlix](https://github.com/kimkwanka/RESTFlix) and  [GraphFlix](https://github.com/kimkwanka/GraphFlix) apps.
 
 Movie data is provided via [TMDb API](https://developers.themoviedb.org/3/getting-started/introduction) and can be retrieved via REST proxy (endpoint `/tmdb`) or a GraphQL wrapper (endpoint` /graphql`).
 
 In the same vein, User Management (CRUD) functionality can also be accessed via the corresponding REST endpoints or GraphQL operations.
 
+[GraphQL Code Generator](https://www.graphql-code-generator.com/) is used to generate the base [TypeScript typings](https://www.graphql-code-generator.com/plugins/typescript) and [GraphQL resolver type signatures](https://www.graphql-code-generator.com/plugins/typescript-resolvers) directly from flix-backend's GraphQL schema.
+
 For more information, check the [API documentation](https://movie-api.cardinalzero.com/documentation.html).
 ## Built With
-- MongoDB
+- MongoDB / Mongoose
 - Express
 - Node.js
-- GraphQL / Apollo
+- GraphQL
+- Apollo Server
 - Redis
 - TypeScript
 
