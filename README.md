@@ -7,7 +7,7 @@ In the same vein, User Management (CRUD) functionality can also be accessed via 
 
 [GraphQL Code Generator](https://www.graphql-code-generator.com/) is used to generate the base [TypeScript typings](https://www.graphql-code-generator.com/plugins/typescript) and [GraphQL resolver type signatures](https://www.graphql-code-generator.com/plugins/typescript-resolvers) directly from flix-backend's GraphQL schema.
 
-For more information, check the [API documentation](https://movie-api.cardinalzero.com/documentation.html).
+For more information, check the [API documentation](https://flix.kimkwanka.io/documentation.html).
 ## Built With
 - MongoDB / Mongoose
 - Express
@@ -18,7 +18,7 @@ For more information, check the [API documentation](https://movie-api.cardinalze
 - TypeScript
 
 ## Live Version
-You can find the live version at https://movie-api.cardinalzero.com/.
+You can find the live version at https://flix.kimkwanka.io.
 
 ## Project Structure
 This project is structured 'by components' following the [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices) and tries to separate the concerns of the different logic layers as much as possible as outlined in [this article](https://www.coreycleary.me/project-structure-for-an-express-rest-api-when-there-is-no-standard-way) by Corey Cleary.
