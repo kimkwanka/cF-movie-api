@@ -1,6 +1,6 @@
 import express from 'express';
 
-import graphqlController from '@graphql/graphql.controller';
+import graphqlController from '#graphql/graphql.controller';
 
 const graphqlRouter = express.Router();
 

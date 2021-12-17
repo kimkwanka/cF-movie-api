@@ -1,8 +1,8 @@
 import express from 'express';
 
-import authController from '@auth/auth.controller';
+import authController from '#auth/auth.controller';
 
-import usersController from '@users/users.controller';
+import usersController from '#users/users.controller';
 
 const usersRouter = express.Router();
 /**
@@ -26,7 +26,7 @@ usersRouter.post('/users', usersController.addUser);
  * @name {PUT} /users/:userId
  * @path {PUT} /users/:userId
  * @params {String} [userId] User Id
- * @auth This route requires JWT Authentication
+ * #auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
  * @code {400} Bad request (username or email already exist)
@@ -49,7 +49,7 @@ usersRouter.put(
  * @name {DELETE} /users/:userId
  * @path {DELETE} /users/:userId
  * @params {String} [userId] User Id
- * @auth This route requires JWT Authentication
+ * #auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
  * @code {401} Unauthorized
@@ -70,7 +70,7 @@ usersRouter.delete(
  * @path {POST} /users/:userId/movies/:movieId
  * @params {String} [userId] User Id
  * @params {String} [movieId] Movie Id
- * @auth This route requires JWT Authentication
+ * #auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
  * @code {400} Bad request (movie is already a favorite)
@@ -92,7 +92,7 @@ usersRouter.post(
  * @path {DELETE} /users/:userId/movies/:movieId
  * @params {String} [userId] User Id
  * @params {String} [movieId] Movie Id
- * @auth This route requires JWT Authentication
+ * #auth This route requires JWT Authentication
  * @header Authorization: {String} Bearer [token]
  * @code {200} OK
  * @code {400} Bad request (movie is not a favorite)

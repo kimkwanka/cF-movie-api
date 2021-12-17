@@ -1,10 +1,10 @@
 import { AuthenticationError, ApolloError } from 'apollo-server-express';
 
-import { Resolvers, TmdbMovieDetailed } from '@generated/types';
+import { Resolvers, TmdbMovieDetailed } from '#generated/types';
 
-import { runIfAuthenticated, runIfAuthorized } from '@graphql/graphql.service';
+import { runIfAuthenticated, runIfAuthorized } from '#graphql/graphql.service';
 
-import { tmdbFetch } from '@tmdb/tmdb.service';
+import { tmdbFetch } from '#tmdb/tmdb.service';
 
 import {
   addAccessTokenToBlacklist,
@@ -13,11 +13,11 @@ import {
   generateRefreshTokenData,
   refreshAllTokens,
   removeRefreshTokenFromWhitelist,
-} from '@auth/auth.service';
+} from '#auth/auth.service';
 
-import { REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from '@auth/auth.config';
+import { REFRESH_TOKEN_EXPIRATION_IN_SECONDS } from '#auth/auth.config';
 
-import usersService from '@users/users.service';
+import usersService from '#users/users.service';
 
 const isURIEncoded = (str: string) =>
   !str.match('.*[\\ "\\<\\>\\{\\}|\\\\^~\\[\\]].*');

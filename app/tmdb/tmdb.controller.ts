@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { tmdbFetch } from '@tmdb/tmdb.service';
+import { tmdbFetch } from '#tmdb/tmdb.service';
 
 const tmdbProxyRequest = async (req: Request, res: Response) => {
   const endpoint = req.originalUrl.replace('/tmdb', '');

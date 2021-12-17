@@ -6,12 +6,13 @@ import { ApolloServer } from 'apollo-server-express';
 
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-import { getAuthStatus } from '@graphql/graphql.service';
-import { tmdbFetch } from '@tmdb/tmdb.service';
+import { getAuthStatus } from '#graphql/graphql.service';
 
-import resolvers from '@graphql/graphql.resolvers';
+import { tmdbFetch } from '#tmdb/tmdb.service';
 
-import { TmdbImageBaseUrls, TmdbGenre } from '@generated/types';
+import { TmdbImageBaseUrls, TmdbGenre } from '#generated/types';
+
+import resolvers from '#graphql/graphql.resolvers';
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, 'schema.graphql'),

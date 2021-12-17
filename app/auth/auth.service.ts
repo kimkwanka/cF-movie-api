@@ -1,16 +1,16 @@
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
-import redis from '@auth/auth.redis';
+import { RefreshTokenData } from '#generated/types';
 
-import usersService from '@users/users.service';
+import redis from '#auth/auth.redis';
 
-import { RefreshTokenData } from '@generated/types';
+import usersService from '#users/users.service';
 
 import {
   JWT_TOKEN_EXPIRATION_IN_SECONDS,
   REFRESH_TOKEN_EXPIRATION_IN_SECONDS,
-} from '@auth/auth.config';
+} from '#auth/auth.config';
 
 type TJWTUserPayload = jwt.JwtPayload & {
   iat: number;
@@ -187,4 +187,4 @@ export const refreshAllTokens = async (refreshToken: string) => {
   return {};
 };
 
-export { default as initStrategies } from '@auth/auth.strategies';
+export { default as initStrategies } from '#auth/auth.strategies';

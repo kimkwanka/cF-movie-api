@@ -1,6 +1,6 @@
-import { getTokenPayload, isValidToken } from '@auth/auth.service';
+import { getTokenPayload, isValidToken } from '#auth/auth.service';
 
-import usersService from '@users/users.service';
+import usersService from '#users/users.service';
 
 export const getAuthStatus = async (token: string) => {
   try {

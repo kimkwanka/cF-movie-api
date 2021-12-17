@@ -7,7 +7,7 @@ import {
   ExtractJwt as ExtractJWT,
 } from 'passport-jwt';
 
-import usersService from '@users/users.service';
+import usersService from '#users/users.service';
 
 const initLocalStrategy = () => {
   const localStrategy = new LocalStrategy(

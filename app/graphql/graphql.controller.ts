@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-import apolloServer from '@graphql/graphql.server';
+import apolloServer from '#graphql/graphql.server';
 
 let isServerRunning = false;
 

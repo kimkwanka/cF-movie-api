@@ -20,13 +20,11 @@
     "jsx": "preserve",
     "baseUrl": "./app",
     "paths": {
-      "@generated/*": ["_generated/*"],
-      "@auth/*": ["auth/*"],
-      "@graphql/*": ["graphql/*"],
-      "@movies/*": ["movies/*"],
-      "@tmdb/*": ["tmdb/*"],
-      "@users/*": ["users/*"],
-      "@utils/*": ["utils/*"],
+      "#generated/*": ["_generated/*"],
+      "#auth/*": ["auth/*"],
+      "#graphql/*": ["graphql/*"],
+      "#tmdb/*": ["tmdb/*"],
+      "#users/*": ["users/*"],
     },
   },
   "include": [

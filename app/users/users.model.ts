@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 
-import { User } from '@generated/types';
+import { User } from '#generated/types';
 
 mongoose.connect(process.env.MONGODB_URI || '');
 

@@ -1,8 +1,8 @@
 import express from 'express';
 
-import authController from '@auth/auth.controller';
+import authController from '#auth/auth.controller';
 
-import tmdbController from '@tmdb/tmdb.controller';
+import tmdbController from '#tmdb/tmdb.controller';
 
 const tmdbRouter = express.Router();
 

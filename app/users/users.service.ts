@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 
 import validator from 'validator';
 
-import { UserInput } from '@generated/types';
+import { UserInput } from '#generated/types';
 
-import Users from '@users/users.model';
+import Users from '#users/users.model';
 
 const findAllUsers = async () => Users.find({});
 
